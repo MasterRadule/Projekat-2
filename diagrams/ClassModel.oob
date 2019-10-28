@@ -2308,11 +2308,11 @@ LABL 0 Arial,8,N</a:FontList>
 </o:Attribute>
 <o:Attribute Id="o66">
 <a:ObjectID>524F40C6-32EA-4C78-A537-48E2889CF92D</a:ObjectID>
-<a:Name>isParterre</a:Name>
-<a:Code>isParterre</a:Code>
+<a:Name>isParter</a:Name>
+<a:Code>isParter</a:Code>
 <a:CreationDate>1572198066</a:CreationDate>
 <a:Creator>Tanja</a:Creator>
-<a:ModificationDate>1572246417</a:ModificationDate>
+<a:ModificationDate>1572198077</a:ModificationDate>
 <a:Modifier>Tanja</a:Modifier>
 <a:DataType>boolean</a:DataType>
 <a:Attribute.Visibility>-</a:Attribute.Visibility>
