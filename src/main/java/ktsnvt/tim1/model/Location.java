@@ -15,10 +15,13 @@ public class Location {
     private String name;
 
     @Column(nullable = false)
-    private double latitude;
+    private Double latitude;
 
     @Column(nullable = false)
-    private double longitude;
+    private Double longitude;
+
+    @Column(nullable = false)
+    private Boolean isDisabled;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<SeatGroup> seatGroups;
@@ -31,28 +34,12 @@ public class Location {
         this.events = new HashSet<>();
     }
 
-    public Location(String name, double latitude, double longitude) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.seatGroups = new HashSet<>();
-        this.events = new HashSet<>();
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Set<SeatGroup> getSeatGroups() {
-        return seatGroups;
-    }
-
-    public void setSeatGroups(Set<SeatGroup> seatGroups) {
-        this.seatGroups = seatGroups;
     }
 
     public String getName() {
@@ -63,20 +50,36 @@ public class Location {
         this.name = name;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public Boolean getDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        isDisabled = disabled;
+    }
+
+    public Set<SeatGroup> getSeatGroups() {
+        return seatGroups;
+    }
+
+    public void setSeatGroups(Set<SeatGroup> seatGroups) {
+        this.seatGroups = seatGroups;
     }
 
     public Set<Event> getEvents() {

@@ -12,31 +12,26 @@ public class Reservation {
     private Long id;
 
     @Column(nullable = false)
-    private int rowNum;
+    private Integer rowNum;
 
     @Column(nullable = false)
-    private int colNum;
+    private Integer colNum;
 
     @Column(nullable = false)
-    private boolean isPaid;
+    private Boolean isPaid;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    private Boolean isCancelled;
+
+    @ManyToMany(mappedBy = "reservations")
     private Set<EventDay> eventDays;
 
     @ManyToOne()
-    @JoinColumn(name = "seat_group_id", nullable = false)
-    private SeatGroup seatGroup;
+    @JoinColumn(name = "event_seat_group_id", nullable = false)
+    private EventSeatGroup eventSeatGroup;
 
     public Reservation() {
         this.eventDays = new HashSet<>();
-    }
-
-    public Reservation(int rowNum, int colNum, boolean isPaid, Set<EventDay> eventDays, SeatGroup seatGroup) {
-        this.rowNum = rowNum;
-        this.colNum = colNum;
-        this.isPaid = isPaid;
-        this.eventDays = eventDays;
-        this.seatGroup = seatGroup;
     }
 
     public Long getId() {
@@ -47,28 +42,36 @@ public class Reservation {
         this.id = id;
     }
 
-    public int getRowNum() {
+    public Integer getRowNum() {
         return rowNum;
     }
 
-    public void setRowNum(int rowNum) {
+    public void setRowNum(Integer rowNum) {
         this.rowNum = rowNum;
     }
 
-    public int getColNum() {
+    public Integer getColNum() {
         return colNum;
     }
 
-    public void setColNum(int colNum) {
+    public void setColNum(Integer colNum) {
         this.colNum = colNum;
     }
 
-    public boolean isPaid() {
+    public Boolean getPaid() {
         return isPaid;
     }
 
-    public void setPaid(boolean paid) {
+    public void setPaid(Boolean paid) {
         isPaid = paid;
+    }
+
+    public Boolean getCancelled() {
+        return isCancelled;
+    }
+
+    public void setCancelled(Boolean cancelled) {
+        isCancelled = cancelled;
     }
 
     public Set<EventDay> getEventDays() {
@@ -79,11 +82,11 @@ public class Reservation {
         this.eventDays = eventDays;
     }
 
-    public SeatGroup getSeatGroup() {
-        return seatGroup;
+    public EventSeatGroup getEventSeatGroup() {
+        return eventSeatGroup;
     }
 
-    public void setSeatGroup(SeatGroup seatGroup) {
-        this.seatGroup = seatGroup;
+    public void setEventSeatGroup(EventSeatGroup eventSeatGroup) {
+        this.eventSeatGroup = eventSeatGroup;
     }
 }

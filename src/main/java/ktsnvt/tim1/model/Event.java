@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,35 +27,30 @@ public class Event {
     private List<Object> videos;
 
     @Column(nullable = false)
-    private boolean isActiveForReservations;
+    private Boolean isActiveForReservations;
 
     @Column(nullable = false)
-    private boolean isCancelled;
+    private Boolean isCancelled;
 
     @Column(nullable = false)
-    private int reservationDeadlineDays;
+    private Integer reservationDeadlineDays;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private Integer maxReservationsPerUser;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<EventDay> eventDays;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<EventSeatGroup> eventSeatGroups;
 
     @ManyToOne()
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
     public Event() {
-    }
-
-    public Event(String name, String description, EventCategory category, List<Object> pictures, List<Object> videos, boolean isActiveForReservations, boolean isCancelled, int reservationDeadlineDays, Set<EventDay> eventDays, Location location) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.pictures = pictures;
-        this.videos = videos;
-        this.isActiveForReservations = isActiveForReservations;
-        this.isCancelled = isCancelled;
-        this.reservationDeadlineDays = reservationDeadlineDays;
-        this.eventDays = eventDays;
-        this.location = location;
+        this.eventDays = new HashSet<>();
+        this.eventSeatGroups = new HashSet<>();
     }
 
     public Long getId() {
@@ -105,28 +101,36 @@ public class Event {
         this.videos = videos;
     }
 
-    public boolean isActiveForReservations() {
+    public Boolean getActiveForReservations() {
         return isActiveForReservations;
     }
 
-    public void setActiveForReservations(boolean activeForReservations) {
+    public void setActiveForReservations(Boolean activeForReservations) {
         isActiveForReservations = activeForReservations;
     }
 
-    public boolean isCancelled() {
+    public Boolean getCancelled() {
         return isCancelled;
     }
 
-    public void setCancelled(boolean cancelled) {
+    public void setCancelled(Boolean cancelled) {
         isCancelled = cancelled;
     }
 
-    public int getReservationDeadlineDays() {
+    public Integer getReservationDeadlineDays() {
         return reservationDeadlineDays;
     }
 
-    public void setReservationDeadlineDays(int reservationDeadlineDays) {
+    public void setReservationDeadlineDays(Integer reservationDeadlineDays) {
         this.reservationDeadlineDays = reservationDeadlineDays;
+    }
+
+    public Integer getMaxReservationsPerUser() {
+        return maxReservationsPerUser;
+    }
+
+    public void setMaxReservationsPerUser(Integer maxReservationsPerUser) {
+        this.maxReservationsPerUser = maxReservationsPerUser;
     }
 
     public Set<EventDay> getEventDays() {
@@ -135,6 +139,14 @@ public class Event {
 
     public void setEventDays(Set<EventDay> eventDays) {
         this.eventDays = eventDays;
+    }
+
+    public Set<EventSeatGroup> getEventSeatGroups() {
+        return eventSeatGroups;
+    }
+
+    public void setEventSeatGroups(Set<EventSeatGroup> eventSeatGroups) {
+        this.eventSeatGroups = eventSeatGroups;
     }
 
     public Location getLocation() {

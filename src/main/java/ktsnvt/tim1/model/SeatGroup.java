@@ -10,29 +10,24 @@ public class SeatGroup {
     private Long id;
 
     @Column(nullable = false)
-    private int rowsNum;
+    private Integer rowsNum;
 
     @Column(nullable = false)
-    private int colsNum;
+    private Integer colsNum;
 
     @Column(nullable = false)
-    private int freeSeats;
+    private Integer freeSeats;
 
     @Column(nullable = false)
-    private boolean isParterre;
+    private Boolean isParterre;
 
     @Column(nullable = false)
-    private double price;
+    private Double xCoordinate;
+
+    @Column(nullable = false)
+    private Double yCoordinate;
 
     public SeatGroup() {
-    }
-
-    public SeatGroup(int rowsNum, int colsNum, int freeSeats, boolean isParterre, double price) {
-        this.rowsNum = rowsNum;
-        this.colsNum = colsNum;
-        this.freeSeats = freeSeats;
-        this.isParterre = isParterre;
-        this.price = price;
     }
 
     public Long getId() {
@@ -43,43 +38,51 @@ public class SeatGroup {
         this.id = id;
     }
 
-    public int getRowsNum() {
+    public Integer getRowsNum() {
         return rowsNum;
     }
 
-    public void setRowsNum(int rowsNum) {
+    public void setRowsNum(Integer rowsNum) {
         this.rowsNum = rowsNum;
     }
 
-    public int getColsNum() {
+    public Integer getColsNum() {
         return colsNum;
     }
 
-    public void setColsNum(int colsNum) {
+    public void setColsNum(Integer colsNum) {
         this.colsNum = colsNum;
     }
 
-    public int getFreeSeats() {
+    public Integer getFreeSeats() {
         return freeSeats;
     }
 
-    public void setFreeSeats(int freeSeats) {
+    public void setFreeSeats(Integer freeSeats) {
         this.freeSeats = freeSeats;
     }
 
-    public boolean isParterre() {
+    public Boolean getParterre() {
         return isParterre;
     }
 
-    public void setParterre(boolean parterre) {
+    public void setParterre(Boolean parterre) {
         isParterre = parterre;
     }
 
-    public double getPrice() {
-        return price;
+    public Double getxCoordinate() {
+        return xCoordinate;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setxCoordinate(Double xCoordinate) {
+        this.xCoordinate = xCoordinate;
+    }
+
+    public Double getyCoordinate() {
+        return yCoordinate;
+    }
+
+    public void setyCoordinate(Double yCoordinate) {
+        this.yCoordinate = yCoordinate;
     }
 }

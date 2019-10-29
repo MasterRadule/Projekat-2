@@ -23,17 +23,9 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
-    private boolean isVerified;
+    private Boolean isVerified;
 
     public User() {
-    }
-
-    public User(String email, String password, String firstName, String lastName, boolean isVerified) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isVerified = isVerified;
     }
 
     public Long getId() {
@@ -76,11 +68,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean isVerified() {
+    public Boolean getVerified() {
         return isVerified;
     }
 
-    public void setVerified(boolean verified) {
+    public void setVerified(Boolean verified) {
         isVerified = verified;
     }
 }

@@ -2,6 +2,9 @@ package ktsnvt.tim1.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class EventDay {
@@ -17,17 +20,12 @@ public class EventDay {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne()
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "event_day_reservations", joinColumns = @JoinColumn(name = "event_day", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "reservation", referencedColumnName = "id"))
+    private Set<Reservation> reservations;
 
     public EventDay() {
-    }
-
-    public EventDay(Date date, Event event, Reservation reservation) {
-        this.date = date;
-        this.event = event;
-        this.reservation = reservation;
+        this.reservations = new HashSet<>();
     }
 
     public Long getId() {
@@ -54,11 +52,11 @@ public class EventDay {
         this.event = event;
     }
 
-    public Reservation getReservation() {
-        return reservation;
+    public Set<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
     }
 }
