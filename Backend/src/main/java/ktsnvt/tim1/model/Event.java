@@ -22,9 +22,9 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventCategory category;
 
-    private List<Object> pictures;
+    //private List<Object> pictures;
 
-    private List<Object> videos;
+    //private List<Object> videos;
 
     @Column(nullable = false)
     private Boolean isActiveForReservations;
@@ -85,6 +85,7 @@ public class Event {
         this.category = category;
     }
 
+    /*
     public List<Object> getPictures() {
         return pictures;
     }
@@ -99,7 +100,7 @@ public class Event {
 
     public void setVideos(List<Object> videos) {
         this.videos = videos;
-    }
+    }*/
 
     public Boolean getActiveForReservations() {
         return isActiveForReservations;
