@@ -35,6 +35,11 @@ public class LocationController {
         }
     }
 
+    @GetMapping(value = "search")
+    public ResponseEntity<Page<LocationDTO>> searchLocations(@RequestParam("name") String name, Pageable pageable) {
+        return new ResponseEntity<>(locationService.searchLocations(name, pageable), HttpStatus.OK);
+    }
+
     @PostMapping()
     public ResponseEntity<LocationDTO> createLocation(@Valid @RequestBody LocationDTO location) {
         return new ResponseEntity<>(locationService.createLocation(location), HttpStatus.CREATED);

@@ -35,6 +35,10 @@ public class LocationService {
                 .orElseThrow(() -> new EntityNotFoundException("Location not found")));
     }
 
+    public Page<LocationDTO> searchLocations(String name, Pageable pageable) {
+        return locationRepository.findByNameContaining(name, pageable).map(LocationDTO::new);
+    }
+
     public LocationDTO createLocation(LocationDTO location) {
         return new LocationDTO(locationRepository.save(location.convertToEntity()));
     }
