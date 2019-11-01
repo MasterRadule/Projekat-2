@@ -16,6 +16,10 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    public Page<EventDTO> getEvents(Pageable pageable) {
+        return eventRepository.findAll(pageable).map(EventDTO::new);
+    }
+
     public EventDTO getEvent(Long id) throws EntityNotFoundException {
         return new EventDTO(eventRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }

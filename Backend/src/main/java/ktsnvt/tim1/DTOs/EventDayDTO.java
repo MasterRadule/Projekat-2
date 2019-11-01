@@ -25,7 +25,7 @@ public class EventDayDTO {
 
     public EventDay convertToEntity() throws ParseException {
         EventDay ed = new EventDay();
-        ed.setId(this.id);
+        ed.setId(null);
         ed.setDate(formatter.parse(this.date));
 
         return ed;
