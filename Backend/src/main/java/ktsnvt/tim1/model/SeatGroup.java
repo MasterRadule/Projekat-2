@@ -9,11 +9,10 @@ public class SeatGroup {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-
+    @Column()
     private Integer rowsNum;
 
-    @Column(nullable = false)
+    @Column()
     private Integer colsNum;
 
     @Column(nullable = false)
@@ -24,6 +23,7 @@ public class SeatGroup {
 
     @Column(nullable = false)
     private Double yCoordinate;
+
     public SeatGroup() {
     }
 
