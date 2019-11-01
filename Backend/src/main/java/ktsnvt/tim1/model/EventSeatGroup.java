@@ -15,14 +15,17 @@ public class EventSeatGroup {
     private Double price;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Reservation> reservation;
+    private Set<Reservation> reservations;
 
     @ManyToOne()
     @JoinColumn(name = "seat_group_id", nullable = false)
     private SeatGroup seatGroupB;
 
+    @Column(nullable = false)
+    private Integer freeSeats;
+
     public EventSeatGroup() {
-        this.reservation = new HashSet<>();
+        this.reservations = new HashSet<>();
     }
 
     public Long getId() {
@@ -41,12 +44,20 @@ public class EventSeatGroup {
         this.price = price;
     }
 
-    public Set<Reservation> getReservation() {
-        return reservation;
+    public Set<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setReservation(Set<Reservation> reservation) {
-        this.reservation = reservation;
+    public Integer getFreeSeats() {
+        return freeSeats;
+    }
+
+    public void setFreeSeats(Integer freeSeats) {
+        this.freeSeats = freeSeats;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
     public SeatGroup getSeatGroupB() {
@@ -56,4 +67,6 @@ public class EventSeatGroup {
     public void setSeatGroupB(SeatGroup seatGroupB) {
         this.seatGroupB = seatGroupB;
     }
+
+
 }

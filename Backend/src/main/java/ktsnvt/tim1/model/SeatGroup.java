@@ -17,9 +17,6 @@ public class SeatGroup {
     private Integer colsNum;
 
     @Column(nullable = false)
-    private Integer freeSeats;
-
-    @Column(nullable = false)
     private Boolean isParterre;
 
     @Column(nullable = false)
@@ -52,14 +49,6 @@ public class SeatGroup {
 
     public void setColsNum(Integer colsNum) {
         this.colsNum = colsNum;
-    }
-
-    public Integer getFreeSeats() {
-        return freeSeats;
-    }
-
-    public void setFreeSeats(Integer freeSeats) {
-        this.freeSeats = freeSeats;
     }
 
     public Boolean getParterre() {

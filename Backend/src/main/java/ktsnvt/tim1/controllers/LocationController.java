@@ -3,6 +3,7 @@ package ktsnvt.tim1.controllers;
 import ktsnvt.tim1.DTOs.LocationDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,8 @@ public class LocationController {
             return new ResponseEntity<>(locationService.createSeatGroup(id, seatGroup), HttpStatus.CREATED);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

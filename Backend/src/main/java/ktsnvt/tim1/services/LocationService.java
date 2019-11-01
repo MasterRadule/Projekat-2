@@ -3,6 +3,7 @@ package ktsnvt.tim1.services;
 import ktsnvt.tim1.DTOs.LocationDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Location;
 import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -57,7 +58,7 @@ public class LocationService {
                 .orElseThrow(() -> new EntityNotFoundException("Seat group not found")));
     }
 
-    public SeatGroupDTO createSeatGroup(Long id, SeatGroupDTO seatGroup) throws EntityNotFoundException {
+    public SeatGroupDTO createSeatGroup(Long id, SeatGroupDTO seatGroup) throws EntityNotFoundException, EntityNotValidException {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
 

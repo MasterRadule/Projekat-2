@@ -1,24 +1,16 @@
 package ktsnvt.tim1.DTOs;
 
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.SeatGroup;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SeatGroupDTO {
     private Long id;
 
-    @NotNull(message = "Number of rows must be specified")
-    @Min(value = 1, message = "Number of rows must be greater than zero")
     private Integer rowsNum;
 
-    @NotNull(message = "Number of columns must be specified")
-    @Min(value = 1, message = "Number of columns must be greater than zero")
     private Integer colsNum;
-
-    @NotNull(message = "Number of free seats must be specified")
-    @Min(value = 0, message = "Number of free seats cannot be negative")
-    private Integer freeSeats;
 
     @NotNull(message = "Seat group parterre must be specified")
     private Boolean parterre;
@@ -36,22 +28,28 @@ public class SeatGroupDTO {
         this.id = seatGroup.getId();
         this.colsNum = seatGroup.getColsNum();
         this.rowsNum = seatGroup.getRowsNum();
-        this.freeSeats = seatGroup.getFreeSeats();
         this.parterre = seatGroup.getParterre();
         this.xCoordinate = seatGroup.getxCoordinate();
         this.yCoordinate = seatGroup.getyCoordinate();
     }
 
-    public SeatGroup convertToEntity() {
+    public SeatGroup convertToEntity() throws EntityNotValidException {
         SeatGroup seatGroup = new SeatGroup();
 
-        seatGroup.setColsNum(this.colsNum);
-        seatGroup.setFreeSeats(this.freeSeats);
-        seatGroup.setId(this.id);
+        seatGroup.setId(null);
         seatGroup.setParterre(this.parterre);
-        seatGroup.setRowsNum(this.rowsNum);
         seatGroup.setxCoordinate(this.xCoordinate);
         seatGroup.setyCoordinate(this.yCoordinate);
+
+        if (this.isParterre()) {
+            seatGroup.setColsNum(null);
+            seatGroup.setRowsNum(null);
+        } else if (this.colsNum == null || this.colsNum < 1 || this.rowsNum == null || this.rowsNum < 1) {
+            throw new EntityNotValidException("Row and column numbers must be specified");
+        }
+
+        seatGroup.setRowsNum(this.rowsNum);
+        seatGroup.setColsNum(this.colsNum);
 
         return seatGroup;
     }
@@ -78,14 +76,6 @@ public class SeatGroupDTO {
 
     public void setColsNum(Integer colsNum) {
         this.colsNum = colsNum;
-    }
-
-    public Integer getFreeSeats() {
-        return freeSeats;
-    }
-
-    public void setFreeSeats(Integer freeSeats) {
-        this.freeSeats = freeSeats;
     }
 
     public Boolean isParterre() {
