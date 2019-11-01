@@ -10,13 +10,11 @@ public class SeatGroup {
     private Long id;
 
     @Column(nullable = false)
+
     private Integer rowsNum;
 
     @Column(nullable = false)
     private Integer colsNum;
-
-    @Column(nullable = false)
-    private Integer freeSeats;
 
     @Column(nullable = false)
     private Boolean isParterre;
@@ -26,7 +24,6 @@ public class SeatGroup {
 
     @Column(nullable = false)
     private Double yCoordinate;
-
     public SeatGroup() {
     }
 
@@ -52,14 +49,6 @@ public class SeatGroup {
 
     public void setColsNum(Integer colsNum) {
         this.colsNum = colsNum;
-    }
-
-    public Integer getFreeSeats() {
-        return freeSeats;
-    }
-
-    public void setFreeSeats(Integer freeSeats) {
-        this.freeSeats = freeSeats;
     }
 
     public Boolean getParterre() {
