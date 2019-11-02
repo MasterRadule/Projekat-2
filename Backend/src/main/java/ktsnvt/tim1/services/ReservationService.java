@@ -16,9 +16,9 @@ public class ReservationService {
 
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
         switch(type){
-            case bought:
+            case BOUGHT:
                 return reservationRepository.findByOrderIdIsNotNull(pageable).map(ReservationDTO::new);
-            case reserved:
+            case RESERVED:
                 return reservationRepository.findByOrderIdIsNull(pageable).map(ReservationDTO::new);
             default:
                 return reservationRepository.findAll(pageable).map(ReservationDTO::new);
