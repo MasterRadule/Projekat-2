@@ -19,7 +19,7 @@ public class EventSeatGroup {
 
     @ManyToOne()
     @JoinColumn(name = "seat_group_id", nullable = false)
-    private SeatGroup seatGroupB;
+    private SeatGroup seatGroup;
 
     @Column(nullable = false)
     private Integer freeSeats;
@@ -60,12 +60,12 @@ public class EventSeatGroup {
         this.reservations = reservations;
     }
 
-    public SeatGroup getSeatGroupB() {
-        return seatGroupB;
+    public SeatGroup getSeatGroup() {
+        return seatGroup;
     }
 
-    public void setSeatGroupB(SeatGroup seatGroupB) {
-        this.seatGroupB = seatGroupB;
+    public void setSeatGroup(SeatGroup seatGroup) {
+        this.seatGroup = seatGroup;
     }
 
 
