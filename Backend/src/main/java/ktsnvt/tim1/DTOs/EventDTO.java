@@ -74,6 +74,7 @@ public class EventDTO {
         Set<EventDay> eventDays = new HashSet<>();
         for (EventDayDTO d : this.eventDays) {
             EventDay eventDay = d.convertToEntity();
+            eventDay.setEvent(e);
             eventDays.add(eventDay);
         }
         e.setEventDays(eventDays);

@@ -38,7 +38,7 @@ public class Event {
     @Column(nullable = false)
     private Integer maxReservationsPerUser;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventDay> eventDays;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
