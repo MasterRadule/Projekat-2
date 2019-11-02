@@ -46,8 +46,14 @@ public class LocationController {
     }
 
     @PutMapping()
-    public ResponseEntity<LocationDTO> editLocation(@Valid @RequestBody LocationDTO location) {
-        return null;
+    public ResponseEntity<Object> editLocation(@Valid @RequestBody LocationDTO location) {
+        try {
+            return new ResponseEntity<>(locationService.editLocation(location), HttpStatus.OK);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping(value = "/{id}/seat-groups")
