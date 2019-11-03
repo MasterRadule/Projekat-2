@@ -20,6 +20,10 @@ public class Reservation {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Ticket> tickets;
 
+    @ManyToOne()
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
+
     public Reservation() {
         this.tickets = new HashSet<>();
     }
@@ -54,5 +58,13 @@ public class Reservation {
 
     public void setTickets(Set<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

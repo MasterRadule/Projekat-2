@@ -24,6 +24,9 @@ public class SeatGroup {
     @Column(nullable = false)
     private Double yCoordinate;
 
+    @Column(nullable = false)
+    private String name;
+
     public SeatGroup() {
     }
 
@@ -73,5 +76,13 @@ public class SeatGroup {
 
     public void setyCoordinate(Double yCoordinate) {
         this.yCoordinate = yCoordinate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
