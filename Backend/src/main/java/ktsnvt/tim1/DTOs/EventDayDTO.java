@@ -1,5 +1,6 @@
 package ktsnvt.tim1.DTOs;
 
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.EventDay;
 
 import javax.validation.constraints.NotNull;
@@ -23,11 +24,15 @@ public class EventDayDTO {
         this.date = formatter.format(eventDay.getDate());
     }
 
-    public EventDay convertToEntity() throws ParseException {
+    public EventDay convertToEntity() throws EntityNotValidException {
         EventDay ed = new EventDay();
         ed.setId(null);
-        ed.setDate(formatter.parse(this.date));
-
+        try {
+            ed.setDate(formatter.parse(this.date));
+        } catch (ParseException e) {
+            throw new EntityNotValidException("Dates of event days are in invalid format");
+        }
+        
         return ed;
     }
 

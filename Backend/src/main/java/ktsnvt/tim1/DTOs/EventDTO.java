@@ -1,5 +1,6 @@
 package ktsnvt.tim1.DTOs;
 
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.model.EventCategory;
 import ktsnvt.tim1.model.EventDay;
@@ -60,7 +61,7 @@ public class EventDTO {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Event convertToEntity() throws ParseException {
+    public Event convertToEntity() throws EntityNotValidException {
         Event e = new Event();
         e.setId(null);
         e.setName(this.name);
@@ -73,6 +74,7 @@ public class EventDTO {
         Set<EventDay> eventDays = new HashSet<>();
         for (EventDayDTO d : this.eventDays) {
             EventDay eventDay = d.convertToEntity();
+            eventDay.setEvent(e);
             eventDays.add(eventDay);
         }
         e.setEventDays(eventDays);
