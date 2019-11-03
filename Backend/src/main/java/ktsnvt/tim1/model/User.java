@@ -1,6 +1,8 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -24,6 +26,17 @@ public class User {
 
     @Column(nullable = false)
     private Boolean isVerified;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    private Set<UserAuthority> userAuthorities = new HashSet<UserAuthority>();
+
+    public Set<UserAuthority> getUserAuthorities() {
+        return userAuthorities;
+    }
+
+    public void setUserAuthorities(Set<UserAuthority> userAuthorities) {
+        this.userAuthorities = userAuthorities;
+    }
 
     public User() {
     }
