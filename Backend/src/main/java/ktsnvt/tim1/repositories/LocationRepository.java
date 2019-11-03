@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
-    Page<Location> findByNameContaining(String name, Pageable pageable);
+    Page<Location> findByNameIgnoreCaseContaining(String name, Pageable pageable);
 }

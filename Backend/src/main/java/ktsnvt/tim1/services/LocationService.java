@@ -36,11 +36,26 @@ public class LocationService {
     }
 
     public Page<LocationDTO> searchLocations(String name, Pageable pageable) {
-        return locationRepository.findByNameContaining(name, pageable).map(LocationDTO::new);
+        return locationRepository.findByNameIgnoreCaseContaining(name, pageable).map(LocationDTO::new);
     }
 
     public LocationDTO createLocation(LocationDTO location) {
         return new LocationDTO(locationRepository.save(location.convertToEntity()));
+    }
+
+    public LocationDTO editLocation(LocationDTO location) throws EntityNotValidException, EntityNotFoundException {
+        if (location.getId() == null)
+            throw new EntityNotValidException("Location must have an ID");
+
+        Location editedLocation = locationRepository.findById(location.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Location not found"));
+
+        editedLocation.setName(location.getName());
+        editedLocation.setLongitude(location.getLongitude());
+        editedLocation.setLatitude(location.getLatitude());
+        editedLocation.setDisabled(location.isDisabled());
+
+        return new LocationDTO(locationRepository.save(editedLocation));
     }
 
     public Page<SeatGroupDTO> getSeatGroups(Long id, Pageable pageable) throws EntityNotFoundException {
