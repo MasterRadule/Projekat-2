@@ -58,7 +58,7 @@ public class EventController {
     }
 
     @GetMapping(value = "search")
-    public ResponseEntity<Object> searchEvents(@Valid @RequestBody SearchEventsDTO searchDTO, Pageable pageable) {
+    public ResponseEntity<Object> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) {
         try {
             return new ResponseEntity<>(eventService.searchEvents(searchDTO, pageable), HttpStatus.OK);
         }

@@ -93,10 +93,9 @@ public class EventService {
     public Page<EventDTO> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) throws EntityNotValidException {
         String name = searchDTO.getName().toLowerCase() + "%";
         String category = searchDTO.getCategory().equals("") ? "%" : searchDTO.getCategory();
-        String locationID = searchDTO.getLocationID() == null ? "%" : Long.toString(searchDTO.getLocationID());
-        Page<Event> events = eventRepository.searchEvents(name, category, locationID, pageable);
+        Page<Event> events = eventRepository.searchEvents(name, category, searchDTO.getLocationID(), pageable);
 
-        if (searchDTO.getFromDate() != null && searchDTO.getToDate() != null) {
+        if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
             Date fromDate;
