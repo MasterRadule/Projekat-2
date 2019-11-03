@@ -1,6 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.DTOs.NewReservationDTO;
 import ktsnvt.tim1.DTOs.ReservationDTO;
 import ktsnvt.tim1.DTOs.ReservationTypeDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -32,6 +35,11 @@ public class ReservationController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping()
+    public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody NewReservationDTO newReservationDTO) {
+        return new ResponseEntity<>(reservationService.createReservation(newReservationDTO), HttpStatus.CREATED);
     }
 
 }
