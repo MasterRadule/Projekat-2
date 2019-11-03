@@ -1,22 +1,18 @@
 package ktsnvt.tim1.services;
 
-import ktsnvt.tim1.DTOs.EventDTO;
-import ktsnvt.tim1.DTOs.EventDayDTO;
+import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
-import ktsnvt.tim1.model.Event;
-import ktsnvt.tim1.model.EventCategory;
-import ktsnvt.tim1.model.EventDay;
+import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
+import ktsnvt.tim1.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -24,6 +20,9 @@ public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
 
     public Page<EventDTO> getEvents(Pageable pageable) {
         return eventRepository.findAll(pageable).map(EventDTO::new);
@@ -80,6 +79,44 @@ public class EventService {
             throw new EntityNotValidException("Number of reservation deadline days must " +
                     "be less than number of days left until the event");
         e.setReservationDeadlineDays(event.getReservationDeadlineDays());
+
+        return new EventDTO(eventRepository.save(e));
+    }
+
+    public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException {
+        Event e = eventRepository.findById(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Location l = locationRepository.findById(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
+        ArrayList<EventSeatGroupDTO> seatGroups = seatGroupsDTO.getEventSeatGroups();
+        SeatGroup seatGroup;
+        EventSeatGroup eventSeatGroup;
+
+        e.getEventSeatGroups().removeIf(esg -> seatGroupsDTO.getEventSeatGroups().stream()
+                .noneMatch(sgDTO -> sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()));
+
+        for (EventSeatGroupDTO esgDTO : seatGroups) {
+            seatGroup = l.getSeatGroups().stream()
+                    .filter(seatG -> seatG.getId().longValue() == esgDTO.getSeatGroupID().longValue()).findFirst().orElse(null);
+
+            if (seatGroup != null) {
+                eventSeatGroup = e.getEventSeatGroups().stream()
+                        .filter(seatG -> seatG.getSeatGroup().getId().longValue() == esgDTO.getSeatGroupID().longValue()).findFirst().orElse(null);
+                if (eventSeatGroup != null) {
+                    eventSeatGroup.setPrice(esgDTO.getPrice());
+                    continue;
+                }
+
+                EventSeatGroup esg = new EventSeatGroup();
+                esg.setPrice(esgDTO.getPrice());
+                esg.setSeatGroup(seatGroup);
+                if (seatGroup.getParterre()) {
+                    esg.setFreeSeats(esgDTO.getFreeSeats());
+                }
+                else {
+                    esg.setFreeSeats(seatGroup.getColsNum() * seatGroup.getRowsNum());
+                }
+                e.getEventSeatGroups().add(esg);
+            }
+        }
 
         return new EventDTO(eventRepository.save(e));
     }

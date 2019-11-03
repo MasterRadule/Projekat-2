@@ -1,6 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.EventDTO;
+import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.services.EventService;
@@ -53,6 +54,16 @@ public class EventController {
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/location")
+    public ResponseEntity<Object> setEventLocationAndSeatGroups(@Valid @RequestBody LocationSeatGroupDTO locSeatGroupDTO) {
+        try {
+            return new ResponseEntity<>(eventService.setEventLocationAndSeatGroups(locSeatGroupDTO), HttpStatus.OK);
+        }
+        catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
