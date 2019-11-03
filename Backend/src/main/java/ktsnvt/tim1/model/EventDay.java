@@ -1,10 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class EventDay {
@@ -21,11 +18,24 @@ public class EventDay {
     private Event event;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "event_day_reservations", joinColumns = @JoinColumn(name = "event_day", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "reservation", referencedColumnName = "id"))
-    private Set<Reservation> reservations;
+    @JoinTable(name = "event_day_tickets", joinColumns = @JoinColumn(name = "event_day", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ticket", referencedColumnName = "id"))
+    private Set<Ticket> tickets;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventDay eventDay = (EventDay) o;
+        return date.getTime() == eventDay.getDate().getTime();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date);
+    }
 
     public EventDay() {
-        this.reservations = new HashSet<>();
+        this.tickets = new HashSet<>();
     }
 
     public Long getId() {
@@ -52,11 +62,11 @@ public class EventDay {
         this.event = event;
     }
 
-    public Set<Reservation> getReservations() {
-        return reservations;
+    public Set<Ticket> getTickets() {
+        return tickets;
     }
 
-    public void setReservations(Set<Reservation> reservations) {
-        this.reservations = reservations;
+    public void setTickets(Set<Ticket> tickets) {
+        this.tickets = tickets;
     }
 }

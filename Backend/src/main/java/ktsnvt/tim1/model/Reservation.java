@@ -11,27 +11,21 @@ public class Reservation {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer rowNum;
-
-    @Column(nullable = false)
-    private Integer colNum;
-
-    @Column(nullable = false)
-    private Boolean isPaid;
+    @Column(nullable = true)
+    private String orderId;
 
     @Column(nullable = false)
     private Boolean isCancelled;
 
-    @ManyToMany(mappedBy = "reservations")
-    private Set<EventDay> eventDays;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Ticket> tickets;
 
     @ManyToOne()
-    @JoinColumn(name = "event_seat_group_id", nullable = false)
-    private EventSeatGroup eventSeatGroup;
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
     public Reservation() {
-        this.eventDays = new HashSet<>();
+        this.tickets = new HashSet<>();
     }
 
     public Long getId() {
@@ -42,28 +36,12 @@ public class Reservation {
         this.id = id;
     }
 
-    public Integer getRowNum() {
-        return rowNum;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
-    }
-
-    public Integer getColNum() {
-        return colNum;
-    }
-
-    public void setColNum(Integer colNum) {
-        this.colNum = colNum;
-    }
-
-    public Boolean getPaid() {
-        return isPaid;
-    }
-
-    public void setPaid(Boolean paid) {
-        isPaid = paid;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public Boolean getCancelled() {
@@ -74,19 +52,19 @@ public class Reservation {
         isCancelled = cancelled;
     }
 
-    public Set<EventDay> getEventDays() {
-        return eventDays;
+    public Set<Ticket> getTickets() {
+        return tickets;
     }
 
-    public void setEventDays(Set<EventDay> eventDays) {
-        this.eventDays = eventDays;
+    public void setTickets(Set<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
-    public EventSeatGroup getEventSeatGroup() {
-        return eventSeatGroup;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventSeatGroup(EventSeatGroup eventSeatGroup) {
-        this.eventSeatGroup = eventSeatGroup;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }
