@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 
 @RestController
 @RequestMapping("/events")
@@ -32,7 +31,7 @@ public class EventController {
         try {
             return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
         }
-        catch(ParseException e) {
+        catch(EntityNotValidException e) {
             return new ResponseEntity<>("Dates of event days are in invalid format", HttpStatus.BAD_REQUEST);
         }
     }
@@ -44,9 +43,6 @@ public class EventController {
         }
         catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
-        }
-        catch(ParseException e) {
-            return new ResponseEntity<>("Dates of event days are in invalid format", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

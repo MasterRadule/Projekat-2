@@ -28,12 +28,11 @@ public class EventService {
         return new EventDTO(eventRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public EventDTO createEvent(EventDTO event) throws ParseException {
+    public EventDTO createEvent(EventDTO event) throws EntityNotValidException {
         return new EventDTO(eventRepository.save(event.convertToEntity()));
     }
 
-    public EventDTO editEvent(EventDTO event) throws EntityNotFoundException, EntityAlreadyExistsException,
-            ParseException, EntityNotValidException {
+    public EventDTO editEvent(EventDTO event) throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
         if (event.getId() == null)
             throw new EntityNotValidException("Event must have an ID");
 
