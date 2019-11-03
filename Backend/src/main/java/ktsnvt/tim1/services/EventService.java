@@ -2,6 +2,7 @@ package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.EventDTO;
 import ktsnvt.tim1.DTOs.EventDayDTO;
+import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -11,13 +12,18 @@ import ktsnvt.tim1.model.EventDay;
 import ktsnvt.tim1.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -82,5 +88,39 @@ public class EventService {
         e.setReservationDeadlineDays(event.getReservationDeadlineDays());
 
         return new EventDTO(eventRepository.save(e));
+    }
+
+    public Page<EventDTO> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) throws EntityNotValidException {
+        String name = searchDTO.getName().toLowerCase() + "%";
+        String category = searchDTO.getCategory().equals("") ? "%" : searchDTO.getCategory();
+        Page<Event> events = eventRepository.searchEvents(name, category, searchDTO.getLocationID(), pageable);
+
+        if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
+            ArrayList<EventDTO> eventsDTO = new ArrayList<>();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+            Date fromDate;
+            Date toDate;
+            try {
+                fromDate = formatter.parse(searchDTO.getFromDate());
+                toDate = formatter.parse(searchDTO.getToDate());
+            } catch (ParseException e) {
+                throw new EntityNotValidException("Dates are in invalid format");
+            }
+
+            events.stream().forEach(e -> {
+                for (EventDay ev : e.getEventDays()) {
+                    if (fromDate.compareTo(ev.getDate()) * ev.getDate().compareTo(toDate) >= 0) {
+                        eventsDTO.add(new EventDTO(e));
+                        return;
+                    }
+                }
+            });
+
+            return new PageImpl<>(eventsDTO);
+        }
+        else {
+            return new PageImpl<>(events.stream().map(EventDTO::new).collect(Collectors.toList()));
+        }
+
     }
 }
