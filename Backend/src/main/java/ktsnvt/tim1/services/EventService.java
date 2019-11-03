@@ -51,6 +51,24 @@ public class EventService {
         e.setMaxReservationsPerUser(event.getMaxReservationsPerUser());
         e.setCancelled(event.isCancelled());
 
+        addAndRemoveEventDays(e, event);
+        checkNumberOfReservationDeadlineDays(e, event);
+
+        return new EventDTO(eventRepository.save(e));
+    }
+
+    public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
+        Event e = eventRepository.findById(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Location l = locationRepository.findById(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
+
+        changeLocation(e, l);
+        disableEventGroups(e, seatGroupsDTO);
+        enableEventGroups(e, l, seatGroupsDTO);
+
+        return new EventDTO(eventRepository.save(e));
+    }
+
+    private void addAndRemoveEventDays(Event e, EventDTO event) throws EntityNotValidException {
         Set<EventDay> daysFromDTO = new HashSet<>();
         ArrayList<EventDayDTO> evDays = event.getEventDays();
         for (EventDayDTO eDay : evDays) {
@@ -72,27 +90,38 @@ public class EventService {
             eDay.setEvent(e);
             e.getEventDays().add(eDay);
         });
+    }
 
+    private void checkNumberOfReservationDeadlineDays(Event e, EventDTO event) throws EntityNotValidException {
         Date firstEventDay = e.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
         int numOfDaysToEvent = (int) TimeUnit.DAYS.convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
         if (event.getReservationDeadlineDays() > numOfDaysToEvent)
             throw new EntityNotValidException("Number of reservation deadline days must " +
                     "be less than number of days left until the event");
         e.setReservationDeadlineDays(event.getReservationDeadlineDays());
-
-        return new EventDTO(eventRepository.save(e));
     }
 
-    public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException {
-        Event e = eventRepository.findById(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
-        Location l = locationRepository.findById(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
+    private void changeLocation(Event e, Location l) throws EntityNotValidException{
+        if (!e.getLocation().equals(l)) {
+            Set<EventSeatGroup> eventSeatGroups = e.getEventSeatGroups();
+            for (EventSeatGroup esg : eventSeatGroups) {
+                if (!esg.getTickets().isEmpty()) {
+                    throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
+                }
+            }
+        }
+    }
+
+    private void disableEventGroups(Event e, LocationSeatGroupDTO seatGroupsDTO) {
+        e.getEventSeatGroups().removeIf(esg -> seatGroupsDTO.getEventSeatGroups().stream()
+                .anyMatch(sgDTO -> sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue())
+                && esg.getTickets().isEmpty());
+    }
+
+    private void enableEventGroups(Event e, Location l, LocationSeatGroupDTO seatGroupsDTO) {
         ArrayList<EventSeatGroupDTO> seatGroups = seatGroupsDTO.getEventSeatGroups();
         SeatGroup seatGroup;
         EventSeatGroup eventSeatGroup;
-
-        e.getEventSeatGroups().removeIf(esg -> seatGroupsDTO.getEventSeatGroups().stream()
-                .noneMatch(sgDTO -> sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()));
-
         for (EventSeatGroupDTO esgDTO : seatGroups) {
             seatGroup = l.getSeatGroups().stream()
                     .filter(seatG -> seatG.getId().longValue() == esgDTO.getSeatGroupID().longValue()).findFirst().orElse(null);
@@ -117,7 +146,5 @@ public class EventService {
                 e.getEventSeatGroups().add(esg);
             }
         }
-
-        return new EventDTO(eventRepository.save(e));
     }
 }
