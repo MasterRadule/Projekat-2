@@ -36,7 +36,7 @@ public class LocationService {
     }
 
     public Page<LocationDTO> searchLocations(String name, Pageable pageable) {
-        return locationRepository.findByNameContaining(name, pageable).map(LocationDTO::new);
+        return locationRepository.findByNameIgnoreCaseContaining(name, pageable).map(LocationDTO::new);
     }
 
     public LocationDTO createLocation(LocationDTO location) {
