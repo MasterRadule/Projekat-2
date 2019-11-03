@@ -2,6 +2,7 @@ package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.EventDTO;
 import ktsnvt.tim1.DTOs.SearchEventsDTO;
+import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.services.EventService;
@@ -30,7 +31,7 @@ public class EventController {
         try {
             return new ResponseEntity<>(eventService.getEvent(id), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -52,7 +53,7 @@ public class EventController {
         catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        catch (Exception e) {
+        catch (EntityNotValidException | EntityAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
