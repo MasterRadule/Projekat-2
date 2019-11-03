@@ -9,14 +9,11 @@ public class SeatGroup {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column()
     private Integer rowsNum;
 
-    @Column(nullable = false)
+    @Column()
     private Integer colsNum;
-
-    @Column(nullable = false)
-    private Integer freeSeats;
 
     @Column(nullable = false)
     private Boolean isParterre;
@@ -26,6 +23,9 @@ public class SeatGroup {
 
     @Column(nullable = false)
     private Double yCoordinate;
+
+    @Column(nullable = false)
+    private String name;
 
     public SeatGroup() {
     }
@@ -54,14 +54,6 @@ public class SeatGroup {
         this.colsNum = colsNum;
     }
 
-    public Integer getFreeSeats() {
-        return freeSeats;
-    }
-
-    public void setFreeSeats(Integer freeSeats) {
-        this.freeSeats = freeSeats;
-    }
-
     public Boolean getParterre() {
         return isParterre;
     }
@@ -84,5 +76,13 @@ public class SeatGroup {
 
     public void setyCoordinate(Double yCoordinate) {
         this.yCoordinate = yCoordinate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

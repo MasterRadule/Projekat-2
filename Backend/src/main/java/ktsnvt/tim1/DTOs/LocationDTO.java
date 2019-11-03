@@ -34,7 +34,7 @@ public class LocationDTO {
     public Location convertToEntity() {
         Location l = new Location();
         l.setDisabled(this.disabled);
-        l.setId(this.id);
+        l.setId(null);
         l.setLatitude(this.latitude);
         l.setLongitude(this.longitude);
         l.setName(this.name);
