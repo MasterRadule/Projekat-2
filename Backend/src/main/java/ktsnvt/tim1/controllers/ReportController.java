@@ -1,5 +1,7 @@
 package ktsnvt.tim1.controllers;
 
+import ktsnvt.tim1.DTOs.ReportRequestDTO;
+import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Date;
 
 @RestController
@@ -19,9 +22,11 @@ public class ReportController {
     private ReportService reportService;
 
     @GetMapping()
-    public ResponseEntity<Object> getReport(@RequestParam("startDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date startDate,
-                                            @RequestParam("endDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date endDate,
-                                            @RequestParam("locationId") Long locationId, @RequestParam("eventId") Long eventId) {
-        return new ResponseEntity<>(reportService.getReport(startDate, endDate, locationId, eventId), HttpStatus.OK);
+    public ResponseEntity<Object> getReport(@Valid ReportRequestDTO reportRequest) {
+        try {
+            return new ResponseEntity<>(reportService.getReport(reportRequest), HttpStatus.OK);
+        } catch (BadParametersException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

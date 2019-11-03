@@ -17,9 +17,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Page<Reservation> findByOrderIdIsNotNull(Pageable pageable);
 
-    @Query(nativeQuery = true, value = "SELECT DATE(ed.DATE), COUNT(*) FROM RESERVATION r INNER JOIN " +
-            "EVENT_DAY_RESERVATIONS edr ON r.ID = edr.RESERVATION INNER JOIN EVENT_DAY ed ON edr.EVENT_DAY = ed.ID " +
-            "WHERE r.IS_PAID = TRUE AND DATE(ed.date) BETWEEN :startDate AND :endDate GROUP BY DATE(ed.date) " +
-            "ORDER BY (ed.date) asc;")
-    List<Object[]> getEarningsForPeriod(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query(value = "select ed.date, count(t), sum(esg.price) from Reservation r join r.tickets t join t.eventDays ed " +
+            "join t.eventSeatGroup esg join ed.event e join e.location l where r.orderId is not null and ed.date " +
+            "between ?1 and ?2 and (?3 is null or l.id = ?3) and (?4 is null or e.id = ?4) group by ed.date order by " +
+            "ed.date asc")
+    List<Object[]> getAttendanceAndEarningsForPeriod(Date startDate, Date endDate, Long locationId, Long eventId);
 }
