@@ -10,8 +10,9 @@ import ktsnvt.tim1.model.EventCategory;
 import ktsnvt.tim1.model.EventDay;
 import ktsnvt.tim1.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class EventService {
     }
 
     public EventDTO getEvent(Long id) throws EntityNotFoundException {
-        return new EventDTO(eventRepository.findById(id).orElseThrow(EntityNotFoundException::new));
+        return new EventDTO(eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found")));
     }
 
     public EventDTO createEvent(EventDTO event) throws EntityNotValidException {
@@ -40,7 +41,7 @@ public class EventService {
         if (event.getId() == null)
             throw new EntityNotValidException("Event must have an ID");
 
-        Event e = eventRepository.findById(event.getId()).orElseThrow(EntityNotFoundException::new);
+        Event e = eventRepository.findById(event.getId()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (!e.getName().equalsIgnoreCase(event.getName()) && eventRepository.findOneByName(event.getName()) != null) {
             throw new EntityAlreadyExistsException("Event with given name already exists");
         }
@@ -59,12 +60,12 @@ public class EventService {
 
         Set<EventDay> eventDays = new HashSet<>(e.getEventDays());
         eventDays.removeAll(daysFromDTO);
-        boolean invalidRemove = e.getEventDays().stream().anyMatch(eDay -> eventDays.contains(eDay) && !eDay.getReservations().isEmpty());
+        boolean invalidRemove = e.getEventDays().stream().anyMatch(eDay -> eventDays.contains(eDay) && !eDay.getTickets().isEmpty());
         if (invalidRemove) {
             throw new EntityNotValidException("Event day for which reservations exist cannot be removed");
         }
         else {
-            e.getEventDays().removeIf(eDay -> eventDays.contains(eDay) && eDay.getReservations().isEmpty());
+            e.getEventDays().removeIf(eDay -> eventDays.contains(eDay) && eDay.getTickets().isEmpty());
         }
 
         daysFromDTO.removeAll(e.getEventDays());

@@ -5,6 +5,8 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,7 @@ public class EventController {
             return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
         }
         catch(EntityNotValidException e) {
-            return new ResponseEntity<>("Dates of event days are in invalid format", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -47,7 +49,7 @@ public class EventController {
             return new ResponseEntity<>(eventService.editEvent(event), HttpStatus.OK);
         }
         catch (EntityNotFoundException e) {
-            return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
