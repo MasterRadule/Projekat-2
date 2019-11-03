@@ -26,13 +26,13 @@ public class EventDayDTO {
 
     public EventDay convertToEntity() throws EntityNotValidException {
         EventDay ed = new EventDay();
-        ed.setId(this.id);
+        ed.setId(null);
         try {
             ed.setDate(formatter.parse(this.date));
         } catch (ParseException e) {
             throw new EntityNotValidException("Dates of event days are in invalid format");
         }
-
+        
         return ed;
     }
 

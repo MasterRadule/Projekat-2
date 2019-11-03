@@ -42,7 +42,6 @@ public class EventDTO {
     private Integer maxReservationsPerUser;
 
     @Valid
-    @NotNull(message = "Event days must be specified")
     @NotEmpty(message = "Event days must be specified")
     private ArrayList<EventDayDTO> eventDays;
 
@@ -64,7 +63,7 @@ public class EventDTO {
 
     public Event convertToEntity() throws EntityNotValidException {
         Event e = new Event();
-        e.setId(this.id);
+        e.setId(null);
         e.setName(this.name);
         e.setDescription(this.description);
         e.setCategory(EventCategory.valueOf(this.category));

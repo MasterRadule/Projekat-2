@@ -17,6 +17,11 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @GetMapping()
+    public ResponseEntity<Page<EventDTO>> getEvents(Pageable pageable) {
+        return new ResponseEntity<>(eventService.getEvents(pageable), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getEvent(@PathVariable("id") Long id) {
         try {
