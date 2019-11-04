@@ -1,20 +1,22 @@
 package ktsnvt.tim1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Authority {
+public class Authority implements GrantedAuthority {
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	String name;
-	
-	@OneToMany(mappedBy = "authority", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	private Set<UserAuthority> userAuthorities = new HashSet<UserAuthority>();
 
+	@Enumerated(EnumType.STRING)
+	private UserType type;
+
+	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
@@ -23,19 +25,18 @@ public class Authority {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	@JsonIgnore
+	public UserType getType() {
+		return type;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setType(UserType type) {
+		this.type = type;
 	}
 
-	public Set<UserAuthority> getUserAuthorities() {
-		return userAuthorities;
+	@Override
+	public String getAuthority() {
+		return type.toString();
 	}
 
-	public void setUserAuthorities(Set<UserAuthority> userAuthorities) {
-		this.userAuthorities = userAuthorities;
 	}
-}
