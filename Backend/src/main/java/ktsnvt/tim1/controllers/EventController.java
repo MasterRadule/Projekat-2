@@ -1,6 +1,8 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.EventDTO;
+import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
+import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -53,6 +55,29 @@ public class EventController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (EntityNotValidException | EntityAlreadyExistsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "search")
+    public ResponseEntity<Object> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) {
+        try {
+            return new ResponseEntity<>(eventService.searchEvents(searchDTO, pageable), HttpStatus.OK);
+        }
+        catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/location")
+    public ResponseEntity<Object> setEventLocationAndSeatGroups(@Valid @RequestBody LocationSeatGroupDTO locSeatGroupDTO) {
+        try {
+            return new ResponseEntity<>(eventService.setEventLocationAndSeatGroups(locSeatGroupDTO), HttpStatus.OK);
+        }
+        catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

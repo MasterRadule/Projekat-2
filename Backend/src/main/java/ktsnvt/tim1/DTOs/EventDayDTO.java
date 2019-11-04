@@ -3,7 +3,7 @@ package ktsnvt.tim1.DTOs;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.EventDay;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -13,7 +13,7 @@ public class EventDayDTO {
 
     private Long id;
 
-    @NotNull(message = "Event day's date must be specified")
+    @NotBlank(message = "Event day's date must be specified")
     private String date;
 
     public EventDayDTO() {
