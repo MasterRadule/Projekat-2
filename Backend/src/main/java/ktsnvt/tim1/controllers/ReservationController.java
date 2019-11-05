@@ -5,6 +5,8 @@ import ktsnvt.tim1.DTOs.NewReservationDTO;
 import ktsnvt.tim1.DTOs.ReservationDTO;
 import ktsnvt.tim1.DTOs.ReservationTypeDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.exceptions.EntityNotValidException;
+import ktsnvt.tim1.exceptions.ImpossibleActionException;
 import ktsnvt.tim1.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,8 +40,16 @@ public class ReservationController {
     }
 
     @PostMapping()
-    public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody NewReservationDTO newReservationDTO) {
-        return new ResponseEntity<>(reservationService.createReservation(newReservationDTO), HttpStatus.CREATED);
+    public ResponseEntity<Object> createReservation(@Valid @RequestBody NewReservationDTO newReservationDTO) {
+        try {
+            return new ResponseEntity<>(reservationService.createReservation(newReservationDTO), HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
 }

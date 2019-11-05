@@ -11,21 +11,14 @@ public class Ticket {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer rowNum;
+    @ManyToMany(mappedBy = "tickets", fetch = FetchType.LAZY)
+    private Set<ReservableSeatGroup> reservableSeatGroups;
 
-    @Column(nullable = false)
-    private Integer colNum;
-
-    @ManyToMany(mappedBy = "tickets")
-    private Set<EventDay> eventDays;
-
-    @ManyToOne()
-    @JoinColumn(name = "event_seat_group_id", nullable = false)
-    private EventSeatGroup eventSeatGroup;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Seat> seats;
 
     public Ticket() {
-        this.eventDays = new HashSet<>();
+        this.reservableSeatGroups = new HashSet<>();
     }
 
     public Long getId() {
@@ -36,35 +29,19 @@ public class Ticket {
         this.id = id;
     }
 
-    public Integer getRowNum() {
-        return rowNum;
+    public Set<ReservableSeatGroup> getReservableSeatGroups() {
+        return reservableSeatGroups;
     }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
+    public void setReservableSeatGroups(Set<ReservableSeatGroup> reservableSeatGroups) {
+        this.reservableSeatGroups = reservableSeatGroups;
     }
 
-    public Integer getColNum() {
-        return colNum;
+    public Set<Seat> getSeats() {
+        return seats;
     }
 
-    public void setColNum(Integer colNum) {
-        this.colNum = colNum;
-    }
-
-    public Set<EventDay> getEventDays() {
-        return eventDays;
-    }
-
-    public void setEventDays(Set<EventDay> eventDays) {
-        this.eventDays = eventDays;
-    }
-
-    public EventSeatGroup getEventSeatGroup() {
-        return eventSeatGroup;
-    }
-
-    public void setEventSeatGroup(EventSeatGroup eventSeatGroup) {
-        this.eventSeatGroup = eventSeatGroup;
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
     }
 }

@@ -17,9 +17,9 @@ public class EventDay {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "event_day_tickets", joinColumns = @JoinColumn(name = "event_day", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ticket", referencedColumnName = "id"))
-    private Set<Ticket> tickets;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<ReservableSeatGroup> reservableSeatGroups;
+
 
     @Override
     public boolean equals(Object o) {
@@ -35,7 +35,7 @@ public class EventDay {
     }
 
     public EventDay() {
-        this.tickets = new HashSet<>();
+        this.reservableSeatGroups = new HashSet<>();
     }
 
     public Long getId() {
@@ -62,11 +62,11 @@ public class EventDay {
         this.event = event;
     }
 
-    public Set<Ticket> getTickets() {
-        return tickets;
+    public Set<ReservableSeatGroup> getReservableSeatGroups() {
+        return reservableSeatGroups;
     }
 
-    public void setTickets(Set<Ticket> tickets) {
-        this.tickets = tickets;
+    public void setReservableSeatGroups(Set<ReservableSeatGroup> reservableSeatGroups) {
+        this.reservableSeatGroups = reservableSeatGroups;
     }
 }

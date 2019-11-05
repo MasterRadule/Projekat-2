@@ -1,37 +1,30 @@
 package ktsnvt.tim1.DTOs;
 
+import javax.validation.constraints.NotNull;
+
 public class NewTicketDTO {
-    private Integer rowNum;
-    private Integer colNum;
-    private Long eventSeatGroupId;
+    private Long reservableSeatGroupId;
+    private Long seatId;
+    @NotNull
     private Boolean allDayTicket;
-    private Long eventDayId;
 
     public NewTicketDTO() {
     }
 
-    public Integer getRowNum() {
-        return rowNum;
+    public Long getReservableSeatGroupId() {
+        return reservableSeatGroupId;
     }
 
-    public void setRowNum(Integer rowNum) {
-        this.rowNum = rowNum;
+    public void setReservableSeatGroupId(Long reservableSeatGroupId) {
+        this.reservableSeatGroupId = reservableSeatGroupId;
     }
 
-    public Integer getColNum() {
-        return colNum;
+    public Long getSeatId() {
+        return seatId;
     }
 
-    public void setColNum(Integer colNum) {
-        this.colNum = colNum;
-    }
-
-    public Long getEventSeatGroupId() {
-        return eventSeatGroupId;
-    }
-
-    public void setEventSeatGroupId(Long eventSeatGroupId) {
-        this.eventSeatGroupId = eventSeatGroupId;
+    public void setSeatId(Long seatId) {
+        this.seatId = seatId;
     }
 
     public Boolean getAllDayTicket() {
@@ -40,13 +33,5 @@ public class NewTicketDTO {
 
     public void setAllDayTicket(Boolean allDayTicket) {
         this.allDayTicket = allDayTicket;
-    }
-
-    public Long getEventDayId() {
-        return eventDayId;
-    }
-
-    public void setEventDayId(Long eventDayId) {
-        this.eventDayId = eventDayId;
     }
 }
