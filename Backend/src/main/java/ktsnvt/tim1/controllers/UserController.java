@@ -1,26 +1,24 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LoginDTO;
+import ktsnvt.tim1.DTOs.UserDTO;
+import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
+import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.security.TokenUtils;
-import ktsnvt.tim1.services.RegistrationService;
 import ktsnvt.tim1.services.UserDetailsServiceImpl;
+import ktsnvt.tim1.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Console;
+import javax.validation.Valid;
 
 @RestController
 public class UserController {
@@ -35,7 +33,7 @@ public class UserController {
 	private TokenUtils tokenUtils;
 
 	@Autowired
-    private RegistrationService registrationService;
+    private UserService userService;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO,
@@ -58,14 +56,23 @@ public class UserController {
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<String> register(@RequestBody User user) {
-		String mess = registrationService.register(user);
-		if(mess.equals("User registered!")){
-			return new ResponseEntity<String>(mess, HttpStatus.OK);
-		}else{
-			return new ResponseEntity<String>(mess, HttpStatus.BAD_REQUEST);
+		try{
+			return new ResponseEntity<>(userService.register(user), HttpStatus.OK);
+		}catch (EntityAlreadyExistsException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
 
+	@PutMapping()
+    public ResponseEntity<Object> editUser(@Valid @RequestBody UserDTO user){
+		try{
+			return new ResponseEntity<>(userService.editUser(user), HttpStatus.OK);
+		}catch (EntityNotValidException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+    }
 
 }
