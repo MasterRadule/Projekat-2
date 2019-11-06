@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));
     } else {
     	return user;
+    }
+  }
+
+  public UserDetails checkIsVerified(String email) throws EntityNotValidException {
+    User user = userRepository.findByEmail(email);
+    if(user.getVerified()){
+      return user;
+    }else{
+      throw new EntityNotValidException("Your account is not verified!");
     }
   }
 
