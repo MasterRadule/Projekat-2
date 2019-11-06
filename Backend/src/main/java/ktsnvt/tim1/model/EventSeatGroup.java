@@ -14,7 +14,7 @@ public class EventSeatGroup {
     @Column(nullable = false)
     private Double price;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ReservableSeatGroup> reservableSeatGroups;
 
     @ManyToOne()

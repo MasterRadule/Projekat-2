@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    Optional<Event> findByIsActiveForReservationsTrueAndIsCancelledFalseAndById(Long eventId);
+    Optional<Event> findByIdAndIsCancelledFalse(Long eventId);
+
+    Optional<Event> findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(Long eventId);
 
     Event findOneByName(String name);
 
