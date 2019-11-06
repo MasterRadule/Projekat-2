@@ -2,7 +2,6 @@ package ktsnvt.tim1.model;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,7 +35,7 @@ public class Event {
     private Integer reservationDeadlineDays;
 
     @Column(nullable = false)
-    private Integer maxReservationsPerUser;
+    private Integer maxTicketsPerReservation;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventDay> eventDays;
@@ -126,12 +125,12 @@ public class Event {
         this.reservationDeadlineDays = reservationDeadlineDays;
     }
 
-    public Integer getMaxReservationsPerUser() {
-        return maxReservationsPerUser;
+    public Integer getMaxTicketsPerReservation() {
+        return maxTicketsPerReservation;
     }
 
-    public void setMaxReservationsPerUser(Integer maxReservationsPerUser) {
-        this.maxReservationsPerUser = maxReservationsPerUser;
+    public void setMaxTicketsPerReservation(Integer maxTicketsPerReservation) {
+        this.maxTicketsPerReservation = maxTicketsPerReservation;
     }
 
     public Set<EventDay> getEventDays() {

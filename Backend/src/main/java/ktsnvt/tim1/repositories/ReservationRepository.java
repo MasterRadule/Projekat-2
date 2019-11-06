@@ -18,6 +18,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Page<Reservation> findByOrderIdIsNotNullAndIsCancelledFalse(Pageable pageable);
 
+    List<Reservation> findByOrderIdIsNullAndIsCancelledFalse();
+
     Optional<Reservation> findByIdAndIsCancelledFalse(Long id);
 
     @Query(value = "select ed.date, count(t), sum(esg.price) from Reservation r join r.tickets t join t" +

@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +38,7 @@ public class EventDTO {
     private Integer reservationDeadlineDays;
 
     @Positive
-    private Integer maxReservationsPerUser;
+    private Integer maxTicketsPerReservation;
 
     @Valid
     @NotEmpty(message = "Event days must be specified")
@@ -56,7 +55,7 @@ public class EventDTO {
         this.activeForReservations = event.getActiveForReservations();
         this.reservationDeadlineDays = event.getReservationDeadlineDays();
         this.cancelled = event.getCancelled();
-        this.maxReservationsPerUser = event.getMaxReservationsPerUser();
+        this.maxTicketsPerReservation = event.getMaxTicketsPerReservation();
         this.eventDays = event.getEventDays().stream().map(EventDayDTO::new)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -68,7 +67,7 @@ public class EventDTO {
         e.setDescription(this.description);
         e.setCategory(EventCategory.valueOf(this.category));
         e.setActiveForReservations(this.activeForReservations);
-        e.setMaxReservationsPerUser(this.maxReservationsPerUser);
+        e.setMaxTicketsPerReservation(this.maxTicketsPerReservation);
         e.setReservationDeadlineDays(this.reservationDeadlineDays);
         e.setCancelled(this.cancelled);
         Set<EventDay> eventDays = new HashSet<>();
@@ -137,12 +136,12 @@ public class EventDTO {
         this.reservationDeadlineDays = reservationDeadlineDays;
     }
 
-    public Integer getMaxReservationsPerUser() {
-        return maxReservationsPerUser;
+    public Integer getMaxTicketsPerReservation() {
+        return maxTicketsPerReservation;
     }
 
-    public void setMaxReservationsPerUser(Integer maxReservationsPerUser) {
-        this.maxReservationsPerUser = maxReservationsPerUser;
+    public void setMaxTicketsPerReservation(Integer maxTicketsPerReservation) {
+        this.maxTicketsPerReservation = maxTicketsPerReservation;
     }
 
     public ArrayList<EventDayDTO> getEventDays() {
