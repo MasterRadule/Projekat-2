@@ -12,6 +12,7 @@ import ktsnvt.tim1.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -73,8 +74,9 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setEvent(event);
         reservation.setTickets(tickets);
-//        RegisteredUser registeredUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        registeredUser.getReservations().add(reservation);
+        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        reservation.setRegisteredUser(registeredUser);
+        registeredUser.getReservations().add(reservation);
         return new ReservationDTO(reservationRepository.save(reservation));
     }
 
