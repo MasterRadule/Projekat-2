@@ -24,6 +24,10 @@ public class Reservation {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false)
+    private RegisteredUser registeredUser;
+
     public Reservation() {
         this.tickets = new HashSet<>();
     }
@@ -66,5 +70,13 @@ public class Reservation {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public RegisteredUser getRegisteredUser() {
+        return registeredUser;
+    }
+
+    public void setRegisteredUser(RegisteredUser registeredUser) {
+        this.registeredUser = registeredUser;
     }
 }

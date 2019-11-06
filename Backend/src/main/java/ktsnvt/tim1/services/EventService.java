@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class EventService {
         e.setDescription(event.getDescription());
         e.setCategory(EventCategory.valueOf(event.getCategory()));
         e.setActiveForReservations(event.isActiveForReservations());
-        e.setMaxReservationsPerUser(event.getMaxReservationsPerUser());
+        e.setMaxTicketsPerReservation(event.getMaxReservationsPerUser());
         e.setCancelled(event.isCancelled());
 
         addAndRemoveEventDays(e, event);

@@ -12,7 +12,9 @@ import ktsnvt.tim1.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +59,8 @@ public class ReservationService {
     public ReservationDTO createReservation(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
         Event event = eventRepository.findByIsActiveForReservationsTrueAndIsCancelledFalseAndById(newReservationDTO.getEventId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        if (newReservationDTO.getTickets().size() > event.getMaxTicketsPerReservation())
+            throw new EntityNotValidException("Too many tickets in the reservation");
         Date firstEventDay = event.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
         int numOfDaysToEvent = (int) TimeUnit.DAYS.convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
         if (numOfDaysToEvent < 0) throw new EntityNotValidException("Event already started");
@@ -70,6 +74,9 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setEvent(event);
         reservation.setTickets(tickets);
+        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        reservation.setRegisteredUser(registeredUser);
+        registeredUser.getReservations().add(reservation);
         return new ReservationDTO(reservationRepository.save(reservation));
     }
 
