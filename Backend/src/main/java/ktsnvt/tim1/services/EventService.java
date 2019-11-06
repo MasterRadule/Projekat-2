@@ -93,7 +93,7 @@ public class EventService {
             if (eventDays.contains(eDay)) {
                 Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
                 for (ReservableSeatGroup rsg : resSeatGroups) {
-                    if (rsg.getFreeSeats() < rsg.getEventSeatGroup().getSeatGroup().getTotalSeats())
+                    if (!rsg.getTickets().isEmpty())
                         return true;
                 }
             }
@@ -107,7 +107,7 @@ public class EventService {
                 if (eventDays.contains(eDay)) {
                     Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
                     for (ReservableSeatGroup rsg : resSeatGroups) {
-                        if (rsg.getFreeSeats().equals(rsg.getEventSeatGroup().getSeatGroup().getTotalSeats()))
+                        if (rsg.getTickets().isEmpty())
                             return true;
                     }
                 }
@@ -137,7 +137,7 @@ public class EventService {
             for (EventSeatGroup esg : eventSeatGroups) {
                 Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
                 for (ReservableSeatGroup rsg : resSeatGroups) {
-                    if (rsg.getFreeSeats() < rsg.getEventSeatGroup().getSeatGroup().getTotalSeats())
+                    if (!rsg.getTickets().isEmpty())
                         throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
                 }
             }
@@ -150,7 +150,7 @@ public class EventService {
                     if (sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()) {
                         Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
                         for (ReservableSeatGroup rsg : resSeatGroups) {
-                            if (rsg.getFreeSeats().equals(rsg.getEventSeatGroup().getSeatGroup().getTotalSeats()))
+                            if (rsg.getTickets().isEmpty())
                                 return true;
                         }
                     }
@@ -177,12 +177,7 @@ public class EventService {
                 EventSeatGroup esg = new EventSeatGroup();
                 esg.setPrice(esgDTO.getPrice());
                 esg.setSeatGroup(seatGroup);
-                e.getEventDays().forEach(eventDay -> {
-                    ReservableSeatGroup rsg = new ReservableSeatGroup();
-                    rsg.setEventDay(eventDay);
-                    rsg.setEventSeatGroup(esg);
-                    rsg.setFreeSeats(esg.getSeatGroup().getTotalSeats());
-                });
+                e.getEventDays().forEach(eventDay -> new ReservableSeatGroup(eventDay, esg));
 
                 e.getEventSeatGroups().add(esg);
             }

@@ -17,7 +17,7 @@ public class ReservableSeatGroup {
             inverseJoinColumns = @JoinColumn(name = "ticket", referencedColumnName = "id"))
     private Set<Ticket> tickets;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Seat> seats;
 
     @ManyToOne
@@ -34,6 +34,23 @@ public class ReservableSeatGroup {
     public ReservableSeatGroup() {
         this.tickets = new HashSet<>();
         this.seats = new HashSet<>();
+    }
+
+    public ReservableSeatGroup(EventDay eventDay, EventSeatGroup esg) {
+        this();
+        this.setEventDay(eventDay);
+        this.setEventSeatGroup(esg);
+        this.setFreeSeats(esg.getSeatGroup().getTotalSeats());
+        if (!esg.getSeatGroup().getParterre()) {
+            int rowsNum = esg.getSeatGroup().getRowsNum();
+            int colsNum = esg.getSeatGroup().getColsNum();
+            for (int i = 0; i < rowsNum; i++) {
+                for (int j = 0; j < colsNum; j++) {
+                    Seat s = new Seat(rowsNum + 1, colsNum + 1, this);
+                    this.getSeats().add(s);
+                }
+            }
+        }
     }
 
     public void incrementFreeSeats(){
