@@ -16,7 +16,6 @@ public class Authority implements GrantedAuthority {
 	@Enumerated(EnumType.STRING)
 	private UserType type;
 
-	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
@@ -25,7 +24,6 @@ public class Authority implements GrantedAuthority {
 		this.id = id;
 	}
 
-	@JsonIgnore
 	public UserType getType() {
 		return type;
 	}

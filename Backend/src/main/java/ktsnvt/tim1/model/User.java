@@ -11,7 +11,7 @@ import java.util.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class User implements Serializable, UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, nullable = false)
@@ -106,23 +106,17 @@ public class User implements Serializable, UserDetails {
         return email;
     }
     @Override
-    @JsonIgnore
     public boolean isAccountNonExpired(){
         return true;
     }
-    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
-    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
-    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
