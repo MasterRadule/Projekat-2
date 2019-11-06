@@ -1,6 +1,8 @@
 package ktsnvt.tim1.DTOs;
 
 import ktsnvt.tim1.model.EventDay;
+import ktsnvt.tim1.model.ReservableSeatGroup;
+import ktsnvt.tim1.model.Seat;
 import ktsnvt.tim1.model.Ticket;
 
 import java.util.ArrayList;
@@ -19,11 +21,16 @@ public class TicketDTO
     }
 
     public TicketDTO(Ticket ticket) {
-        this.rowNum = ticket.getRowNum();
-        this.colNum = ticket.getColNum();
-        this.seatGroupName = ticket.getEventSeatGroup().getSeatGroup().getName();
-        this.price = ticket.getEventSeatGroup().getPrice();
-        this.eventDays = ticket.getEventDays().stream().map(EventDay::getDate).collect(Collectors.toCollection(ArrayList::new));
+        if(!ticket.getSeats().isEmpty()){
+            Seat seat = ticket.getSeats().iterator().next();
+            this.rowNum = seat.getRowNum();
+            this.colNum = seat.getColNum();
+        }
+        ReservableSeatGroup reservableSeatGroup = ticket.getReservableSeatGroups().iterator().next();
+        this.seatGroupName = reservableSeatGroup.getEventSeatGroup().getSeatGroup().getName();
+        this.price = reservableSeatGroup.getEventSeatGroup().getPrice();
+        this.eventDays = ticket.getReservableSeatGroups().stream().map(ReservableSeatGroup::getEventDay)
+                .map(EventDay::getDate).collect(Collectors.toCollection (ArrayList::new));
     }
 
     public Integer getRowNum() {
