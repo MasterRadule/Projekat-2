@@ -14,6 +14,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     //@Lock(LockModeType.OPTIMISTIC)
     @Query(value = "select s from Seat s join s.reservableSeatGroup rsg join rsg.eventSeatGroup  esg " +
-                   "where esg.id = eventSeatGroupId and s.colNum = colNum and s.rowNum = rowNum")
+                   "where esg.id = :eventSeatGroupId and s.colNum = :colNum and s.rowNum = :rowNum")
     List<Seat> getSeatsByRowNumAndColNum(@Param("eventSeatGroupId") Long eventSeatGroupId, @Param("rowNum") Integer rowNum, @Param("colNum") Integer colNum);
 }

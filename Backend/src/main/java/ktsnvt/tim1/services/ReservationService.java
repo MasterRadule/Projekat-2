@@ -77,50 +77,65 @@ public class ReservationService {
         Ticket ticket = new Ticket();
         if (!ticketDTO.getAllDayTicket()) {
             if (ticketDTO.getSeatId() != null) { // seat reservation single day
-                Seat seat = seatRepository.findById(ticketDTO.getSeatId())
-                        .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
-                if (seat.getTicket() != null || !seat.getReservableSeatGroup().decrementFreeSeats())
-                    throw new ImpossibleActionException("Seat is already taken");
-                ticket.getReservableSeatGroups().add(seat.getReservableSeatGroup());
-                seat.getReservableSeatGroup().getTickets().add(ticket);
-                ticket.getSeats().add(seat);
-                seat.setTicket(ticket);
-            } else { // parterre reservation single days
-                ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
-                        .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
-                if (!reservableSeatGroup.decrementFreeSeats())
-                    throw new ImpossibleActionException("Parterre is already fully taken");
-                ticket.getReservableSeatGroups().add(reservableSeatGroup);
-                reservableSeatGroup.getTickets().add(ticket);
+                reserveSeatSingleDay(ticket, ticketDTO);
+            } else { // parterre reservation single day
+                reserveParterreSingleDay(ticket, ticketDTO);
             }
         } else {
             if (ticketDTO.getSeatId() != null) { // seat reservation all days
-                Seat seat = seatRepository.findById(ticketDTO.getSeatId())
-                        .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
-                EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
-                List<Seat> seats = seatRepository.getSeatsByRowNumAndColNum(eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
-                if (seats.stream().anyMatch((s) -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
-                    throw new ImpossibleActionException("Seat is not free for all days");
-                seats.forEach((s) -> {
-                    ticket.getReservableSeatGroups().add(s.getReservableSeatGroup());
-                    s.getReservableSeatGroup().getTickets().add(ticket);
-                    ticket.getSeats().add(s);
-                    s.setTicket(ticket);
-                });
+                reserveSeatAllDays(ticket, ticketDTO);
             } else { // parterre reservation all days
-                ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
-                        .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
-                EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
-                List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository.findByEventSeatGroup(eventSeatGroup.getId());
-                if (reservableSeatGroups.stream().anyMatch((esg) -> !esg.decrementFreeSeats()))
-                    throw new ImpossibleActionException("Parterre not free for all days");
-                reservableSeatGroups.forEach((rsg) -> {
-                    ticket.getReservableSeatGroups().add(rsg);
-                    rsg.getTickets().add(ticket);
-                });
+                reserveParterreAllDays(ticket, ticketDTO);
             }
         }
         tickets.add(ticket);
     }
 
+    private void reserveSeatSingleDay(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
+        Seat seat = seatRepository.findById(ticketDTO.getSeatId())
+                .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
+        if (seat.getTicket() != null || !seat.getReservableSeatGroup().decrementFreeSeats())
+            throw new ImpossibleActionException("Seat is already taken");
+        ticket.getReservableSeatGroups().add(seat.getReservableSeatGroup());
+        seat.getReservableSeatGroup().getTickets().add(ticket);
+        ticket.getSeats().add(seat);
+        seat.setTicket(ticket);
+    }
+
+    private void reserveParterreSingleDay(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
+        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
+                .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
+        if (!reservableSeatGroup.decrementFreeSeats())
+            throw new ImpossibleActionException("Parterre is already fully taken");
+        ticket.getReservableSeatGroups().add(reservableSeatGroup);
+        reservableSeatGroup.getTickets().add(ticket);
+    }
+
+    private void reserveSeatAllDays(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
+        Seat seat = seatRepository.findById(ticketDTO.getSeatId())
+                .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
+        EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
+        List<Seat> seats = seatRepository.getSeatsByRowNumAndColNum(eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
+        if (seats.stream().anyMatch((s) -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
+            throw new ImpossibleActionException("Seat is not free for all days");
+        seats.forEach((s) -> {
+            ticket.getReservableSeatGroups().add(s.getReservableSeatGroup());
+            s.getReservableSeatGroup().getTickets().add(ticket);
+            ticket.getSeats().add(s);
+            s.setTicket(ticket);
+        });
+    }
+
+    private void reserveParterreAllDays(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
+        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
+                .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
+        EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
+        List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository.findByEventSeatGroup(eventSeatGroup.getId());
+        if (reservableSeatGroups.stream().anyMatch((esg) -> !esg.decrementFreeSeats()))
+            throw new ImpossibleActionException("Parterre not free for all days");
+        reservableSeatGroups.forEach((rsg) -> {
+            ticket.getReservableSeatGroups().add(rsg);
+            rsg.getTickets().add(ticket);
+        });
+    }
 }
