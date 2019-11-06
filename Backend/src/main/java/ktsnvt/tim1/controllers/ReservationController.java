@@ -52,4 +52,15 @@ public class ReservationController {
         }
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Object> cancelReservation(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(reservationService.cancelReservation(id), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
 }
