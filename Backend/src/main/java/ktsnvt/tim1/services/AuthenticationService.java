@@ -60,14 +60,8 @@ public class AuthenticationService {
             VerificationToken verificationToken = new VerificationToken(regUser);
             verificationTokenRepository.save(verificationToken);
 
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(regUser.getEmail());
-            mailMessage.setSubject("Complete Registration");
-            mailMessage.setFrom(environment.getProperty("spring.mail.username"));
-            mailMessage.setText("To confirm your account please click here: "
-            +"http://"+url+"/verify-account?token="+ verificationToken.getToken());
+            emailService.sendVerificationEmail(regUser,url,verificationToken);
 
-            emailService.sendEmail(mailMessage);
 
             return u;
         }
@@ -75,7 +69,7 @@ public class AuthenticationService {
 
     public boolean verifyUser(String token) throws EntityNotFoundException {
         VerificationToken vt = verificationTokenRepository.findByToken(token);
-        if(vt==null){
+        if(vt==null || vt.isExpired()){
             throw new EntityNotFoundException("The link is invalid or broken!");
         }
         User u = userRepository.findByEmail(vt.getUser().getEmail());

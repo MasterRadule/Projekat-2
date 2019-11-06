@@ -4,6 +4,7 @@ import ktsnvt.tim1.DTOs.LoginDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.security.TokenUtils;
 import ktsnvt.tim1.services.AuthenticationService;
 import ktsnvt.tim1.services.UserDetailsServiceImpl;
@@ -48,9 +49,10 @@ public class AuthenticationController {
                     loginDTO.getEmail(), loginDTO.getPassword());
             Authentication authentication = authenticationManager.authenticate(token);
             UserDetails details = userDetailsService.loadUserByUsername(loginDTO.getEmail());
+            userDetailsService.checkIsVerified(loginDTO.getEmail());
             return new ResponseEntity<>(tokenUtils.generateToken(details), HttpStatus.OK);
         }
-        catch(UsernameNotFoundException ex){
+        catch(UsernameNotFoundException | EntityNotValidException ex){
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
         catch (BadCredentialsException ex) {

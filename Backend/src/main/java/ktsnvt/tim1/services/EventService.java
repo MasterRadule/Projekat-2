@@ -58,7 +58,7 @@ public class EventService {
         e.setDescription(event.getDescription());
         e.setCategory(EventCategory.valueOf(event.getCategory()));
         e.setActiveForReservations(event.isActiveForReservations());
-        e.setMaxTicketsPerReservation(event.getMaxReservationsPerUser());
+        e.setMaxTicketsPerReservation(event.getMaxTicketsPerReservation());
         e.setCancelled(event.isCancelled());
 
         addAndRemoveEventDays(e, event);

@@ -20,6 +20,8 @@ public class VerificationToken {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
+    private boolean expired;
+
     public VerificationToken(User user) {
         this.user = user;
         this.dateCreated = new Date();
@@ -56,5 +58,18 @@ public class VerificationToken {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isExpired() {
+        Date d1 = new Date();
+        if(d1.getTime()-this.dateCreated.getTime()>86400000){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
     }
 }
