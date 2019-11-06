@@ -9,7 +9,7 @@ public class VerificationToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="token_id")
+    @Column(name = "token_id")
     private Long id;
 
     private String token;
@@ -21,6 +21,9 @@ public class VerificationToken {
     private User user;
 
     private boolean expired;
+
+    public VerificationToken() {
+    }
 
     public VerificationToken(User user) {
         this.user = user;
@@ -62,9 +65,9 @@ public class VerificationToken {
 
     public boolean isExpired() {
         Date d1 = new Date();
-        if(d1.getTime()-this.dateCreated.getTime()>86400000){
+        if (d1.getTime() - this.dateCreated.getTime() > 86400000) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
