@@ -27,10 +27,10 @@ public class Event {
     //private List<Object> videos;
 
     @Column(nullable = false)
-    private Boolean isActiveForReservations;
+    private Boolean isActiveForReservations = true;
 
     @Column(nullable = false)
-    private Boolean isCancelled;
+    private Boolean isCancelled = false;
 
     @Column(nullable = false)
     private Integer reservationDeadlineDays;

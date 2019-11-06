@@ -15,7 +15,7 @@ public class Reservation {
     private String orderId;
 
     @Column(nullable = false)
-    private Boolean isCancelled;
+    private Boolean isCancelled = false;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Ticket> tickets;
