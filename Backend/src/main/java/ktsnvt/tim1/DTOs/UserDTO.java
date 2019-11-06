@@ -17,6 +17,9 @@ public class UserDTO {
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
+    @NotBlank(message = "Email cannot be empty")
+    private String email;
+
 
     public UserDTO() {
     }
@@ -26,6 +29,7 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.firstName = user.getFirstName();
         this.password = user.getPassword();
+        this.email = user.getEmail();
     }
 
 
@@ -61,4 +65,11 @@ public class UserDTO {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
