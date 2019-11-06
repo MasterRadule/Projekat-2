@@ -57,7 +57,7 @@ public class ReservationService {
     }
 
     public ReservationDTO createReservation(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
-        Event event = eventRepository.findByIsActiveForReservationsTrueAndIsCancelledFalseAndById(newReservationDTO.getEventId())
+        Event event = eventRepository.findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(newReservationDTO.getEventId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (newReservationDTO.getTickets().size() > event.getMaxTicketsPerReservation())
             throw new EntityNotValidException("Too many tickets in the reservation");

@@ -39,7 +39,7 @@ public class EventService {
     }
 
     public EventDTO getEvent(Long id) throws EntityNotFoundException {
-        return new EventDTO(eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found")));
+        return new EventDTO(eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found")));
     }
 
     public EventDTO createEvent(EventDTO event) throws EntityNotValidException {
@@ -50,7 +50,7 @@ public class EventService {
         if (event.getId() == null)
             throw new EntityNotValidException("Event must have an ID");
 
-        Event e = eventRepository.findById(event.getId()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Event e = eventRepository.findByIdAndIsCancelledFalse(event.getId()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (!e.getName().equalsIgnoreCase(event.getName()) && eventRepository.findOneByName(event.getName()) != null) {
             throw new EntityAlreadyExistsException("Event with given name already exists");
         }
@@ -68,7 +68,7 @@ public class EventService {
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
-        Event e = eventRepository.findById(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Event e = eventRepository.findByIdAndIsCancelledFalse(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Location l = locationRepository.findById(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
         changeLocation(e, l);
@@ -87,12 +87,32 @@ public class EventService {
 
         Set<EventDay> eventDays = new HashSet<>(e.getEventDays());
         eventDays.removeAll(daysFromDTO);
-        boolean invalidRemove = e.getEventDays().stream().anyMatch(eDay -> eventDays.contains(eDay) && !eDay.getTickets().isEmpty());
+
+
+        boolean invalidRemove = e.getEventDays().stream().anyMatch(eDay -> {
+            if (eventDays.contains(eDay)) {
+                Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
+                for (ReservableSeatGroup rsg : resSeatGroups) {
+                    if (!rsg.getTickets().isEmpty())
+                        return true;
+                }
+            }
+            return false;
+        });
         if (invalidRemove) {
             throw new EntityNotValidException("Event day for which reservations exist cannot be removed");
         }
         else {
-            e.getEventDays().removeIf(eDay -> eventDays.contains(eDay) && eDay.getTickets().isEmpty());
+            e.getEventDays().removeIf(eDay -> {
+                if (eventDays.contains(eDay)) {
+                    Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
+                    for (ReservableSeatGroup rsg : resSeatGroups) {
+                        if (rsg.getTickets().isEmpty())
+                            return true;
+                    }
+                }
+                return false;
+            });
         }
 
         daysFromDTO.removeAll(e.getEventDays());
@@ -115,8 +135,10 @@ public class EventService {
         if (!e.getLocation().equals(l)) {
             Set<EventSeatGroup> eventSeatGroups = e.getEventSeatGroups();
             for (EventSeatGroup esg : eventSeatGroups) {
-                if (!esg.getTickets().isEmpty()) {
-                    throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
+                Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
+                for (ReservableSeatGroup rsg : resSeatGroups) {
+                    if (!rsg.getTickets().isEmpty())
+                        throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
                 }
             }
         }
@@ -124,8 +146,16 @@ public class EventService {
 
     private void disableEventGroups(Event e, LocationSeatGroupDTO seatGroupsDTO) {
         e.getEventSeatGroups().removeIf(esg -> seatGroupsDTO.getEventSeatGroups().stream()
-                .anyMatch(sgDTO -> sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue())
-                && esg.getTickets().isEmpty());
+                .anyMatch(sgDTO -> {
+                    if (sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()) {
+                        Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
+                        for (ReservableSeatGroup rsg : resSeatGroups) {
+                            if (rsg.getTickets().isEmpty())
+                                return true;
+                        }
+                    }
+                    return false;
+                }));
     }
 
     private void enableEventGroups(Event e, Location l, LocationSeatGroupDTO seatGroupsDTO) {
@@ -147,12 +177,8 @@ public class EventService {
                 EventSeatGroup esg = new EventSeatGroup();
                 esg.setPrice(esgDTO.getPrice());
                 esg.setSeatGroup(seatGroup);
-                if (seatGroup.getParterre()) {
-                    esg.setFreeSeats(esgDTO.getFreeSeats());
-                }
-                else {
-                    esg.setFreeSeats(seatGroup.getColsNum() * seatGroup.getRowsNum());
-                }
+                e.getEventDays().forEach(eventDay -> new ReservableSeatGroup(eventDay, esg));
+
                 e.getEventSeatGroups().add(esg);
             }
         }

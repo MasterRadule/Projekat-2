@@ -26,6 +26,12 @@ public class Seat {
     public Seat() {
     }
 
+    public Seat(int rowsNum, int colsNum, ReservableSeatGroup reservableSeatGroup) {
+        this.setRowNum(rowsNum);
+        this.setColNum(colsNum);
+        this.setReservableSeatGroup(reservableSeatGroup);
+    }
+
     public Long getId() {
         return id;
     }

@@ -27,6 +27,9 @@ public class SeatGroup {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private Integer totalSeats;
+
     public SeatGroup() {
     }
 
@@ -84,5 +87,13 @@ public class SeatGroup {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getTotalSeats() {
+        return totalSeats;
+    }
+
+    public void setTotalSeats(Integer totalSeats) {
+        this.totalSeats = totalSeats;
     }
 }
