@@ -11,11 +11,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    Page<Reservation> findByOrderIdIsNull(Pageable pageable);
+    Page<Reservation> findByOrderIdIsNullAndIsCancelledFalse(Pageable pageable);
 
-    Page<Reservation> findByOrderIdIsNotNull(Pageable pageable);
+    Page<Reservation> findByOrderIdIsNotNullAndIsCancelledFalse(Pageable pageable);
+
+    Optional<Reservation> findByIdAndIsCancelledFalse(Long id);
 
     @Query(value = "select ed.date, count(t), sum(esg.price) from Reservation r join r.tickets t join t" +
             ".reservableSeatGroups rsg join rsg.eventSeatGroup esg join rsg.eventDay ed join r.event e join e" +

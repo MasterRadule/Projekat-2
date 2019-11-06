@@ -40,9 +40,9 @@ public class ReservationService {
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
         switch (type) {
             case BOUGHT:
-                return reservationRepository.findByOrderIdIsNotNull(pageable).map(ReservationDTO::new);
+                return reservationRepository.findByOrderIdIsNotNullAndIsCancelledFalse(pageable).map(ReservationDTO::new);
             case RESERVED:
-                return reservationRepository.findByOrderIdIsNull(pageable).map(ReservationDTO::new);
+                return reservationRepository.findByOrderIdIsNullAndIsCancelledFalse(pageable).map(ReservationDTO::new);
             default:
                 return reservationRepository.findAll(pageable).map(ReservationDTO::new);
 
@@ -50,7 +50,7 @@ public class ReservationService {
     }
 
     public ReservationDTO getReservation(Long id) throws EntityNotFoundException {
-        return new ReservationDTO(reservationRepository.findById(id)
+        return new ReservationDTO(reservationRepository.findByIdAndIsCancelledFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found")));
     }
 
@@ -70,21 +70,21 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setEvent(event);
         reservation.setTickets(tickets);
-        return new ReservationDTO(reservation);
+        return new ReservationDTO(reservationRepository.save(reservation));
     }
 
     private void makeTicket(NewTicketDTO ticketDTO, Set<Ticket> tickets) throws EntityNotFoundException, ImpossibleActionException {
         Ticket ticket = new Ticket();
         if (!ticketDTO.getAllDayTicket()) {
-            if (ticketDTO.getSeatId() != null) { // seat reservation single day
+            if (ticketDTO.getSeatId() != null) {
                 reserveSeatSingleDay(ticket, ticketDTO);
-            } else { // parterre reservation single day
+            } else {
                 reserveParterreSingleDay(ticket, ticketDTO);
             }
         } else {
-            if (ticketDTO.getSeatId() != null) { // seat reservation all days
+            if (ticketDTO.getSeatId() != null) {
                 reserveSeatAllDays(ticket, ticketDTO);
-            } else { // parterre reservation all days
+            } else {
                 reserveParterreAllDays(ticket, ticketDTO);
             }
         }
@@ -137,5 +137,14 @@ public class ReservationService {
             ticket.getReservableSeatGroups().add(rsg);
             rsg.getTickets().add(ticket);
         });
+    }
+
+    public Object cancelReservation(Long id) throws EntityNotFoundException, ImpossibleActionException {
+        Reservation reservation = reservationRepository.findByIdAndIsCancelledFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+        if (reservation.getOrderId() != null)
+            throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
+        reservation.setCancelled(true);
+        return new ReservationDTO(reservationRepository.save(reservation));
     }
 }
