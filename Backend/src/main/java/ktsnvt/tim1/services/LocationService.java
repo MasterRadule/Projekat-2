@@ -4,6 +4,8 @@ import ktsnvt.tim1.DTOs.LocationDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
+import ktsnvt.tim1.mappers.LocationMapper;
+import ktsnvt.tim1.mappers.SeatGroupMapper;
 import ktsnvt.tim1.model.Location;
 import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -25,22 +27,28 @@ public class LocationService {
     @Autowired
     private SeatGroupRepository seatGroupRepository;
 
+    @Autowired
+    private LocationMapper locationMapper;
+
+    @Autowired
+    private SeatGroupMapper seatGroupMapper;
+
     public Page<LocationDTO> getLocations(Pageable pageable) {
         return locationRepository.findAll(pageable)
-                .map(LocationDTO::new);
+                .map(l -> locationMapper.toDTO(l));
     }
 
     public LocationDTO getLocation(Long id) throws EntityNotFoundException {
-        return new LocationDTO(locationRepository.findById(id)
+        return locationMapper.toDTO(locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found")));
     }
 
     public Page<LocationDTO> searchLocations(String name, Pageable pageable) {
-        return locationRepository.findByNameIgnoreCaseContaining(name, pageable).map(LocationDTO::new);
+        return locationRepository.findByNameIgnoreCaseContaining(name, pageable).map(l -> locationMapper.toDTO(l));
     }
 
     public LocationDTO createLocation(LocationDTO location) {
-        return new LocationDTO(locationRepository.save(location.convertToEntity()));
+        return locationMapper.toDTO(locationRepository.save(locationMapper.toEntity(location)));
     }
 
     public LocationDTO editLocation(LocationDTO location) throws EntityNotValidException, EntityNotFoundException {
@@ -55,7 +63,7 @@ public class LocationService {
         editedLocation.setLatitude(location.getLatitude());
         editedLocation.setDisabled(location.isDisabled());
 
-        return new LocationDTO(locationRepository.save(editedLocation));
+        return locationMapper.toDTO(locationRepository.save(editedLocation));
     }
 
     public Page<SeatGroupDTO> getSeatGroups(Long id, Pageable pageable) throws EntityNotFoundException {
@@ -63,11 +71,11 @@ public class LocationService {
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
         return (new PageImpl<>(new ArrayList<>(location.getSeatGroups()), pageable, location.getSeatGroups()
-                .size())).map(SeatGroupDTO::new);
+                .size())).map(sg -> seatGroupMapper.toDTO(sg));
     }
 
     public SeatGroupDTO getSeatGroup(Long locationId, Long seatGroupId) throws EntityNotFoundException {
-        return new SeatGroupDTO(locationRepository.findById(locationId)
+        return seatGroupMapper.toDTO(locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"))
                 .getSeatGroups()
                 .stream()
@@ -81,11 +89,11 @@ public class LocationService {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
-        SeatGroup newSeatGroup = seatGroupRepository.save(seatGroup.convertToEntity());
+        SeatGroup newSeatGroup = seatGroupRepository.save(seatGroupMapper.toEntity(seatGroup));
         location.getSeatGroups()
                 .add(newSeatGroup);
         locationRepository.save(location);
 
-        return new SeatGroupDTO(newSeatGroup);
+        return seatGroupMapper.toDTO(newSeatGroup);
     }
 }

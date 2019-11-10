@@ -1,7 +1,5 @@
 package ktsnvt.tim1.DTOs;
 
-import ktsnvt.tim1.model.Location;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -21,25 +19,6 @@ public class LocationDTO {
     private Boolean disabled;
 
     public LocationDTO() {
-    }
-
-    public LocationDTO(Location location) {
-        this.id = location.getId();
-        this.name = location.getName();
-        this.latitude = location.getLatitude();
-        this.longitude = location.getLongitude();
-        this.disabled = location.getDisabled();
-    }
-
-    public Location convertToEntity() {
-        Location l = new Location();
-        l.setDisabled(this.disabled);
-        l.setId(null);
-        l.setLatitude(this.latitude);
-        l.setLongitude(this.longitude);
-        l.setName(this.name);
-
-        return l;
     }
 
     public Long getId() {
