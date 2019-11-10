@@ -26,43 +26,6 @@ public class SeatGroupDTO {
     public SeatGroupDTO() {
     }
 
-    public SeatGroupDTO(SeatGroup seatGroup) {
-        this.id = seatGroup.getId();
-        this.colsNum = seatGroup.getColsNum();
-        this.rowsNum = seatGroup.getRowsNum();
-        this.parterre = seatGroup.getParterre();
-        this.xCoordinate = seatGroup.getxCoordinate();
-        this.yCoordinate = seatGroup.getyCoordinate();
-        this.totalSeats = seatGroup.getTotalSeats();
-    }
-
-    public SeatGroup convertToEntity() throws EntityNotValidException {
-        SeatGroup seatGroup = new SeatGroup();
-
-        seatGroup.setId(null);
-        seatGroup.setParterre(this.parterre);
-        seatGroup.setxCoordinate(this.xCoordinate);
-        seatGroup.setyCoordinate(this.yCoordinate);
-
-        if (this.isParterre()) {
-            seatGroup.setColsNum(null);
-            seatGroup.setRowsNum(null);
-            if (this.totalSeats == null || this.totalSeats <= 0) {
-                throw new EntityNotValidException("Invalid value for parterre's total seats.");
-            }
-            seatGroup.setTotalSeats(this.totalSeats);
-        } else if (this.colsNum == null || this.colsNum < 1 || this.rowsNum == null || this.rowsNum < 1) {
-            throw new EntityNotValidException("Row and column numbers must be specified");
-        }
-        else {
-            seatGroup.setRowsNum(this.rowsNum);
-            seatGroup.setColsNum(this.colsNum);
-            seatGroup.setTotalSeats(this.rowsNum * this.colsNum);
-        }
-
-        return seatGroup;
-    }
-
     public Long getId() {
         return id;
     }

@@ -4,7 +4,6 @@ import ktsnvt.tim1.DTOs.LocationDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
-import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
