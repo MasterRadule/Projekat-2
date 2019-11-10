@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.DTOs.EventDTO;
 import ktsnvt.tim1.DTOs.EventDayDTO;
@@ -17,13 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -73,6 +75,27 @@ public class EventService {
         checkNumberOfReservationDeadlineDays(e, event);
 
         return eventMapper.toDTO(eventRepository.save(e));
+    }
+
+    public String uploadFiles(EventMediaFilesDTO mediaFiles) throws EntityNotValidException, EntityNotFoundException {
+        if (mediaFiles.getEventID() == null)
+            throw new EntityNotValidException("Event must have an ID");
+
+        Event e = eventRepository.findByIdAndIsCancelledFalse(mediaFiles.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        for (MultipartFile file : mediaFiles.getFiles()) {
+            MediaFile mediaFile;
+            if (!file.getContentType().startsWith("image") && !file.getContentType().startsWith("video"))
+                throw new EntityNotValidException("Invalid file type");
+            try {
+                mediaFile = new MediaFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
+            } catch (IOException ex) {
+                throw new EntityNotValidException("Invalid file data");
+            }
+            e.getPicturesAndVideos().add(mediaFile);
+        }
+        eventRepository.save(e);
+
+        return "Files uploaded successfully";
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {

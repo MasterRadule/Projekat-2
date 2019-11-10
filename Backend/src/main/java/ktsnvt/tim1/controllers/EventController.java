@@ -1,6 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.EventDTO;
+import ktsnvt.tim1.DTOs.EventMediaFilesDTO;
 import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
 import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -43,6 +45,18 @@ public class EventController {
         }
         catch(EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/{id}/picturesAndVideos")
+    public ResponseEntity<Object> uploadMultipleFiles(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
+        EventMediaFilesDTO mediaFiles = new EventMediaFilesDTO(id, files);
+        try {
+            return new ResponseEntity<>(eventService.uploadFiles(mediaFiles), HttpStatus.OK);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

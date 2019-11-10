@@ -21,9 +21,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventCategory category;
 
-    //private List<Object> pictures;
-
-    //private List<Object> videos;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MediaFile> picturesAndVideos;
 
     @Column(nullable = false)
     private Boolean isActiveForReservations = true;
@@ -84,22 +83,13 @@ public class Event {
         this.category = category;
     }
 
-    /*
-    public List<Object> getPictures() {
-        return pictures;
+    public Set<MediaFile> getPicturesAndVideos() {
+        return picturesAndVideos;
     }
 
-    public void setPictures(List<Object> pictures) {
-        this.pictures = pictures;
+    public void setPicturesAndVideos(Set<MediaFile> picturesAndVideos) {
+        this.picturesAndVideos = picturesAndVideos;
     }
-
-    public List<Object> getVideos() {
-        return videos;
-    }
-
-    public void setVideos(List<Object> videos) {
-        this.videos = videos;
-    }*/
 
     public Boolean getActiveForReservations() {
         return isActiveForReservations;
