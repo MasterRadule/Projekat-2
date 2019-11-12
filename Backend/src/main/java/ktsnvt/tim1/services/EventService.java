@@ -12,18 +12,18 @@ import ktsnvt.tim1.mappers.EventMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
+import ktsnvt.tim1.repositories.MediaFileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -35,6 +35,9 @@ public class EventService {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private MediaFileRepository mediaFileRepository;
 
     @Autowired
     private EventMapper eventMapper;
@@ -73,6 +76,35 @@ public class EventService {
         checkNumberOfReservationDeadlineDays(e, event);
 
         return eventMapper.toDTO(eventRepository.save(e));
+    }
+
+    public void uploadPicturesAndVideos(Long id, MultipartFile[] files) throws EntityNotValidException, EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        for (MultipartFile file : files) {
+            MediaFile mediaFile;
+            if (!file.getContentType().startsWith("image") && !file.getContentType().startsWith("video"))
+                throw new EntityNotValidException("Invalid file type");
+            try {
+                mediaFile = new MediaFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
+            } catch (IOException ex) {
+                throw new EntityNotValidException("Invalid file data");
+            }
+            e.getPicturesAndVideos().add(mediaFile);
+        }
+        eventRepository.save(e);
+    }
+
+    public Set<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+
+        return e.getPicturesAndVideos();
+    }
+
+    public void deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(eventID).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        MediaFile mf = mediaFileRepository.findById(fileID).orElseThrow(() -> new EntityNotFoundException("File not found"));
+        e.getPicturesAndVideos().remove(mf);
+        eventRepository.save(e);
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {

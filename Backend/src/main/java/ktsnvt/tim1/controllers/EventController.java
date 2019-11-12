@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -43,6 +44,37 @@ public class EventController {
         }
         catch(EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/{id}/pictures-and-videos")
+    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
+        try {
+            eventService.uploadPicturesAndVideos(id, files);
+            return new ResponseEntity<>("Files uploaded successfully", HttpStatus.OK);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "/{id}/pictures-and-videos")
+    public ResponseEntity<Object> getEventsPicturesAndVideos(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(eventService.getPicturesAndVideos(id), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(value = "{eventID}/pictures-and-videos/{fileID}")
+    public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
+        try {
+            eventService.deleteMediaFile(eventID, fileID);
+            return new ResponseEntity<>("File deleted successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
