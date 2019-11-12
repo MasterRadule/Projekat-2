@@ -1,7 +1,6 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.EventDTO;
-import ktsnvt.tim1.DTOs.EventMediaFilesDTO;
 import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
 import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
@@ -48,11 +47,11 @@ public class EventController {
         }
     }
 
-    @PostMapping(value = "/{id}/picturesAndVideos")
+    @PostMapping(value = "/{id}/pictures-and-videos")
     public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
-        EventMediaFilesDTO mediaFiles = new EventMediaFilesDTO(id, files);
         try {
-            return new ResponseEntity<>(eventService.uploadPicturesAndVideos(mediaFiles), HttpStatus.OK);
+            eventService.uploadPicturesAndVideos(id, files);
+            return new ResponseEntity<>("Files uploaded successfully", HttpStatus.OK);
         } catch (EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {
@@ -60,7 +59,7 @@ public class EventController {
         }
     }
 
-    @GetMapping(value = "/{id}/picturesAndVideos")
+    @GetMapping(value = "/{id}/pictures-and-videos")
     public ResponseEntity<Object> getEventsPicturesAndVideos(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(eventService.getPicturesAndVideos(id), HttpStatus.OK);
@@ -69,10 +68,11 @@ public class EventController {
         }
     }
 
-    @DeleteMapping(value = "{eventID}/picturesAndVideos/{fileID}")
+    @DeleteMapping(value = "{eventID}/pictures-and-videos/{fileID}")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
-            return new ResponseEntity<>(eventService.deleteMediaFile(eventID, fileID), HttpStatus.OK);
+            eventService.deleteMediaFile(eventID, fileID);
+            return new ResponseEntity<>("File deleted successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

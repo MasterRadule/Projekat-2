@@ -78,9 +78,9 @@ public class EventService {
         return eventMapper.toDTO(eventRepository.save(e));
     }
 
-    public String uploadPicturesAndVideos(EventMediaFilesDTO mediaFiles) throws EntityNotValidException, EntityNotFoundException {
-        Event e = eventRepository.findByIdAndIsCancelledFalse(mediaFiles.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
-        for (MultipartFile file : mediaFiles.getFiles()) {
+    public void uploadPicturesAndVideos(Long id, MultipartFile[] files) throws EntityNotValidException, EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        for (MultipartFile file : files) {
             MediaFile mediaFile;
             if (!file.getContentType().startsWith("image") && !file.getContentType().startsWith("video"))
                 throw new EntityNotValidException("Invalid file type");
@@ -92,23 +92,19 @@ public class EventService {
             e.getPicturesAndVideos().add(mediaFile);
         }
         eventRepository.save(e);
-
-        return "Files uploaded successfully";
     }
 
-    public ArrayList<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
+    public Set<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
-        return new ArrayList<>(e.getPicturesAndVideos());
+        return e.getPicturesAndVideos();
     }
 
-    public String deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
+    public void deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(eventID).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         MediaFile mf = mediaFileRepository.findById(fileID).orElseThrow(() -> new EntityNotFoundException("File not found"));
         e.getPicturesAndVideos().remove(mf);
         eventRepository.save(e);
-
-        return "File deleted successfully";
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
