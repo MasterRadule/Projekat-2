@@ -1,6 +1,5 @@
 package ktsnvt.tim1.services;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.DTOs.EventDTO;
 import ktsnvt.tim1.DTOs.EventDayDTO;
@@ -13,15 +12,14 @@ import ktsnvt.tim1.mappers.EventMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
+import ktsnvt.tim1.repositories.MediaFileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +35,9 @@ public class EventService {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private MediaFileRepository mediaFileRepository;
 
     @Autowired
     private EventMapper eventMapper;
@@ -77,10 +78,7 @@ public class EventService {
         return eventMapper.toDTO(eventRepository.save(e));
     }
 
-    public String uploadFiles(EventMediaFilesDTO mediaFiles) throws EntityNotValidException, EntityNotFoundException {
-        if (mediaFiles.getEventID() == null)
-            throw new EntityNotValidException("Event must have an ID");
-
+    public String uploadPicturesAndVideos(EventMediaFilesDTO mediaFiles) throws EntityNotValidException, EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(mediaFiles.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         for (MultipartFile file : mediaFiles.getFiles()) {
             MediaFile mediaFile;
@@ -96,6 +94,22 @@ public class EventService {
         eventRepository.save(e);
 
         return "Files uploaded successfully";
+    }
+
+
+    public ArrayList<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+
+        return new ArrayList<>(e.getPicturesAndVideos());
+    }
+
+    public String deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalse(eventID).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        MediaFile mf = mediaFileRepository.findById(fileID).orElseThrow(() -> new EntityNotFoundException("File not found"));
+        e.getPicturesAndVideos().remove(mf);
+        eventRepository.save(e);
+
+        return "File deleted successfully";
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {

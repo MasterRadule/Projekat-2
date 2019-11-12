@@ -49,12 +49,30 @@ public class EventController {
     }
 
     @PostMapping(value = "/{id}/picturesAndVideos")
-    public ResponseEntity<Object> uploadMultipleFiles(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
+    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
         EventMediaFilesDTO mediaFiles = new EventMediaFilesDTO(id, files);
         try {
-            return new ResponseEntity<>(eventService.uploadFiles(mediaFiles), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.uploadPicturesAndVideos(mediaFiles), HttpStatus.OK);
         } catch (EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "/{id}/picturesAndVideos")
+    public ResponseEntity<Object> getEventsPicturesAndVideos(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(eventService.getPicturesAndVideos(id), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(value = "{eventID}/picturesAndVideos/{fileID}")
+    public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
+        try {
+            return new ResponseEntity<>(eventService.deleteMediaFile(eventID, fileID), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

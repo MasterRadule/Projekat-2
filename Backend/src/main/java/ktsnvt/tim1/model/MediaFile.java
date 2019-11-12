@@ -17,10 +17,6 @@ public class MediaFile {
     @Lob
     private byte[] data;
 
-    @ManyToOne()
-    @JoinColumn(name = "event_id")
-    private Event event;
-
     public MediaFile() {
     }
 
