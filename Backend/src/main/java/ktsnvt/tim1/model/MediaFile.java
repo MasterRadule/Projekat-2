@@ -57,12 +57,4 @@ public class MediaFile {
     public void setData(byte[] data) {
         this.data = data;
     }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
 }

@@ -96,7 +96,6 @@ public class EventService {
         return "Files uploaded successfully";
     }
 
-
     public ArrayList<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
