@@ -47,6 +47,17 @@ public class EmailService {
     }
 
     @Async
+    public void sendReservationExpiredEmail(RegisteredUser registeredUser, Reservation reservation, Date expirationDate) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(registeredUser.getEmail());
+        mailMessage.setSubject("Reservation expired");
+        mailMessage.setFrom(emailAddress);
+        mailMessage.setText(String.format("Dear %s %s,\nWe want to inform you that your reservation for event %s just expired.\nKTSNVT",
+                registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName()));
+        javaMailSender.send(mailMessage);
+    }
+
+    @Async
     public void sendVerificationEmail(RegisteredUser registeredUser, String url, VerificationToken verificationToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(registeredUser.getEmail());
