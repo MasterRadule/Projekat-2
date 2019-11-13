@@ -20,19 +20,6 @@ public class TicketDTO
     public TicketDTO() {
     }
 
-    public TicketDTO(Ticket ticket) {
-        if(!ticket.getSeats().isEmpty()){
-            Seat seat = ticket.getSeats().iterator().next();
-            this.rowNum = seat.getRowNum();
-            this.colNum = seat.getColNum();
-        }
-        ReservableSeatGroup reservableSeatGroup = ticket.getReservableSeatGroups().iterator().next();
-        this.seatGroupName = reservableSeatGroup.getEventSeatGroup().getSeatGroup().getName();
-        this.price = reservableSeatGroup.getEventSeatGroup().getPrice();
-        this.eventDays = ticket.getReservableSeatGroups().stream().map(ReservableSeatGroup::getEventDay)
-                .map(EventDay::getDate).collect(Collectors.toCollection (ArrayList::new));
-    }
-
     public Integer getRowNum() {
         return rowNum;
     }
