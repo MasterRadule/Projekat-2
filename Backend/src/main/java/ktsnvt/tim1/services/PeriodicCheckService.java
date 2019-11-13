@@ -34,15 +34,18 @@ public class PeriodicCheckService {
                     long reservationDeadlineDaysInMilliseconds = TimeUnit.MILLISECONDS.convert(reservation.getEvent().getReservationDeadlineDays(), TimeUnit.DAYS);
                     Date expirationDate = new Date();
                     expirationDate.setTime(firstEventDay.getTime() - reservationDeadlineDaysInMilliseconds);
-                    if (expiresSoon(reservation, expirationDate)) {
-                        RegisteredUser registeredUser = reservation.getRegisteredUser();
-                        emailService.sendReservationNotificationEmail(registeredUser, reservation, expirationDate);
+                    if (expirationDate.before(new Date())) {
+                        reservation.setCancelled(true);
+                        reservationRepository.save(reservation);
+                        emailService.sendReservationExpiredEmail(reservation.getRegisteredUser(), reservation, expirationDate);
+                    } else if (expiresSoon(expirationDate)) {
+                        emailService.sendReservationNotificationEmail(reservation.getRegisteredUser(), reservation, expirationDate);
                     }
                 }
         );
     }
 
-    private boolean expiresSoon(Reservation reservation, Date expirationDate) {
+    private boolean expiresSoon(Date expirationDate) {
         int numOfHoursBeforeExpiration = (int) TimeUnit.HOURS.convert(Math.abs(expirationDate.getTime()
                 - new Date().getTime()), TimeUnit.MILLISECONDS);
         return numOfHoursBeforeExpiration < notifyHoursBeforeExpiration;

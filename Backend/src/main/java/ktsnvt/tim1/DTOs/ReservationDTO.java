@@ -20,14 +20,6 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Reservation reservation) {
-        this.id = reservation.getId();
-        this.orderId = reservation.getOrderId();
-        this.tickets = reservation.getTickets().stream().map(TicketDTO::new).collect(Collectors.toCollection(ArrayList::new));
-        this.eventId = reservation.getEvent().getId();
-        this.eventName = reservation.getEvent().getName();
-    }
-
     public Long getId() {
         return id;
     }
