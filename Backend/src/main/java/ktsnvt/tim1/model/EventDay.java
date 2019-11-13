@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import java.time.ZoneId;
 import java.util.*;
 
 @Entity
@@ -26,7 +27,10 @@ public class EventDay {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDay eventDay = (EventDay) o;
-        return date.getTime() == eventDay.getDate().getTime();
+        int sameDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                .compareTo(eventDay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+        return sameDate == 0;
     }
 
     @Override
