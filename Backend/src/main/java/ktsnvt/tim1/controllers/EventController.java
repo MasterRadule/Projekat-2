@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class EventController {
     }
 
     @PostMapping()
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> createEvent(@Valid @RequestBody EventDTO event) {
         try {
             return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
@@ -48,6 +50,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/{id}/pictures-and-videos")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
         try {
             eventService.uploadPicturesAndVideos(id, files);
@@ -69,6 +72,7 @@ public class EventController {
     }
 
     @DeleteMapping(value = "{eventID}/pictures-and-videos/{fileID}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
             eventService.deleteMediaFile(eventID, fileID);
@@ -79,6 +83,7 @@ public class EventController {
     }
 
     @PutMapping()
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editEvent(@Valid @RequestBody EventDTO event) {
         try {
             return new ResponseEntity<>(eventService.editEvent(event), HttpStatus.OK);
@@ -102,6 +107,7 @@ public class EventController {
     }
 
     @PutMapping("/location")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> setEventLocationAndSeatGroups(@Valid @RequestBody LocationSeatGroupDTO locSeatGroupDTO) {
         try {
             return new ResponseEntity<>(eventService.setEventLocationAndSeatGroups(locSeatGroupDTO), HttpStatus.OK);
