@@ -1,12 +1,11 @@
 package ktsnvt.tim1.controllers;
 
-import ktsnvt.tim1.DTOs.LocationDTO;
-import ktsnvt.tim1.DTOs.NewReservationDTO;
-import ktsnvt.tim1.DTOs.ReservationDTO;
-import ktsnvt.tim1.DTOs.ReservationTypeDTO;
+import com.paypal.base.rest.PayPalRESTException;
+import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.exceptions.ImpossibleActionException;
+import ktsnvt.tim1.exceptions.PayPalException;
 import ktsnvt.tim1.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +59,32 @@ public class ReservationController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (ImpossibleActionException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Object> payReservationCreatePayment(@PathVariable("id") Long reservationId) {
+        try {
+            return new ResponseEntity<>(reservationService.payReservationCreatePayment(reservationId), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    @PutMapping(value = "/{id}/executePayment")
+    public ResponseEntity<Object> payReservationExecutePayment(@Valid @RequestBody PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
+        try {
+            return new ResponseEntity<>(reservationService.payReservationExecutePayment(reservationId, paymentDTO), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
         }
     }
 
