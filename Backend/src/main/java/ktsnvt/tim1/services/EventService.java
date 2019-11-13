@@ -109,9 +109,11 @@ public class EventService {
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(seatGroupsDTO.getEventID()).orElseThrow(() -> new EntityNotFoundException("Event not found"));
-        Location l = locationRepository.findById(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
+        Location l = locationRepository.findByIdAndIsDisabledFalse(seatGroupsDTO.getLocationID()).orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
-        changeLocation(e, l);
+        if (!e.getLocation().equals(l))
+            changeLocation(e, l);
+
         disableEventGroups(e, seatGroupsDTO);
         enableEventGroups(e, l, seatGroupsDTO);
 
@@ -205,31 +207,52 @@ public class EventService {
         e.setReservationDeadlineDays(event.getReservationDeadlineDays());
     }
 
-    private void changeLocation(Event e, Location l) throws EntityNotValidException{
-        if (!e.getLocation().equals(l)) {
-            Set<EventSeatGroup> eventSeatGroups = e.getEventSeatGroups();
-            for (EventSeatGroup esg : eventSeatGroups) {
-                Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
-                for (ReservableSeatGroup rsg : resSeatGroups) {
-                    if (!rsg.getTickets().isEmpty())
-                        throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
+    private void changeLocation(Event e, Location l) throws EntityNotValidException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        for (Event event : l.getEvents()) {
+            for (EventDay ev : event.getEventDays()) {
+                if (e.getEventDays().contains(ev)) {
+                    throw new EntityNotValidException("Location is already taken for " + formatter.format(ev.getDate()));
                 }
             }
         }
+        Set<EventSeatGroup> eventSeatGroups = e.getEventSeatGroups();
+        for (EventSeatGroup esg : eventSeatGroups) {
+            Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
+            for (ReservableSeatGroup rsg : resSeatGroups) {
+                if (!rsg.getTickets().isEmpty())
+                    throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
+            }
+        }
+        e.getLocation().getEvents().remove(e);
+        e.setLocation(l);
+        l.getEvents().add(e);
     }
 
-    private void disableEventGroups(Event e, LocationSeatGroupDTO seatGroupsDTO) {
-        e.getEventSeatGroups().removeIf(esg -> seatGroupsDTO.getEventSeatGroups().stream()
-                .anyMatch(sgDTO -> {
-                    if (sgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()) {
-                        Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
-                        for (ReservableSeatGroup rsg : resSeatGroups) {
-                            if (rsg.getTickets().isEmpty())
-                                return true;
-                        }
+    private void disableEventGroups(Event e, LocationSeatGroupDTO seatGroupsDTO) throws EntityNotValidException {
+        Iterator<EventSeatGroup> iter = e.getEventSeatGroups().iterator();
+        EventSeatGroup esg;
+        while(iter.hasNext()) {
+            esg = iter.next();
+            boolean toDisable = true;
+            for (EventSeatGroupDTO esgDTO : seatGroupsDTO.getEventSeatGroups()) {
+                if (esgDTO.getSeatGroupID().longValue() == esg.getSeatGroup().getId().longValue()) {
+                    toDisable = false;
+                    break;
+                }
+            }
+            if (toDisable) {
+                Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
+                for (ReservableSeatGroup rsg : resSeatGroups) {
+                    if (rsg.getTickets().isEmpty()) {
+                        iter.remove();
                     }
-                    return false;
-                }));
+                    else {
+                        throw new EntityNotValidException("Seat group which has at least one reservation cannot be disabled");
+                    }
+                }
+            }
+        }
     }
 
     private void enableEventGroups(Event e, Location l, LocationSeatGroupDTO seatGroupsDTO) {
