@@ -3,7 +3,10 @@ package ktsnvt.tim1.services;
 import ktsnvt.tim1.model.EventDay;
 import ktsnvt.tim1.model.RegisteredUser;
 import ktsnvt.tim1.model.Reservation;
+import ktsnvt.tim1.model.VerificationToken;
 import ktsnvt.tim1.repositories.ReservationRepository;
+import ktsnvt.tim1.repositories.UserRepository;
+import ktsnvt.tim1.repositories.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -26,6 +29,12 @@ public class PeriodicCheckService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Scheduled(cron = "${checkReservations.cron}")
     public void checkReservations() {
         reservationRepository.findByOrderIdIsNullAndIsCancelledFalse().forEach((reservation) ->
@@ -40,6 +49,18 @@ public class PeriodicCheckService {
                     }
                 }
         );
+    }
+
+    @Scheduled(cron = "${checkToken.cron}")
+    public void checkToken(){
+        userRepository.findByEmailNotNullAndIsVerifiedFalse().forEach((user)->{
+            VerificationToken vt = verificationTokenRepository.findByUser(user);
+            if(vt.isExpired()){
+                verificationTokenRepository.delete(vt);
+                userRepository.delete(user);
+            }
+
+        });
     }
 
     private boolean expiresSoon(Reservation reservation, Date expirationDate) {

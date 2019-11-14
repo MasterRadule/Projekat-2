@@ -42,12 +42,6 @@ public class AuthenticationService {
     public UserDTO register(UserDTO user, HttpServletRequest request) throws EntityAlreadyExistsException, MalformedURLException {
         String url = new URL(request.getRequestURL().toString()).getAuthority();
 
-        if(verificationTokenRepository.findByUser_Email(user.getEmail())!=null && verificationTokenRepository.findByUser_Email(user.getEmail()).isExpired() &&
-                userRepository.findByEmail(user.getEmail())!= null && !userRepository.findByEmail(user.getEmail()).getVerified()){
-            verificationTokenRepository.delete(verificationTokenRepository.findByUser_Email(user.getEmail()));
-            userRepository.deleteByEmail(user.getEmail());
-            userRepository.flush();
-        }
         if(userRepository.findByEmail(user.getEmail())!= null){
             throw new EntityAlreadyExistsException("Email already taken!");
         }else{
