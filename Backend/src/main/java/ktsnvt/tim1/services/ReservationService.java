@@ -7,6 +7,7 @@ import ktsnvt.tim1.DTOs.ReservationTypeDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.exceptions.ImpossibleActionException;
+import ktsnvt.tim1.mappers.ReservationMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,20 +40,23 @@ public class ReservationService {
     @Autowired
     private ReservableSeatGroupRepository reservableSeatGroupRepository;
 
+    @Autowired
+    private ReservationMapper reservationMapper;
+
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
         switch (type) {
             case BOUGHT:
-                return reservationRepository.findByOrderIdIsNotNullAndIsCancelledFalse(pageable).map(ReservationDTO::new);
+                return reservationRepository.findByOrderIdIsNotNullAndIsCancelledFalse(pageable).map(reservationMapper::toDTO);
             case RESERVED:
-                return reservationRepository.findByOrderIdIsNullAndIsCancelledFalse(pageable).map(ReservationDTO::new);
+                return reservationRepository.findByOrderIdIsNullAndIsCancelledFalse(pageable).map(reservationMapper::toDTO);
             default:
-                return reservationRepository.findAll(pageable).map(ReservationDTO::new);
+                return reservationRepository.findAll(pageable).map(reservationMapper::toDTO);
 
         }
     }
 
     public ReservationDTO getReservation(Long id) throws EntityNotFoundException {
-        return new ReservationDTO(reservationRepository.findByIdAndIsCancelledFalse(id)
+        return reservationMapper.toDTO(reservationRepository.findByIdAndIsCancelledFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found")));
     }
 
@@ -77,7 +81,7 @@ public class ReservationService {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         reservation.setRegisteredUser(registeredUser);
         registeredUser.getReservations().add(reservation);
-        return new ReservationDTO(reservationRepository.save(reservation));
+        return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 
     private void makeTicket(NewTicketDTO ticketDTO, Set<Ticket> tickets) throws EntityNotFoundException, ImpossibleActionException {
@@ -152,6 +156,6 @@ public class ReservationService {
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
         reservation.setCancelled(true);
-        return new ReservationDTO(reservationRepository.save(reservation));
+        return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 }
