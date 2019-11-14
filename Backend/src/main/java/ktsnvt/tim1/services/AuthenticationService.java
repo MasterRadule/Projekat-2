@@ -4,6 +4,7 @@ package ktsnvt.tim1.services;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.mappers.UserMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.UserRepository;
 import ktsnvt.tim1.repositories.VerificationTokenRepository;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,11 +33,12 @@ public class AuthenticationService {
     private VerificationTokenRepository verificationTokenRepository;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Transactional
     public UserDTO register(UserDTO user, HttpServletRequest request) throws EntityAlreadyExistsException, MalformedURLException {
         String url = new URL(request.getRequestURL().toString()).getAuthority();
 
@@ -55,15 +58,12 @@ public class AuthenticationService {
             authorities.add(a);
             regUser.setAuthorities(authorities);
 
-            UserDTO u = new UserDTO(userRepository.save(regUser));
-
             VerificationToken verificationToken = new VerificationToken(regUser);
+            emailService.sendVerificationEmail(regUser,url,verificationToken);
+            User u = userRepository.save(regUser);
             verificationTokenRepository.save(verificationToken);
 
-            emailService.sendVerificationEmail(regUser,url,verificationToken);
-
-
-            return u;
+            return userMapper.toDTO(u);
         }
     }
 

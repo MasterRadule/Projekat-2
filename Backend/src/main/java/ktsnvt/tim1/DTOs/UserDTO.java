@@ -3,6 +3,8 @@ package ktsnvt.tim1.DTOs;
 import ktsnvt.tim1.model.User;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class UserDTO {
 
@@ -15,25 +17,21 @@ public class UserDTO {
     private String lastName;
 
     @NotBlank(message = "Password cannot be empty")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}")
     private String password;
 
     @NotBlank(message = "Email cannot be empty")
+    @Pattern(regexp = "^(.+)@(.+)$")
     private String email;
+
+    @NotNull
+    private Boolean verified;
 
 
     public UserDTO() {
     }
 
-    public UserDTO(User user){
-        this.id = user.getId();
-        this.lastName = user.getLastName();
-        this.firstName = user.getFirstName();
-        this.password = user.getPassword();
-        this.email = user.getEmail();
-    }
-
-
-    public Long getId() {
+     public Long getId() {
         return id;
     }
 
@@ -71,5 +69,13 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

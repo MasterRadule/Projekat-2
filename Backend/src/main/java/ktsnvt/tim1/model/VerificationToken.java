@@ -16,7 +16,7 @@ public class VerificationToken {
 
     private Date dateCreated;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
@@ -66,10 +66,11 @@ public class VerificationToken {
     public boolean isExpired() {
         Date d1 = new Date();
         if (d1.getTime() - this.dateCreated.getTime() > 86400000) {
-            return true;
+            this.expired = true;
         } else {
-            return false;
+            this.expired=false;
         }
+        return expired;
     }
 
     public void setExpired(boolean expired) {

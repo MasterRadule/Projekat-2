@@ -3,6 +3,7 @@ package ktsnvt.tim1.services;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
+import ktsnvt.tim1.mappers.UserMapper;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserMapper userMapper;
 
     public UserDTO editUser(UserDTO user) throws EntityNotValidException, EntityNotFoundException{
 
@@ -31,7 +35,7 @@ public class UserService {
         toEdit.setLastName(user.getLastName());
         toEdit.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return new UserDTO(userRepository.save(toEdit));
+        return userMapper.toDTO(userRepository.save(toEdit));
 
     }
 
