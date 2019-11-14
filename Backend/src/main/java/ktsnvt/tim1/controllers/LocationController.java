@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,11 +41,13 @@ public class LocationController {
     }
 
     @PostMapping()
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<LocationDTO> createLocation(@Valid @RequestBody LocationDTO location) {
         return new ResponseEntity<>(locationService.createLocation(location), HttpStatus.CREATED);
     }
 
     @PutMapping()
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editLocation(@Valid @RequestBody LocationDTO location) {
         try {
             return new ResponseEntity<>(locationService.editLocation(location), HttpStatus.OK);
@@ -74,6 +77,7 @@ public class LocationController {
     }
 
     @PostMapping(value = "/{id}/seat-groups")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> createSeatGroup(@PathVariable("id") Long id, @Valid @RequestBody SeatGroupDTO seatGroup) {
         try {
             return new ResponseEntity<>(locationService.createSeatGroup(id, seatGroup), HttpStatus.CREATED);
