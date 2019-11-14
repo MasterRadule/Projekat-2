@@ -1,27 +1,39 @@
 package ktsnvt.tim1.services;
 
-import ktsnvt.tim1.DTOs.NewReservationDTO;
-import ktsnvt.tim1.DTOs.NewTicketDTO;
-import ktsnvt.tim1.DTOs.ReservationDTO;
-import ktsnvt.tim1.DTOs.ReservationTypeDTO;
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
+import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.exceptions.ImpossibleActionException;
+import ktsnvt.tim1.exceptions.PayPalException;
 import ktsnvt.tim1.mappers.ReservationMapper;
 import ktsnvt.tim1.model.*;
+import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
+
+    @Value("${paypal.clientId}")
+    private String clientId;
+
+    @Value("${paypal.clientSecret}")
+    private String clientSecret;
+
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -67,9 +79,9 @@ public class ReservationService {
             throw new EntityNotValidException("Too many tickets in the reservation");
         Date firstEventDay = event.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
         int numOfDaysToEvent = (int) TimeUnit.DAYS.convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
-        if (numOfDaysToEvent < 0) throw new EntityNotValidException("Event already started");
+        if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
         if (numOfDaysToEvent <= event.getReservationDeadlineDays())
-            throw new EntityNotValidException("Reservation deadline date passed");
+            throw new ImpossibleActionException("Reservation deadline date passed");
 
         HashSet<Ticket> tickets = new HashSet<Ticket>();
         for (NewTicketDTO t : newReservationDTO.getTickets()) {
@@ -150,12 +162,74 @@ public class ReservationService {
         });
     }
 
-    public Object cancelReservation(Long id) throws EntityNotFoundException, ImpossibleActionException {
+    public ReservationDTO cancelReservation(Long id) throws EntityNotFoundException, ImpossibleActionException {
         Reservation reservation = reservationRepository.findByIdAndIsCancelledFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
         reservation.setCancelled(true);
+        return reservationMapper.toDTO(reservationRepository.save(reservation));
+    }
+
+    public Object payReservationCreatePayment(Long reservationId) throws EntityNotFoundException, ImpossibleActionException, PayPalRESTException, PayPalException {
+        Reservation reservation = reservationRepository.findByIdAndIsCancelledFalse(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+        if (reservation.getOrderId() != null)
+            throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");
+
+        APIContext context = new APIContext(clientId, clientSecret, "sandbox");
+        Payment createdPayment = createPaymentObject(reservationId, reservation.getTickets().stream().mapToDouble(
+                t -> t.getReservableSeatGroups().stream().mapToDouble(
+                        rsg -> rsg.getEventSeatGroup().getPrice()).sum()).sum())
+                .create(context);
+        if (createdPayment == null) {
+            throw new PayPalException("Payment not created");
+        }
+        return new PaymentDTO(createdPayment.getId());
+    }
+
+    private Payment createPaymentObject(long reservationId, double price) {
+        Amount amount = new Amount();
+        amount.setCurrency("USD");
+        amount.setTotal(String.valueOf(price));
+
+        Item item = new Item();
+        item.setDescription("KTSNVT - Reservation");
+        item.setName(String.valueOf(reservationId));
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.getItemList().getItems().add(item);
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(transaction);
+
+        Payer payer = new Payer();
+        payer.setPaymentMethod("paypal");
+
+        Payment payment = new Payment();
+        payment.setIntent("sale");
+        payment.setPayer(payer);
+        payment.setTransactions(transactions);
+        return payment;
+    }
+
+    public Object payReservationExecutePayment(Long reservationId, PaymentDTO paymentDTO) throws PayPalRESTException, EntityNotFoundException, ImpossibleActionException, PayPalException {
+        Reservation reservation = reservationRepository.findByIdAndIsCancelledFalse(reservationId) //TODO optimistic lock
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+        if (reservation.getOrderId() != null)
+            throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");
+
+        Payment payment = new Payment();
+        payment.setId(paymentDTO.getPaymentID());
+
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId(paymentDTO.getPayerID());
+        APIContext context = new APIContext(clientId, clientSecret, "sandbox");
+        Payment createdPayment = payment.execute(context, paymentExecution);
+        if (createdPayment == null) {
+            throw new PayPalException("Payment not executed");
+        }
+
+        reservation.setOrderId(createdPayment.getId());
         return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 }
