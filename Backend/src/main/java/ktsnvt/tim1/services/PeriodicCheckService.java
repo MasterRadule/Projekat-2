@@ -53,7 +53,7 @@ public class PeriodicCheckService {
 
     @Scheduled(cron = "${checkToken.cron}")
     public void checkToken(){
-        userRepository.findByEmailNotNullAndIsVerifiedFalse().forEach((user)->{
+        userRepository.findByIsVerifiedFalse().forEach((user)->{
             VerificationToken vt = verificationTokenRepository.findByUser(user);
             if(vt.isExpired()){
                 verificationTokenRepository.delete(vt);
