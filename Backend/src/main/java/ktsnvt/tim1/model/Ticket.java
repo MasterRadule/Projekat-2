@@ -14,8 +14,12 @@ public class Ticket {
     @ManyToMany(mappedBy = "tickets", fetch = FetchType.LAZY)
     private Set<ReservableSeatGroup> reservableSeatGroups;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ticket")
     private Set<Seat> seats;
+
+    @ManyToOne()
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
 
     public Ticket() {
         this.reservableSeatGroups = new HashSet<>();
@@ -43,5 +47,13 @@ public class Ticket {
 
     public void setSeats(Set<Seat> seats) {
         this.seats = seats;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
     }
 }

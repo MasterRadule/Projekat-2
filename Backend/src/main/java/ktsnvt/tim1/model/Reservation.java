@@ -17,7 +17,7 @@ public class Reservation {
     @Column(nullable = false)
     private Boolean isCancelled = false;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "reservation")
     private Set<Ticket> tickets;
 
     @ManyToOne()

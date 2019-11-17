@@ -15,10 +15,10 @@ public class EventDay {
     private Date date;
 
     @ManyToOne()
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "eventDay")
     private Set<ReservableSeatGroup> reservableSeatGroups;
 
 

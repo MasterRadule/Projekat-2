@@ -83,20 +83,18 @@ public class ReservationService {
         if (numOfDaysToEvent <= event.getReservationDeadlineDays())
             throw new ImpossibleActionException("Reservation deadline date passed");
 
-        HashSet<Ticket> tickets = new HashSet<Ticket>();
-        for (NewTicketDTO t : newReservationDTO.getTickets()) {
-            makeTicket(t, tickets);
-        }
         Reservation reservation = new Reservation();
+        for (NewTicketDTO t : newReservationDTO.getTickets()) {
+            makeTicket(t, reservation);
+        }
         reservation.setEvent(event);
-        reservation.setTickets(tickets);
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         reservation.setRegisteredUser(registeredUser);
         registeredUser.getReservations().add(reservation);
         return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 
-    private void makeTicket(NewTicketDTO ticketDTO, Set<Ticket> tickets) throws EntityNotFoundException, ImpossibleActionException {
+    private void makeTicket(NewTicketDTO ticketDTO, Reservation reservation) throws EntityNotFoundException, ImpossibleActionException {
         Ticket ticket = new Ticket();
         if (!ticketDTO.getAllDayTicket()) {
             if (ticketDTO.getSeatId() != null) {
@@ -111,7 +109,8 @@ public class ReservationService {
                 reserveParterreAllDays(ticket, ticketDTO);
             }
         }
-        tickets.add(ticket);
+        reservation.getTickets().add(ticket);
+        ticket.setReservation(reservation);
     }
 
     private void reserveSeatSingleDay(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {

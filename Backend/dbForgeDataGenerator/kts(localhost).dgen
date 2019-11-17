@@ -1,0 +1,2081 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Devart (www.devart.com), Data-Generator document file -->
+<!-- Modifying this generated file will probably render it invalid -->
+<DataGenDocument xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="5.0">
+  <Settings>
+    <Provider>59f90733-4d68-4fdf-82a7-f0fcbf5460aa</Provider>
+    <ConnectionString>User Id=root;Host=localhost;Character Set=utf8</ConnectionString>
+    <CategoryId>00000000-0000-0000-0000-000000000000</CategoryId>
+    <AllowNulls>false</AllowNulls>
+    <IncludeNullsPercent>10</IncludeNullsPercent>
+    <AllowEmptyString>false</AllowEmptyString>
+    <IncludeEmptyStringPercent>10</IncludeEmptyStringPercent>
+    <DatabaseName>kts</DatabaseName>
+    <PopulationType>RowsCount</PopulationType>
+    <RowsToGenerate>50</RowsToGenerate>
+    <ProportionOfExistingData>10</ProportionOfExistingData>
+    <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+    <GenerateUniqueValues>false</GenerateUniqueValues>
+    <TruncateTables>true</TruncateTables>
+    <DistributionMode>Seed</DistributionMode>
+    <Seed>1</Seed>
+    <LastSeedValue>0</LastSeedValue>
+    <Language>US</Language>
+  </Settings>
+  <Tables>
+    <Table Name="authority">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>2</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>1</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9999999</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="type">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>1</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return ["ROLE_ADMIN", "ROLE_USER"]
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="hibernate_sequence">
+      <Checked>false</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="next_val">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>26</SeedValue>
+            <MinValue>-9223372036854775808</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue>NULL</DefaultValue>
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="location">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>30</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>27</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="is_disabled">
+          <Checked>true</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>27</SeedValue>
+            <MinValue>0</MinValue>
+            <MaxValue>1</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBitGenerator</GeneratorType>
+          <GeneratorName>bit</GeneratorName>
+          <GeneratorDescription>fill with N-bit values</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="latitude">
+          <Checked>true</Checked>
+          <DataType>DOUBLE</DataType>
+          <GeneratorOptions xsi:type="MySqlDoubleGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:double">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>27</SeedValue>
+            <MinValue>-89</MinValue>
+            <MaxValue>89</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlDoubleGenerator</GeneratorType>
+          <GeneratorName>Latitude</GeneratorName>
+          <GeneratorDescription>56,27; -13,98; 35; -11,14; ...</GeneratorDescription>
+          <GeneratorCategory>Location</GeneratorCategory>
+        </Column>
+        <Column Name="longitude">
+          <Checked>true</Checked>
+          <DataType>DOUBLE</DataType>
+          <GeneratorOptions xsi:type="MySqlDoubleGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:double">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>27</SeedValue>
+            <MinValue>-179</MinValue>
+            <MaxValue>179</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlDoubleGenerator</GeneratorType>
+          <GeneratorName>Longitude</GeneratorName>
+          <GeneratorDescription>126,83; -42; -178,51; 1,02; ...</GeneratorDescription>
+          <GeneratorCategory>Location</GeneratorCategory>
+        </Column>
+        <Column Name="name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlTextFileGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>27</SeedValue>
+            <IsLoop>true</IsLoop>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <FileName>UKCities.txt</FileName>
+            <TrimLeft>false</TrimLeft>
+            <TrimRight>false</TrimRight>
+            <CodePage>-1</CodePage>
+          </GeneratorOptions>
+          <GeneratorType>MySqlTextFileGenerator</GeneratorType>
+          <GeneratorName>UK City</GeneratorName>
+          <GeneratorDescription>Liverpool, West Bromwich, Oxford, Huddersfield, ...</GeneratorDescription>
+          <GeneratorCategory>Location</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="media_file">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>32</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="data">
+          <Checked>true</Checked>
+          <DataType>LONGBLOB</DataType>
+          <GeneratorOptions xsi:type="MySqlFilesFolderGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>32</SeedValue>
+            <IsLoop>true</IsLoop>
+            <Folder>.\Product Image</Folder>
+            <IncludeSubFolders>false</IncludeSubFolders>
+            <FilePattern>*.jpg</FilePattern>
+            <EncodingCodePage>1252</EncodingCodePage>
+          </GeneratorOptions>
+          <GeneratorType>MySqlFilesFolderGenerator</GeneratorType>
+          <GeneratorName>Product Images</GeneratorName>
+          <GeneratorDescription>loads product pictures in jpg file format</GeneratorDescription>
+          <GeneratorCategory>Product</GeneratorCategory>
+        </Column>
+        <Column Name="file_name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>32</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>((($"FirstNamesMale.txt")|($"FirstNamesFemale.txt")|($"LastNames.txt"))(\D{1,3}))|((($"FirstNamesMale.txt")|($"FirstNamesFemale.txt")|($"LastNames.txt"))((19[5-9]\d)|(20[0-2]\d)))</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>NickName</GeneratorName>
+          <GeneratorDescription>Jodi1982, Nancey777, Terrance28, Erich95, Cindi1, Salena92, Pasquale2015, ...</GeneratorDescription>
+          <GeneratorCategory>Personal</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="file_type">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>32</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>[0-9A-Z]+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlStringRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>Reg Exp</GeneratorName>
+          <GeneratorDescription>values based on a regular expression</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="user">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="dtype">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return ["Admin", "RegisteredUser"]
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Length>31</Length>
+        </Column>
+        <Column Name="email">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>(((((($"FirstNamesMale.txt")|($"FirstNamesFemale.txt"))[_.]?)?($"LastNames.txt"))|(($"LastNames.txt")\C?)|(((($"FirstNamesMale.txt")|($"FirstNamesFemale.txt"))[_.]?(\C[_.]?)?)?($"LastNames.txt")))(\D{,3})?|\c{4,8}(\d{1,4}|[_.]\c{4,10}))@(example$"7"|nowhere$"3").com</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>Email</GeneratorName>
+          <GeneratorDescription>Danica.Foley@example.com, fstu@nowhere.com, CurtK_Burton@example.com, LaroseM696@nowhere.com, ...</GeneratorDescription>
+          <GeneratorCategory>Personal</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="first_name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>($"FirstNamesMale.txt")|($"FirstNamesFemale.txt")</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>First Name (any gender)</GeneratorName>
+          <GeneratorDescription>Nickolas, Agnes, Sabrina, Albert, Rozanne, Kerri, Roberta, ...</GeneratorDescription>
+          <GeneratorCategory>Personal</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="is_verified">
+          <Checked>true</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>1</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBitGenerator</GeneratorType>
+          <GeneratorName>bit</GeneratorName>
+          <GeneratorDescription>fill with N-bit values</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="last_name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlTextFileGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <IsLoop>true</IsLoop>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <FileName>LastNames.txt</FileName>
+            <TrimLeft>false</TrimLeft>
+            <TrimRight>false</TrimRight>
+            <CodePage>-1</CodePage>
+          </GeneratorOptions>
+          <GeneratorType>MySqlTextFileGenerator</GeneratorType>
+          <GeneratorName>Last Name</GeneratorName>
+          <GeneratorDescription>Harter, Nicholson, Eller, Kozlowski, Bennett, Norwood, Olivarez, ...</GeneratorDescription>
+          <GeneratorCategory>Personal</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="password">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlConstantGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>53</SeedValue>
+            <ConstantDistributionMode>UserDefined</ConstantDistributionMode>
+            <UserDefinedConstant xsi:type="xsd:string">$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra</UserDefinedConstant>
+            <ColumnDefaultConstant />
+          </GeneratorOptions>
+          <GeneratorType>MySqlConstantGenerator</GeneratorType>
+          <GeneratorName>Constant</GeneratorName>
+          <GeneratorDescription>fill with a constant or column default value</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="event">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>25</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="category">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlWeightedListGeneratorSingleValuesOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <ColumnDataTypeName>VARCHAR</ColumnDataTypeName>
+            <Scale>0</Scale>
+            <Precision>0</Precision>
+            <Length>255</Length>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Values>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Sport</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Fair</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Movie</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Performance</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Competition</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:string">Music</Value>
+                <Weight>10</Weight>
+              </WeightedListItem>
+            </Values>
+          </GeneratorOptions>
+          <GeneratorType>MySqlWeightedListGeneratorSingleValues</GeneratorType>
+          <GeneratorName>Weighted List (simple)</GeneratorName>
+          <GeneratorDescription>values list with specified frequency of occurrence</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+        <Column Name="description">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlLoremIpsumGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>0</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <MinLength>1</MinLength>
+            <MaxLength>199</MaxLength>
+            <MaxAllowedLength>255</MaxAllowedLength>
+            <MinWordsInSentence>3</MinWordsInSentence>
+            <MaxWordsInSentence>7</MaxWordsInSentence>
+            <MinSentences>1</MinSentences>
+            <MaxSentences>10</MaxSentences>
+            <MinParagraphs>1</MinParagraphs>
+            <MaxParagraphs>1</MaxParagraphs>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <PunctuationSigns>,.!?...;</PunctuationSigns>
+            <StartParagraphWithIndent>false</StartParagraphWithIndent>
+            <AddParagraphTags>false</AddParagraphTags>
+            <AddItalicTags>false</AddItalicTags>
+            <AddBoldTags>false</AddBoldTags>
+            <AddSingleLineBreakTags>false</AddSingleLineBreakTags>
+            <AddNewLines>false</AddNewLines>
+          </GeneratorOptions>
+          <GeneratorType>MySqlLoremIpsumGenerator</GeneratorType>
+          <GeneratorName>Product Description</GeneratorName>
+          <GeneratorDescription>Sunt id voluptatem eveniet ipsum minus hic. Repellenadus at facilis. Aut facilis esse qui, eligendi et quae! Et qui ullam., ...</GeneratorDescription>
+          <GeneratorCategory>Product</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="is_active_for_reservations">
+          <Checked>true</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlWeightedListGeneratorSingleValuesOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <ColumnDataTypeName>BIT</ColumnDataTypeName>
+            <Scale>0</Scale>
+            <Precision>1</Precision>
+            <Length>0</Length>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Values>
+              <WeightedListItem>
+                <Value xsi:type="xsd:long">0</Value>
+                <Weight>15</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:long">1</Value>
+                <Weight>85</Weight>
+              </WeightedListItem>
+            </Values>
+          </GeneratorOptions>
+          <GeneratorType>MySqlWeightedListGeneratorSingleValues</GeneratorType>
+          <GeneratorName>Weighted List (simple)</GeneratorName>
+          <GeneratorDescription>values list with specified frequency of occurrence</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="is_cancelled">
+          <Checked>true</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlWeightedListGeneratorSingleValuesOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <ColumnDataTypeName>BIT</ColumnDataTypeName>
+            <Scale>0</Scale>
+            <Precision>1</Precision>
+            <Length>0</Length>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>3</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Values>
+              <WeightedListItem>
+                <Value xsi:type="xsd:long">0</Value>
+                <Weight>85</Weight>
+              </WeightedListItem>
+              <WeightedListItem>
+                <Value xsi:type="xsd:long">1</Value>
+                <Weight>15</Weight>
+              </WeightedListItem>
+            </Values>
+          </GeneratorOptions>
+          <GeneratorType>MySqlWeightedListGeneratorSingleValues</GeneratorType>
+          <GeneratorName>Weighted List (simple)</GeneratorName>
+          <GeneratorDescription>values list with specified frequency of occurrence</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="max_tickets_per_reservation">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="MySqlIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>4</SeedValue>
+            <MinValue>2</MinValue>
+            <MaxValue>5</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlIntegerGenerator</GeneratorType>
+          <GeneratorName>int</GeneratorName>
+          <GeneratorDescription>fill with 32-bit signed integer values</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>((Com|Speak|Sub|Con|Mic|Tweet|Read|Tab|Cab|Tab|Bi|Te|Mono|Print|Pro|Mon|Arm|Sup|Cart|Char|Re|Clean|Re|Trans|An|Stereo|Play|Com|Amp)(put|hold|ceiv|woof|mut|top|ta|le|cul|cess|tell|ject|find|pick|band|cord|plott|tin|cycl|tect|ni|cord|lict|tin|lifi)(|ic|im|in|up|ad|er||on|ep|ed|let|ga|aqu|ef|edg|op|oll|omm|ew|fi|an|ex|pl)?(er|or|er|on|phone|ra|entor|ator|ar|er|scope|or|ry|ridge|let))</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>Product Name</GeneratorName>
+          <GeneratorDescription>Repickentor, Playtinon, Cleantinedridge, Tweetnier, Cartholdoper, ... </GeneratorDescription>
+          <GeneratorCategory>Product</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="reservation_deadline_days">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="MySqlIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>3</SeedValue>
+            <MinValue>2</MinValue>
+            <MaxValue>5</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlIntegerGenerator</GeneratorType>
+          <GeneratorName>int</GeneratorName>
+          <GeneratorDescription>fill with 32-bit signed integer values</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="location_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>2</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>25</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue>NULL</DefaultValue>
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="seat_group">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="cols_num">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    retval = []
+    arr = [3,5,4,2,3]
+    for i in range(config["n_rows"]):
+        if i &gt; 4:
+            val = DBNull.Value
+        else:
+            val = arr[i]
+        retval.append(val)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="is_parterre">
+          <Checked>true</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    retval = []
+    for i in range(config["n_rows"]):
+        val = 0
+        if cols_num == DBNull.Value:
+            val = 1
+        retval.append(val)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="name">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>Apartment|Basement|Building|Department|Floor|Front|Hangar|Lobby|Lot|Lower|Office|Penthouse|Pier|Rear|Room|Side|Slip|Space|Stop|Suite|Trailer|Unit|Upper</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>Building Unit</GeneratorName>
+          <GeneratorDescription>Basement, Lobby, Office, Unit, Penthouse, ...</GeneratorDescription>
+          <GeneratorCategory>Location</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="rows_num">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    retval = []
+    arr = [3,2,2,5,3]
+    for i in range(config["n_rows"]):
+        if i &gt; 4:
+            val = DBNull.Value
+        else:
+            val = arr[i]
+        retval.append(val)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="total_seats">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    retval = []
+    arr = [9,10,8,10,9]
+    for i in range(config["n_rows"]):
+        if i &gt; 4:
+            val = Random(i).Next(10,100)
+        else:
+            val = arr[i]
+        retval.append(val)
+    return retval
+# Specify your own script here</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="x_coordinate">
+          <Checked>true</Checked>
+          <DataType>DOUBLE</DataType>
+          <GeneratorOptions xsi:type="MySqlDoubleGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:double">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <MinValue>5</MinValue>
+            <MaxValue>400</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlDoubleGenerator</GeneratorType>
+          <GeneratorName>double</GeneratorName>
+          <GeneratorDescription>fill with double numeric values</GeneratorDescription>
+        </Column>
+        <Column Name="y_coordinate">
+          <Checked>true</Checked>
+          <DataType>DOUBLE</DataType>
+          <GeneratorOptions xsi:type="MySqlDoubleGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:double">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>47</SeedValue>
+            <MinValue>5</MinValue>
+            <MaxValue>400</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlDoubleGenerator</GeneratorType>
+          <GeneratorName>double</GeneratorName>
+          <GeneratorDescription>fill with double numeric values</GeneratorDescription>
+        </Column>
+        <Column Name="location_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>20</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>25</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="event_day">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>5</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="date">
+          <Checked>true</Checked>
+          <DataType>DATETIME</DataType>
+          <GeneratorOptions xsi:type="MySqlDateTimeGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <UseDefault>false</UseDefault>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>5</SeedValue>
+            <SequentialValueTicks>1728000000000</SequentialValueTicks>
+            <OffsetFromColumnMaxTimeTicks>10000000</OffsetFromColumnMaxTimeTicks>
+            <OffsetFromColumnMinTimeTicks>10000000</OffsetFromColumnMinTimeTicks>
+            <DateTimeRange>MinMaxDate</DateTimeRange>
+            <UseOffsetDetails>false</UseOffsetDetails>
+            <OffsetFromColumnMinDays>0</OffsetFromColumnMinDays>
+            <OffsetFromColumnMaxDays>7</OffsetFromColumnMaxDays>
+            <MinDate>2020-01-01T00:00:00</MinDate>
+            <MaxDate>2020-05-01T00:00:00</MaxDate>
+            <IsRandomizeDate>true</IsRandomizeDate>
+            <MinFraction>0</MinFraction>
+            <MaxFraction>999</MaxFraction>
+            <MaxAllowedFraction>999</MaxAllowedFraction>
+            <IsRandomizeFraction>false</IsRandomizeFraction>
+            <Scale>6</Scale>
+            <Precision>6</Precision>
+            <IsRandomizeTime>true</IsRandomizeTime>
+            <MaxTime>863990000000</MaxTime>
+            <MinTime>0</MinTime>
+          </GeneratorOptions>
+          <GeneratorType>MySqlDateTimeGenerator</GeneratorType>
+          <GeneratorName>datetime</GeneratorName>
+          <GeneratorDescription>fill with date and time with fractional seconds values</GeneratorDescription>
+          <Precision>6</Precision>
+        </Column>
+        <Column Name="event_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>5</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="event_seat_group">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>18</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="price">
+          <Checked>true</Checked>
+          <DataType>DOUBLE</DataType>
+          <GeneratorOptions xsi:type="MySqlDoubleGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:double">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>18</SeedValue>
+            <MinValue>5</MinValue>
+            <MaxValue>35</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlDoubleGenerator</GeneratorType>
+          <GeneratorName>double</GeneratorName>
+          <GeneratorDescription>fill with double numeric values</GeneratorDescription>
+        </Column>
+        <Column Name="event_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>19</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return range(1,26)
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="seat_group_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>18</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return range(1,51)
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="reservation">
+      <Checked>false</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>39</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="is_cancelled">
+          <Checked>false</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>39</SeedValue>
+            <MinValue>0</MinValue>
+            <MaxValue>1</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBitGenerator</GeneratorType>
+          <GeneratorName>bit</GeneratorName>
+          <GeneratorDescription>fill with N-bit values</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="order_id">
+          <Checked>false</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>39</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>\d{5}</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>ID (random)</GeneratorName>
+          <GeneratorDescription>54470, 16912, 43814, 06728, 36017, 82433, 95664, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Length>255</Length>
+        </Column>
+        <Column Name="event_id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>40</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="user_id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>41</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="reservable_seat_group">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>33</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="free_seats">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>46</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    retval = []
+    arr = [9,10,8,10,9]
+    for i in range(config["n_rows"]):
+        if i &gt; 4:
+            val = Random(i).Next(10,100)
+        else:
+            val = arr[i]
+        retval.append(val)
+    return retval
+# Specify your own script here</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="event_day_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>33</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="event_seat_group_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>34</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="ticket">
+      <Checked>false</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>49</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="reservation_id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>23</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="event_pictures_and_videos">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="event_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>16</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="pictures_and_videos_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>17</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="reservable_seat_groups_tickets">
+      <Checked>false</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="reservable_seat_group">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>37</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="ticket">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>38</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="seat">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>46</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>44</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="col_num">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>18</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    arr = [9,10,8,10,9]
+    cols = [3,5,4,2,3]
+    retval = []
+    rsg_id = 0
+    for i in range(len(arr)):
+        rsg_id += 1
+        for j in range(arr[i]):
+            retval.append(j%cols[i]+1)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="row_num">
+          <Checked>true</Checked>
+          <DataType>INT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>19</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    arr = [9,10,8,10,9]
+    rows = [3,2,2,5,3]
+    retval = []
+    rsg_id = 0
+    for i in range(len(arr)):
+        rsg_id += 1
+        for j in range(arr[i]):
+            retval.append(j%rows[i]+1)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>11</Precision>
+        </Column>
+        <Column Name="reservable_seat_group_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>18</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    arr = [9,10,8,10,9]
+    retval = []
+    rsg_id = 0
+    for i in range(len(arr)):
+        rsg_id += 1
+        for j in range(arr[i]):
+            retval.append(rsg_id)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="ticket_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="MySqlConstantGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>true</AllowNulls>
+            <NullProportion>100</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>45</SeedValue>
+            <ConstantDistributionMode>UserDefined</ConstantDistributionMode>
+            <UserDefinedConstant xsi:type="xsd:int">0</UserDefinedConstant>
+            <ColumnDefaultConstant>NULL</ColumnDefaultConstant>
+          </GeneratorOptions>
+          <GeneratorType>MySqlConstantGenerator</GeneratorType>
+          <GeneratorName>Constant</GeneratorName>
+          <GeneratorDescription>fill with a constant or column default value</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="user_authority">
+      <Checked>true</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>50</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="user_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>54</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="authority_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>55</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return ["1", "2"]
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+    <Table Name="verification_token">
+      <Checked>false</Checked>
+      <Settings>
+        <Truncate>true</Truncate>
+        <RowsToGenerate>0</RowsToGenerate>
+        <PopulationDetails>
+          <PopulationType>RowsCount</PopulationType>
+          <RowsCount>1</RowsCount>
+          <LookupProportion>30</LookupProportion>
+          <ProportionOfExistingData>10</ProportionOfExistingData>
+          <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
+        </PopulationDetails>
+      </Settings>
+      <Columns>
+        <Column Name="token_id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:long">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>58</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>9223372036854775807</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>ID (sequential)</GeneratorName>
+          <GeneratorDescription>1, 2, 3, 4, ..., 9, 10, 11, 12, ...</GeneratorDescription>
+          <GeneratorCategory>Business</GeneratorCategory>
+          <Precision>20</Precision>
+        </Column>
+        <Column Name="date_created">
+          <Checked>false</Checked>
+          <DataType>DATETIME</DataType>
+          <GeneratorOptions xsi:type="MySqlDateTimeGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <UseDefault>false</UseDefault>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>58</SeedValue>
+            <SequentialValueTicks>864000000000</SequentialValueTicks>
+            <OffsetFromColumnMaxTimeTicks>10000000</OffsetFromColumnMaxTimeTicks>
+            <OffsetFromColumnMinTimeTicks>10000000</OffsetFromColumnMinTimeTicks>
+            <DateTimeRange>MinMaxDate</DateTimeRange>
+            <UseOffsetDetails>false</UseOffsetDetails>
+            <OffsetFromColumnMinDays>0</OffsetFromColumnMinDays>
+            <OffsetFromColumnMaxDays>7</OffsetFromColumnMaxDays>
+            <MinDate>1970-01-01T00:00:00</MinDate>
+            <MaxDate>2019-11-16T00:00:00+01:00</MaxDate>
+            <IsRandomizeDate>true</IsRandomizeDate>
+            <MinFraction>0</MinFraction>
+            <MaxFraction>999</MaxFraction>
+            <MaxAllowedFraction>999</MaxAllowedFraction>
+            <IsRandomizeFraction>true</IsRandomizeFraction>
+            <Scale>6</Scale>
+            <Precision>6</Precision>
+            <IsRandomizeTime>true</IsRandomizeTime>
+            <MaxTime>863990000000</MaxTime>
+            <MinTime>10000000</MinTime>
+          </GeneratorOptions>
+          <GeneratorType>MySqlDateTimeGenerator</GeneratorType>
+          <GeneratorName>datetime</GeneratorName>
+          <GeneratorDescription>fill with date and time with fractional seconds values</GeneratorDescription>
+          <Precision>6</Precision>
+        </Column>
+        <Column Name="expired">
+          <Checked>false</Checked>
+          <DataType>BIT</DataType>
+          <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>58</SeedValue>
+            <MinValue>0</MinValue>
+            <MaxValue>1</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
+          </GeneratorOptions>
+          <GeneratorType>MySqlBitGenerator</GeneratorType>
+          <GeneratorName>bit</GeneratorName>
+          <GeneratorDescription>fill with N-bit values</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="token">
+          <Checked>false</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
+            <AllowEmptyStrings>false</AllowEmptyStrings>
+            <EmptyStringProportion>10</EmptyStringProportion>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>58</SeedValue>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Expression>[0-9A-Z]+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlStringRegularExpressionGenerator</GeneratorType>
+          <GeneratorName>Reg Exp</GeneratorName>
+          <GeneratorDescription>values based on a regular expression</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+        <Column Name="user_id">
+          <Checked>false</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>58</SeedValue>
+            <RepeatValues>false</RepeatValues>
+            <FromTimes>1</FromTimes>
+            <ToTimes>10</ToTimes>
+            <ExcludeValues>false</ExcludeValues>
+            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+          </GeneratorOptions>
+          <GeneratorType>ForeignKeyGenerator</GeneratorType>
+          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
+          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <HasForeignKey>true</HasForeignKey>
+          <Precision>20</Precision>
+        </Column>
+      </Columns>
+    </Table>
+  </Tables>
+  <SynchronizationOptions xsi:type="DataSyncOptionGroup">
+    <SynchronizeType>File</SynchronizeType>
+    <SynchronizationFileName>C:\Users\a\Desktop\data.sql</SynchronizationFileName>
+    <ExecuteCustomScriptTypeBefore>Execute UseEmbeddedScript</ExecuteCustomScriptTypeBefore>
+    <EmbeddedScriptBefore>SET SQL_SAFE_UPDATES = 0;</EmbeddedScriptBefore>
+    <ExecuteCustomScriptTypeAfter>Execute UseEmbeddedScript</ExecuteCustomScriptTypeAfter>
+    <EmbeddedScriptAfter>SET SQL_SAFE_UPDATES = 1;</EmbeddedScriptAfter>
+    <BulkInsert>false</BulkInsert>
+  </SynchronizationOptions>
+</DataGenDocument>

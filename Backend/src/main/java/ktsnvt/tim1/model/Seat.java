@@ -14,7 +14,7 @@ public class Seat {
     private ReservableSeatGroup reservableSeatGroup;
 
     @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
     @Column(nullable = false)

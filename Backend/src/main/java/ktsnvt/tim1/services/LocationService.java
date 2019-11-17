@@ -92,6 +92,7 @@ public class LocationService {
         SeatGroup newSeatGroup = seatGroupRepository.save(seatGroupMapper.toEntity(seatGroup));
         location.getSeatGroups()
                 .add(newSeatGroup);
+        newSeatGroup.setLocation(location);
         locationRepository.save(location);
 
         return seatGroupMapper.toDTO(newSeatGroup);

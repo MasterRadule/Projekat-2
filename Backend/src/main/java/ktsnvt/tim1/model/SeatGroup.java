@@ -30,6 +30,10 @@ public class SeatGroup {
     @Column(nullable = false)
     private Integer totalSeats;
 
+    @ManyToOne()
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
+
     public SeatGroup() {
     }
 
@@ -95,5 +99,13 @@ public class SeatGroup {
 
     public void setTotalSeats(Integer totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
