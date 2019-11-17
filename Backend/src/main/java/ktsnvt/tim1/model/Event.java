@@ -36,10 +36,10 @@ public class Event {
     @Column(nullable = false)
     private Integer maxTicketsPerReservation;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "event")
     private Set<EventDay> eventDays;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "event")
     private Set<EventSeatGroup> eventSeatGroups;
 
     @ManyToOne()

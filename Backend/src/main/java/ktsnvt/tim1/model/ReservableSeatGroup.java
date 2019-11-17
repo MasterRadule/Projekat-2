@@ -17,7 +17,7 @@ public class ReservableSeatGroup {
             inverseJoinColumns = @JoinColumn(name = "ticket", referencedColumnName = "id"))
     private Set<Ticket> tickets;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "reservableSeatGroup")
     private Set<Seat> seats;
 
     @ManyToOne
