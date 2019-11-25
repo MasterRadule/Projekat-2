@@ -21,7 +21,7 @@ public class Location {
     private Double longitude;
 
     @Column(nullable = false)
-    private Boolean isDisabled;
+    private Boolean disabled;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "location")
     private Set<SeatGroup> seatGroups;
@@ -32,6 +32,16 @@ public class Location {
     public Location() {
         this.seatGroups = new HashSet<>();
         this.events = new HashSet<>();
+    }
+
+    public Location(Long id, String name, Double longitude, Double latitude, Boolean disabled) {
+        this.seatGroups = new HashSet<>();
+        this.events = new HashSet<>();
+        this.id = id;
+        this.name = name;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.disabled = disabled;
     }
 
     public Long getId() {
@@ -66,12 +76,12 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public Boolean getDisabled() {
-        return isDisabled;
+    public Boolean isDisabled() {
+        return disabled;
     }
 
     public void setDisabled(Boolean disabled) {
-        isDisabled = disabled;
+        this.disabled = disabled;
     }
 
     public Set<SeatGroup> getSeatGroups() {

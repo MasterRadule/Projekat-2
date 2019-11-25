@@ -21,6 +21,14 @@ public class LocationDTO {
     public LocationDTO() {
     }
 
+    public LocationDTO(Long id, String name, Double longitude, Double latitude, Boolean disabled) {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.disabled = disabled;
+    }
+
     public Long getId() {
         return id;
     }

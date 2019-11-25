@@ -21,7 +21,7 @@ public class LocationMapper implements IMapper<Location, LocationDTO> {
     @Override
     public LocationDTO toDTO(Location location) {
         LocationDTO dto = new LocationDTO();
-        dto.setDisabled(location.getDisabled());
+        dto.setDisabled(location.isDisabled());
         dto.setId(location.getId());
         dto.setLatitude(location.getLatitude());
         dto.setLongitude(location.getLongitude());
