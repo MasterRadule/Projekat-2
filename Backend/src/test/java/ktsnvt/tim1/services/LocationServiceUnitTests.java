@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("dragan")
+@ActiveProfiles("test")
 class LocationServiceUnitTests {
     @Autowired
     private LocationService locationService;
@@ -64,7 +64,9 @@ class LocationServiceUnitTests {
 
     @Test
     void getLocation_locationDoesNotExist_EntityNotFoundExceptionThrown() {
-        assertThrows(EntityNotFoundException.class, () -> locationService.getLocation(1L));
+        Long id = 1L;
+        Mockito.when(locationRepositoryMocked.findById(id)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> locationService.getLocation(id));
     }
 
     @Test
@@ -111,7 +113,11 @@ class LocationServiceUnitTests {
 
     @Test
     void editLocation_locationDoesNotExist_EntityNotFoundExceptionThrown() {
-        LocationDTO editedDTO = new LocationDTO(1L, "Spens", 50.0, 60.0, false);
+        Long id = 1L;
+        LocationDTO editedDTO = new LocationDTO(id, "Spens", 50.0, 60.0, false);
+
+        Mockito.when(locationRepositoryMocked.findById(id)).thenReturn(Optional.empty());
+
         assertThrows(EntityNotFoundException.class, () -> locationService.editLocation(editedDTO));
     }
 
