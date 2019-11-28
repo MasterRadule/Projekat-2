@@ -58,7 +58,7 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void getLocation_locationExists_LocationReturned() throws EntityNotFoundException {
+    void getLocation_locationExists_locationReturned() throws EntityNotFoundException {
         Long id = 1L;
         Location entity = new Location(id, "Spens", 50.0, 50.0, false);
 
@@ -74,7 +74,7 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void getLocation_locationDoesNotExist_EntityNotFoundExceptionThrown() {
+    void getLocation_locationDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
         Mockito.when(locationRepositoryMocked.findById(id)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> locationService.getLocation(id));
@@ -117,13 +117,13 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void editLocation_locationIdIsNull_EntityNotValidExceptionThrown() {
+    void editLocation_locationIdIsNull_entityNotValidExceptionThrown() {
         LocationDTO editedDTO = new LocationDTO(null, "Spens", 50.0, 60.0, false);
         assertThrows(EntityNotValidException.class, () -> locationService.editLocation(editedDTO));
     }
 
     @Test
-    void editLocation_locationDoesNotExist_EntityNotFoundExceptionThrown() {
+    void editLocation_locationDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
         LocationDTO editedDTO = new LocationDTO(id, "Spens", 50.0, 60.0, false);
 
@@ -148,10 +148,14 @@ class LocationServiceUnitTests {
         assertEquals(editedDTO.getLatitude(), editedLocation.getLatitude());
         assertEquals(editedDTO.getLongitude(), editedLocation.getLongitude());
         assertEquals(editedDTO.getName(), editedLocation.getName());
+
+        verify(locationRepositoryMocked, times(1)).findById(editedDTO.getId());
+        verify(locationRepositoryMocked, times(1)).save(oldEntity);
+        verify(locationMapperMocked, times(1)).toDTO(newEntity);
     }
 
     @Test
-    void getSeatGroups_locationExists_repositoryMethodCalledOnce() throws EntityNotFoundException {
+    void getSeatGroups_locationExists_pageReturned() throws EntityNotFoundException {
         Long id = 1L;
         Location l = new Location(1L, "Spens", 50.0, 60.0, false);
         int numberOfSeatGroups = 5;
@@ -176,7 +180,7 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void getSeatGroups_locationDoesNotExist_EntityNotFoundExceptionThrown() {
+    void getSeatGroups_locationDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
         Mockito.when(locationRepositoryMocked.findById(id)).thenReturn(Optional.empty());
 
@@ -203,6 +207,7 @@ class LocationServiceUnitTests {
 
         assertEquals(seatGroupId, returnedValue.getId());
         verify(locationRepositoryMocked, times(1)).findById(locationId);
+        verify(seatGroupMapperMocked, times(1)).toDTO(sg);
     }
 
     @Test

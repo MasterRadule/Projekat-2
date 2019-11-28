@@ -1,3 +1,2 @@
 
-Backend/testdb.trace.db
-Backend/testdb.mv.db
+*.db
