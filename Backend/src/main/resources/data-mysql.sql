@@ -75,7 +75,7 @@ INSERT INTO authority(id, type) VALUES
 --
 -- Inserting data into table location
 --
-INSERT INTO location(id, is_disabled, latitude, longitude, name) VALUES
+INSERT INTO location(id, disabled, latitude, longitude, name) VALUES
 (1, False, 33, -44, 'Huddersfield'),
 (2, False, 46, -51, 'Sheffield'),
 (3, True, -31, -62, 'Sunderland'),

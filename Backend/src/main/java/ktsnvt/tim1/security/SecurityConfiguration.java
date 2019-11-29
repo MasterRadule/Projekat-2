@@ -19,55 +19,58 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
 
-	@Autowired
-	public void configureAuthentication(
-			AuthenticationManagerBuilder authenticationManagerBuilder)
-			throws Exception {
-		
-		authenticationManagerBuilder
-				.userDetailsService(this.userDetailsService).passwordEncoder(
-						passwordEncoder());
-	}
+    @Autowired
+    public void configureAuthentication(
+            AuthenticationManagerBuilder authenticationManagerBuilder)
+            throws Exception {
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
-	
-	@Bean
-	public AuthenticationTokenFilter authenticationTokenFilterBean()
-			throws Exception {
-		AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
-		authenticationTokenFilter
-				.setAuthenticationManager(authenticationManagerBean());
-		return authenticationTokenFilter;
-	}
+        authenticationManagerBuilder
+                .userDetailsService(userDetailsService()).passwordEncoder(
+                passwordEncoder());
+    }
 
-	@Override
-	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity
-			.csrf().disable()
+    @Bean
+    public UserDetailsServiceImpl userDetailsService() {
+        return new UserDetailsServiceImpl();
+    }
 
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-			.authorizeRequests()
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public AuthenticationTokenFilter authenticationTokenFilterBean()
+            throws Exception {
+        AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
+        authenticationTokenFilter
+                .setAuthenticationManager(authenticationManagerBean());
+        return authenticationTokenFilter;
+    }
+
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf().disable()
+
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
 
-		// Custom JWT based authentication
-		httpSecurity.addFilterBefore(authenticationTokenFilterBean(),
-				UsernamePasswordAuthenticationFilter.class);
-	}
+        // Custom JWT based authentication
+        httpSecurity.addFilterBefore(authenticationTokenFilterBean(),
+                UsernamePasswordAuthenticationFilter.class);
+    }
 
 }
