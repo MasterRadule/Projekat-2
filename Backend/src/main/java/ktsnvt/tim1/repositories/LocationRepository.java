@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<Location, Long> {
     Page<Location> findByNameIgnoreCaseContaining(String name, Pageable pageable);
 
-    Optional<Location> findByIdAndIsDisabledFalse(Long id);
+    Optional<Location> findByIdAndDisabledFalse(Long id);
 }
