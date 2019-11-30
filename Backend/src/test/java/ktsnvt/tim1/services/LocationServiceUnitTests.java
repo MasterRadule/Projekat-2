@@ -263,7 +263,7 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void createSeatGroup_locationExistsAndSeatGroupIsNotValid_seatGroupCreated() throws EntityNotValidException {
+    void createSeatGroup_locationExistsAndSeatGroupIsNotValid_entityNotValidExceptionThrown() throws EntityNotValidException {
         Long locationId = 1L;
 
         Location l = new Location(locationId, "Spens", 50.0, 50.0, false);
@@ -277,7 +277,7 @@ class LocationServiceUnitTests {
     }
 
     @Test
-    void createSeatGroup_locationDoesNotExist_seatGroupCreated() {
+    void createSeatGroup_locationDoesNotExist_entityNotFoundExceptionThrown() {
         Long locationId = 1L;
         SeatGroupDTO newDTO = new SeatGroupDTO();
 
