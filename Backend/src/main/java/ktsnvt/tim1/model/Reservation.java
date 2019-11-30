@@ -11,7 +11,7 @@ public class Reservation {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = true)
+    @Column
     private String orderId;
 
     @Column(nullable = false)
