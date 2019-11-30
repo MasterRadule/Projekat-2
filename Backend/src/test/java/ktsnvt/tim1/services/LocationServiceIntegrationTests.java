@@ -34,7 +34,7 @@ public class LocationServiceIntegrationTests {
     private LocationRepository locationRepository;
 
     @Test
-    void getLocations_pageRequestSent_returnedLocations() {
+    void getLocations_pageRequestSent_locationsReturned() {
         int pageSize = 5;
         Pageable pageable = PageRequest.of(0, pageSize);
         Page<LocationDTO> page = locationService.getLocations(pageable);
