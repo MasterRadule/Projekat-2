@@ -21,7 +21,7 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Page<LocationDTO>> getLocations(Pageable pageable) {
         return new ResponseEntity<>(locationService.getLocations(pageable), HttpStatus.OK);
     }
