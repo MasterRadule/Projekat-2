@@ -51,6 +51,17 @@ public class Event {
         this.eventSeatGroups = new HashSet<>();
     }
 
+    public Event(Long id, String name, String description, EventCategory eventCategory, boolean cancelled) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.category = eventCategory;
+        this.isCancelled = cancelled;
+        this.eventDays = new HashSet<>();
+        this.picturesAndVideos = new HashSet<>();
+        this.eventSeatGroups = new HashSet<>();
+    }
+
     public Long getId() {
         return id;
     }

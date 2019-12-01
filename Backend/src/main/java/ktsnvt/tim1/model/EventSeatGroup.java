@@ -29,6 +29,11 @@ public class EventSeatGroup {
         this.reservableSeatGroups = new HashSet<>();
     }
 
+    public EventSeatGroup(Long id) {
+        this.id = id;
+        this.reservableSeatGroups = new HashSet<>();
+    }
+
     public Long getId() {
         return id;
     }

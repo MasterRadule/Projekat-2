@@ -17,6 +17,10 @@ public class EventSeatGroupDTO {
 
     public EventSeatGroupDTO() {}
 
+    public EventSeatGroupDTO(Long seatGroupID) {
+        this.seatGroupID = seatGroupID;
+    }
+
     public Long getSeatGroupID() {
         return seatGroupID;
     }

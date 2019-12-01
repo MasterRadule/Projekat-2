@@ -21,6 +21,15 @@ public class EventDay {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "eventDay")
     private Set<ReservableSeatGroup> reservableSeatGroups;
 
+    public EventDay() {
+        this.reservableSeatGroups = new HashSet<>();
+    }
+
+    public EventDay(Long id, Date date) {
+        this.id = id;
+        this.date = date;
+        this.reservableSeatGroups = new HashSet<>();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -36,10 +45,6 @@ public class EventDay {
     @Override
     public int hashCode() {
         return Objects.hash(date);
-    }
-
-    public EventDay() {
-        this.reservableSeatGroups = new HashSet<>();
     }
 
     public Long getId() {

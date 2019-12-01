@@ -19,6 +19,12 @@ public class LocationSeatGroupDTO {
 
     public LocationSeatGroupDTO() {}
 
+    public LocationSeatGroupDTO(Long eventID, Long locationID) {
+        this.eventID = eventID;
+        this.locationID = locationID;
+        this.eventSeatGroups = new ArrayList<>();
+    }
+
     public Long getEventID() {
         return eventID;
     }

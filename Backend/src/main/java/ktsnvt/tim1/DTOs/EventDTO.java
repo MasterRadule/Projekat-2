@@ -39,6 +39,15 @@ public class EventDTO {
     public EventDTO() {
     }
 
+    public EventDTO(Long id, String name, String description, String eventCategory, boolean cancelled) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.category = eventCategory;
+        this.cancelled = cancelled;
+        this.eventDays = new ArrayList<>();
+    }
+
     public Long getId() {
         return id;
     }
