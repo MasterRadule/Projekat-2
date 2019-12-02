@@ -15,6 +15,16 @@ public class SearchEventsDTO {
     private String fromDate;
     private String toDate;
 
+    public SearchEventsDTO() {}
+
+    public SearchEventsDTO(String name, Long locationID, String category, String fromDate, String toDate) {
+        this.name = name;
+        this.locationID = locationID;
+        this.category = category;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+    }
+
     public String getName() {
         return name;
     }

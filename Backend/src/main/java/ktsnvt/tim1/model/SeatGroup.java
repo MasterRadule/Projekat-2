@@ -37,6 +37,10 @@ public class SeatGroup {
     public SeatGroup() {
     }
 
+    public SeatGroup(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
