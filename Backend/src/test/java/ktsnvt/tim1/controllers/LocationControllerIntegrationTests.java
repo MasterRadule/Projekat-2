@@ -1,6 +1,9 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.model.Location;
+import ktsnvt.tim1.repositories.LocationRepository;
+import ktsnvt.tim1.services.LocationService;
 import ktsnvt.tim1.utils.RestResponsePage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,12 +12,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.*;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -26,6 +35,9 @@ public class LocationControllerIntegrationTests {
 
     @Autowired
     TestRestTemplate testRestTemplate;
+
+    @Autowired
+    LocationRepository locationRepository;
 
     @SuppressWarnings("ConstantConditions")
     @Test
@@ -52,7 +64,7 @@ public class LocationControllerIntegrationTests {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(location);
-        assertEquals(1L, location.getId());
+        assertEquals(1L, location.getId().longValue());
     }
 
     @Test
@@ -116,6 +128,33 @@ public class LocationControllerIntegrationTests {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(0, locations.size());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void createLocation_locationCreated() {
+        LocationDTO newDTO = new LocationDTO(null, "Spens", 50.0, 30.0, false);
+
+        long initialSize = locationRepository.count();
+
+        HttpEntity<LocationDTO> entity = new HttpEntity<>(newDTO);
+
+        ResponseEntity<LocationDTO> result = testRestTemplate.exchange(createURLWithPort("/locations"),
+                HttpMethod.POST, entity, LocationDTO.class);
+
+        LocationDTO location = result.getBody();
+
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertNotNull(location);
+        assertEquals(newDTO.getName(), location.getName());
+        assertEquals(newDTO.getLongitude(), location.getLongitude());
+        assertEquals(newDTO.getLatitude(), location.getLatitude());
+        assertEquals(newDTO.isDisabled(), location.isDisabled());
+        assertNotEquals(null, location.getId());
+
+        Page<Location> locationPage = locationRepository.findAll(PageRequest.of(0, 5));
+        assertEquals(initialSize + 1, locationPage.getTotalElements());
     }
 
 
