@@ -1612,7 +1612,7 @@ def main(config):
           <Checked>true</Checked>
           <DataType>BIGINT</DataType>
           <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>false</Unique>
+            <Unique>true</Unique>
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
@@ -2102,9 +2102,18 @@ def main(config):
     <SynchronizeType>File</SynchronizeType>
     <SynchronizationFileName>C:\Users\a\Desktop\data.sql</SynchronizationFileName>
     <ExecuteCustomScriptTypeBefore>Execute UseEmbeddedScript</ExecuteCustomScriptTypeBefore>
-    <EmbeddedScriptBefore>SET SQL_SAFE_UPDATES = 0;</EmbeddedScriptBefore>
+    <EmbeddedScriptBefore>-- for MySQL
+SET SQL_SAFE_UPDATES = 0;</EmbeddedScriptBefore>
     <ExecuteCustomScriptTypeAfter>Execute UseEmbeddedScript</ExecuteCustomScriptTypeAfter>
-    <EmbeddedScriptAfter>SET SQL_SAFE_UPDATES = 1;</EmbeddedScriptAfter>
+    <EmbeddedScriptAfter>-- for MySQL
+TRUNCATE table hibernate_sequence;
+INSERT INTO hibernate_sequence (next_val) VALUES
+(51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51);
+
+SET SQL_SAFE_UPDATES = 1;
+
+-- for H2
+ALTER SEQUENCE hibernate_sequence RESTART WITH 51;</EmbeddedScriptAfter>
     <BulkInsert>false</BulkInsert>
   </SynchronizationOptions>
 </DataGenDocument>
