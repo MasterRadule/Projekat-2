@@ -135,7 +135,7 @@ public class EventService {
 
         if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
             Date fromDate;
             Date toDate;
             try {

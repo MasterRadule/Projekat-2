@@ -12,6 +12,11 @@ public class EventDayDTO {
     public EventDayDTO() {
     }
 
+    public EventDayDTO(Long id, String date) {
+        this.id = id;
+        this.date = date;
+    }
+
     public Long getId() {
         return id;
     }
