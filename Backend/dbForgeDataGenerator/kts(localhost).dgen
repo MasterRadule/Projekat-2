@@ -163,7 +163,7 @@ def main(config):
           <GeneratorCategory>Business</GeneratorCategory>
           <Precision>20</Precision>
         </Column>
-        <Column Name="is_disabled">
+        <Column Name="disabled">
           <Checked>true</Checked>
           <DataType>BIT</DataType>
           <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
@@ -173,9 +173,9 @@ def main(config):
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <Increment xsi:type="xsd:int">1</Increment>
             <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>27</SeedValue>
+            <SeedValue>10</SeedValue>
             <MinValue>0</MinValue>
-            <MaxValue>1</MaxValue>
+            <MaxValue>0</MaxValue>
             <UseDefault>false</UseDefault>
             <DefaultValue />
           </GeneratorOptions>
@@ -401,16 +401,14 @@ def main(config):
             <Expression># Specify your own script here
 
 def main(config):
-    # column_name - is the column name
-    # config["column_type"] - is the column datatype
-    # config["column_size"] - is the column size
-    # config["n_rows"] - is the number of rows
-    # config["seed"] - is the current random seed
-    # config["is_unique"] - is the current random unique
-    # config["config_path"] - is the path to the meaningful generators folder
-    
-    return ["Admin", "RegisteredUser"]
-</Expression>
+    retval = []
+    for i in range(config["n_rows"]):
+        if i &lt; 5:
+            val = "Admin"
+        else:
+            val = "RegisteredUser"
+        retval.append(val)
+    return retval</Expression>
           </GeneratorOptions>
           <GeneratorType>MySqlPythonGenerator</GeneratorType>
           <GeneratorName>Python</GeneratorName>
@@ -1275,13 +1273,13 @@ def main(config):
       </Columns>
     </Table>
     <Table Name="reservation">
-      <Checked>false</Checked>
+      <Checked>true</Checked>
       <Settings>
         <Truncate>true</Truncate>
         <RowsToGenerate>0</RowsToGenerate>
         <PopulationDetails>
           <PopulationType>RowsCount</PopulationType>
-          <RowsCount>50</RowsCount>
+          <RowsCount>25</RowsCount>
           <LookupProportion>30</LookupProportion>
           <ProportionOfExistingData>10</ProportionOfExistingData>
           <TimeTicksToPopulate>100000000</TimeTicksToPopulate>
@@ -1289,7 +1287,7 @@ def main(config):
       </Settings>
       <Columns>
         <Column Name="id">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
           <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
@@ -1311,87 +1309,106 @@ def main(config):
           <Precision>20</Precision>
         </Column>
         <Column Name="is_cancelled">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIT</DataType>
-          <GeneratorOptions xsi:type="MySqlBitGeneratorOptions">
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>16</SeedValue>
+            <Expression>def main(config):
+    retval = []
+    for i in range(config["n_rows"]):
+        if i &gt;= 20:
+            val = 1
+        else:
+            val = 0
+        retval.append(val)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Precision>1</Precision>
+        </Column>
+        <Column Name="order_id">
+          <Checked>true</Checked>
+          <DataType>VARCHAR</DataType>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <SeedValue>16</SeedValue>
+            <Expression>def main(config):
+    retval = []
+    for i in range(config["n_rows"]):
+        if i &gt;= 20:
+            val = DBNull.Value
+        else:
+            val = Random(i).Next()
+        retval.append(val)
+    return retval
+</Expression>
+          </GeneratorOptions>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
+          <Length>255</Length>
+        </Column>
+        <Column Name="event_id">
+          <Checked>true</Checked>
+          <DataType>BIGINT</DataType>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
             <Unique>false</Unique>
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <Increment xsi:type="xsd:int">1</Increment>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>39</SeedValue>
-            <MinValue>0</MinValue>
-            <MaxValue>1</MaxValue>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>16</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>25</MaxValue>
             <UseDefault>false</UseDefault>
             <DefaultValue />
           </GeneratorOptions>
-          <GeneratorType>MySqlBitGenerator</GeneratorType>
-          <GeneratorName>bit</GeneratorName>
-          <GeneratorDescription>fill with N-bit values</GeneratorDescription>
-          <Precision>1</Precision>
-        </Column>
-        <Column Name="order_id">
-          <Checked>false</Checked>
-          <DataType>VARCHAR</DataType>
-          <GeneratorOptions xsi:type="MySqlRegularExpressionGeneratorOptions">
-            <AllowEmptyStrings>false</AllowEmptyStrings>
-            <EmptyStringProportion>10</EmptyStringProportion>
-            <AllowNulls>false</AllowNulls>
-            <NullProportion>10</NullProportion>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>39</SeedValue>
-            <Unique>false</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
-            <Expression>\d{5}</Expression>
-          </GeneratorOptions>
-          <GeneratorType>MySqlRegularExpressionGenerator</GeneratorType>
-          <GeneratorName>ID (random)</GeneratorName>
-          <GeneratorDescription>54470, 16912, 43814, 06728, 36017, 82433, 95664, ...</GeneratorDescription>
-          <GeneratorCategory>Business</GeneratorCategory>
-          <Length>255</Length>
-        </Column>
-        <Column Name="event_id">
-          <Checked>false</Checked>
-          <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>false</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
-            <AllowNulls>false</AllowNulls>
-            <NullProportion>0</NullProportion>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>40</SeedValue>
-            <RepeatValues>false</RepeatValues>
-            <FromTimes>1</FromTimes>
-            <ToTimes>10</ToTimes>
-            <ExcludeValues>false</ExcludeValues>
-            <ExclusionValuesPercent>1</ExclusionValuesPercent>
-          </GeneratorOptions>
-          <GeneratorType>ForeignKeyGenerator</GeneratorType>
-          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
-          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
         <Column Name="user_id">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>false</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
             <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>41</SeedValue>
-            <RepeatValues>false</RepeatValues>
-            <FromTimes>1</FromTimes>
-            <ToTimes>10</ToTimes>
-            <ExcludeValues>false</ExcludeValues>
-            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+            <SeedValue>17</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    
+    return range(6,50)
+</Expression>
           </GeneratorOptions>
-          <GeneratorType>ForeignKeyGenerator</GeneratorType>
-          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
-          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
@@ -1461,6 +1478,7 @@ def main(config):
             val = Random(i).Next(10,100)
         else:
             val = arr[i]
+        val = val - 1 # every reservable seat group has one ticket
         retval.append(val)
     return retval
 # Specify your own script here</Expression>
@@ -1517,7 +1535,7 @@ def main(config):
       </Columns>
     </Table>
     <Table Name="ticket">
-      <Checked>false</Checked>
+      <Checked>true</Checked>
       <Settings>
         <Truncate>true</Truncate>
         <RowsToGenerate>0</RowsToGenerate>
@@ -1531,7 +1549,7 @@ def main(config):
       </Settings>
       <Columns>
         <Column Name="id">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
           <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
@@ -1553,24 +1571,24 @@ def main(config):
           <Precision>20</Precision>
         </Column>
         <Column Name="reservation_id">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>false</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
+            <Unique>false</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
             <SeedValue>23</SeedValue>
-            <RepeatValues>false</RepeatValues>
-            <FromTimes>1</FromTimes>
-            <ToTimes>10</ToTimes>
-            <ExcludeValues>false</ExcludeValues>
-            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+            <MinValue>1</MinValue>
+            <MaxValue>25</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
           </GeneratorOptions>
-          <GeneratorType>ForeignKeyGenerator</GeneratorType>
-          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
-          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
@@ -1594,7 +1612,7 @@ def main(config):
           <Checked>true</Checked>
           <DataType>BIGINT</DataType>
           <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>true</Unique>
+            <Unique>false</Unique>
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
@@ -1637,7 +1655,7 @@ def main(config):
       </Columns>
     </Table>
     <Table Name="reservable_seat_groups_tickets">
-      <Checked>false</Checked>
+      <Checked>true</Checked>
       <Settings>
         <Truncate>true</Truncate>
         <RowsToGenerate>0</RowsToGenerate>
@@ -1651,46 +1669,46 @@ def main(config):
       </Settings>
       <Columns>
         <Column Name="reservable_seat_group">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>true</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>37</SeedValue>
-            <RepeatValues>false</RepeatValues>
-            <FromTimes>1</FromTimes>
-            <ToTimes>10</ToTimes>
-            <ExcludeValues>false</ExcludeValues>
-            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>14</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>50</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
           </GeneratorOptions>
-          <GeneratorType>ForeignKeyGenerator</GeneratorType>
-          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
-          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
         <Column Name="ticket">
-          <Checked>false</Checked>
+          <Checked>true</Checked>
           <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="ForeignKeyGeneratorOptions">
-            <Unique>true</Unique>
-            <IsAlwaysUnique>false</IsAlwaysUnique>
+          <GeneratorOptions xsi:type="BigIntegerGeneratorOptions">
             <AllowNulls>false</AllowNulls>
             <NullProportion>0</NullProportion>
-            <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>38</SeedValue>
-            <RepeatValues>false</RepeatValues>
-            <FromTimes>1</FromTimes>
-            <ToTimes>10</ToTimes>
-            <ExcludeValues>false</ExcludeValues>
-            <ExclusionValuesPercent>1</ExclusionValuesPercent>
+            <Unique>true</Unique>
+            <IsAlwaysUnique>false</IsAlwaysUnique>
+            <Increment xsi:type="xsd:int">1</Increment>
+            <ValueDistributionMode>Sequential</ValueDistributionMode>
+            <SeedValue>15</SeedValue>
+            <MinValue>1</MinValue>
+            <MaxValue>50</MaxValue>
+            <UseDefault>false</UseDefault>
+            <DefaultValue />
           </GeneratorOptions>
-          <GeneratorType>ForeignKeyGenerator</GeneratorType>
-          <GeneratorName>Foreign Key (auto assigned)</GeneratorName>
-          <GeneratorDescription>references a column from parent table</GeneratorDescription>
+          <GeneratorType>MySqlBigIntegerGenerator</GeneratorType>
+          <GeneratorName>bigint</GeneratorName>
+          <GeneratorDescription>fill with 64-bit signed integer values</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
@@ -1843,22 +1861,37 @@ def main(config):
         <Column Name="ticket_id">
           <Checked>true</Checked>
           <DataType>BIGINT</DataType>
-          <GeneratorOptions xsi:type="MySqlConstantGeneratorOptions">
-            <AllowEmptyStrings>false</AllowEmptyStrings>
-            <EmptyStringProportion>10</EmptyStringProportion>
-            <AllowNulls>true</AllowNulls>
-            <NullProportion>100</NullProportion>
+          <GeneratorOptions xsi:type="PythonGeneratorOptions">
+            <AllowNulls>false</AllowNulls>
+            <NullProportion>10</NullProportion>
             <Unique>false</Unique>
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <ValueDistributionMode>Seed</ValueDistributionMode>
-            <SeedValue>45</SeedValue>
-            <ConstantDistributionMode>UserDefined</ConstantDistributionMode>
-            <UserDefinedConstant xsi:type="xsd:int">0</UserDefinedConstant>
-            <ColumnDefaultConstant>NULL</ColumnDefaultConstant>
+            <SeedValue>19</SeedValue>
+            <Expression># Specify your own script here
+
+def main(config):
+    # column_name - is the column name
+    # config["column_type"] - is the column datatype
+    # config["column_size"] - is the column size
+    # config["n_rows"] - is the number of rows
+    # config["seed"] - is the current random seed
+    # config["is_unique"] - is the current random unique
+    # config["config_path"] - is the path to the meaningful generators folder
+    arr = [9,10,8,10,9]
+    retval = []
+    k = 0
+    for i in range(len(arr)):
+        for j in range(arr[i]):
+            if j == 0:
+                k = k + 1
+            retval.append(DBNull.Value if j != 0 else k)
+    return retval
+</Expression>
           </GeneratorOptions>
-          <GeneratorType>MySqlConstantGenerator</GeneratorType>
-          <GeneratorName>Constant</GeneratorName>
-          <GeneratorDescription>fill with a constant or column default value</GeneratorDescription>
+          <GeneratorType>MySqlPythonGenerator</GeneratorType>
+          <GeneratorName>Python</GeneratorName>
+          <GeneratorDescription>generates data using an IronPython script</GeneratorDescription>
           <HasForeignKey>true</HasForeignKey>
           <Precision>20</Precision>
         </Column>
@@ -1910,19 +1943,15 @@ def main(config):
             <IsAlwaysUnique>false</IsAlwaysUnique>
             <ValueDistributionMode>Seed</ValueDistributionMode>
             <SeedValue>55</SeedValue>
-            <Expression># Specify your own script here
-
-def main(config):
-    # column_name - is the column name
-    # config["column_type"] - is the column datatype
-    # config["column_size"] - is the column size
-    # config["n_rows"] - is the number of rows
-    # config["seed"] - is the current random seed
-    # config["is_unique"] - is the current random unique
-    # config["config_path"] - is the path to the meaningful generators folder
-    
-    return ["1", "2"]
-</Expression>
+            <Expression>def main(config):
+    retval = []
+    for i in range(config["n_rows"]):
+        if i &lt; 5:
+            val = 1
+        else:
+            val = 2
+        retval.append(val)
+    return retval</Expression>
           </GeneratorOptions>
           <GeneratorType>MySqlPythonGenerator</GeneratorType>
           <GeneratorName>Python</GeneratorName>
