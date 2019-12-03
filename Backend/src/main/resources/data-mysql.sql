@@ -1,6 +1,7 @@
 --
 -- Scripts to execute before
 --
+-- for MySQL
 SET SQL_SAFE_UPDATES = 0;
 
 --
@@ -785,4 +786,12 @@ INSERT INTO user_authority(user_id, authority_id) VALUES
 --
 -- Scripts to execute after
 --
+-- for MySQL
+TRUNCATE table hibernate_sequence;
+INSERT INTO hibernate_sequence (next_val) VALUES
+(51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51);
+
 SET SQL_SAFE_UPDATES = 1;
+
+-- for H2
+-- ALTER SEQUENCE hibernate_sequence RESTART WITH 51;
