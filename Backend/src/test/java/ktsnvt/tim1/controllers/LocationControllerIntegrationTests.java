@@ -9,6 +9,7 @@ import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
 import ktsnvt.tim1.services.LocationService;
 import ktsnvt.tim1.utils.RestResponsePage;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +50,9 @@ public class LocationControllerIntegrationTests {
 
     @Autowired
     LocationService locationService;
+
+    @Autowired
+    EntityManager entityManager;
 
     @SuppressWarnings("ConstantConditions")
     @Test
@@ -332,19 +337,24 @@ public class LocationControllerIntegrationTests {
         newDTO.setRowsNum(3);
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
+        newDTO.setName("Group1");
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
         ResponseEntity<SeatGroupDTO> result = testRestTemplate
                 .exchange(createURLWithPort("/locations/1/seat-groups"), HttpMethod.POST, entity, SeatGroupDTO.class);
 
+        SeatGroupDTO returnedValue = result.getBody();
+
+        Session session = (Session) entityManager.getDelegate();
+        session.evict(l);
+
         locationOptional = locationRepository.findById(locationId);
+
         if (locationOptional.isPresent())
             l = locationOptional.get();
 
         assertNotNull(l);
-
-        SeatGroupDTO returnedValue = result.getBody();
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(returnedValue);
@@ -353,6 +363,7 @@ public class LocationControllerIntegrationTests {
         assertEquals(newDTO.getRowsNum(), returnedValue.getRowsNum());
         assertEquals(newDTO.getRowsNum() * newDTO.getColsNum(), returnedValue.getTotalSeats().intValue());
         assertEquals(newDTO.isParterre(), returnedValue.isParterre());
+        assertEquals(newDTO.getName(), returnedValue.getName());
         assertEquals(startingNumberOfSeatGroups + 1, l.getSeatGroups().size());
     }
 
@@ -366,6 +377,7 @@ public class LocationControllerIntegrationTests {
         newDTO.setRowsNum(3);
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
+        newDTO.setName("Group1");
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
@@ -388,6 +400,7 @@ public class LocationControllerIntegrationTests {
         newDTO.setTotalSeats(30);
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
+        newDTO.setName("Group1");
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
