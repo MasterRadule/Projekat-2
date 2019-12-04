@@ -25,14 +25,18 @@ public class ReservationRepositoryIntegrationTests {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private LocationRepository locationRepository;
-
     @Test
     public void getAttendanceAndEarningsForPeriod_locationIdAndEventIdAreNull_valuesReturned() {
+
+    }
+
+    @Test
+    public void getAttendanceAndEarningsForPeriod_locationIdIsNotNull_valuesReturned() {
         // TODO
+    }
+
+    @Test
+    public void getAttendanceAndEarningsForPeriod_bothIdsAreProvided_valuesReturned() {
+
     }
 }

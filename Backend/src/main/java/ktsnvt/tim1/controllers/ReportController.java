@@ -2,6 +2,7 @@ package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
+import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +30,8 @@ public class ReportController {
             return new ResponseEntity<>(reportService.getReport(reportRequest), HttpStatus.OK);
         } catch (BadParametersException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 }
