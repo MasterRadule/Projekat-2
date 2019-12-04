@@ -21,7 +21,7 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Page<LocationDTO>> getLocations(Pageable pageable) {
         return new ResponseEntity<>(locationService.getLocations(pageable), HttpStatus.OK);
     }
@@ -40,13 +40,13 @@ public class LocationController {
         return new ResponseEntity<>(locationService.searchLocations(name, pageable), HttpStatus.OK);
     }
 
-    @PostMapping()
+    @PostMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<LocationDTO> createLocation(@Valid @RequestBody LocationDTO location) {
         return new ResponseEntity<>(locationService.createLocation(location), HttpStatus.CREATED);
     }
 
-    @PutMapping()
+    @PutMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editLocation(@Valid @RequestBody LocationDTO location) {
         try {

@@ -5,13 +5,9 @@ import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Location;
-import ktsnvt.tim1.model.Seat;
-import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
-import org.hibernate.id.GUIDGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -21,15 +17,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.ExcludeDefaultListeners;
 import javax.transaction.Transactional;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,7 +34,7 @@ public class LocationServiceIntegrationTests {
     private LocationRepository locationRepository;
 
     @Test
-    void getLocations_pageRequestSent_returnedLocations() {
+    void getLocations_pageRequestSent_locationsReturned() {
         int pageSize = 5;
         Pageable pageable = PageRequest.of(0, pageSize);
         Page<LocationDTO> page = locationService.getLocations(pageable);

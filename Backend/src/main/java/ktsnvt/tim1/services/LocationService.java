@@ -89,10 +89,11 @@ public class LocationService {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
-        SeatGroup newSeatGroup = seatGroupRepository.save(seatGroupMapper.toEntity(seatGroup));
+        SeatGroup seatGroupBeforeSave = seatGroupMapper.toEntity(seatGroup);
+        seatGroupBeforeSave.setLocation(location);
+        SeatGroup newSeatGroup = seatGroupRepository.save(seatGroupBeforeSave);
         location.getSeatGroups()
                 .add(newSeatGroup);
-        newSeatGroup.setLocation(location);
         locationRepository.save(location);
 
         return seatGroupMapper.toDTO(newSeatGroup);

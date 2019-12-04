@@ -15,6 +15,7 @@ public class SeatGroupMapper implements IMapper<SeatGroup, SeatGroupDTO> {
         seatGroup.setParterre(dto.isParterre());
         seatGroup.setxCoordinate(dto.getxCoordinate());
         seatGroup.setyCoordinate(dto.getyCoordinate());
+        seatGroup.setName(dto.getName());
 
         if (dto.isParterre()) {
             seatGroup.setColsNum(null);
@@ -45,6 +46,7 @@ public class SeatGroupMapper implements IMapper<SeatGroup, SeatGroupDTO> {
         dto.setxCoordinate(seatGroup.getxCoordinate());
         dto.setyCoordinate(seatGroup.getyCoordinate());
         dto.setTotalSeats(seatGroup.getTotalSeats());
+        dto.setName(seatGroup.getName());
 
         return dto;
     }

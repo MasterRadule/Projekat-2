@@ -1,8 +1,5 @@
 package ktsnvt.tim1.DTOs;
 
-import ktsnvt.tim1.exceptions.EntityNotValidException;
-import ktsnvt.tim1.model.SeatGroup;
-
 import javax.validation.constraints.NotNull;
 
 public class SeatGroupDTO {
@@ -23,11 +20,22 @@ public class SeatGroupDTO {
 
     private Integer totalSeats;
 
+    @NotNull(message = "Seat group name must be provided")
+    private String name;
+
     public SeatGroupDTO() {
     }
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setId(Long id) {
