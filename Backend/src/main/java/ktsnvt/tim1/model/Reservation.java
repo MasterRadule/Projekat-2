@@ -18,7 +18,7 @@ public class Reservation {
     private Boolean isCancelled = false;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "reservation")
-    private Set<Ticket> tickets;
+    private Set<Ticket> tickets = new HashSet<>();
 
     @ManyToOne()
     @JoinColumn(name = "event_id", nullable = false)
@@ -29,7 +29,6 @@ public class Reservation {
     private RegisteredUser registeredUser;
 
     public Reservation() {
-        this.tickets = new HashSet<>();
     }
 
     public Long getId() {

@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -12,7 +13,7 @@ public class EventDay {
     private Long id;
 
     @Column(nullable = false)
-    private Date date;
+    private LocalDateTime date;
 
     @ManyToOne()
     @JoinColumn(name = "event_id", nullable = false)
@@ -25,7 +26,7 @@ public class EventDay {
         this.reservableSeatGroups = new HashSet<>();
     }
 
-    public EventDay(Long id, Date date) {
+    public EventDay(Long id, LocalDateTime date) {
         this.id = id;
         this.date = date;
         this.reservableSeatGroups = new HashSet<>();
@@ -36,8 +37,7 @@ public class EventDay {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDay eventDay = (EventDay) o;
-        int sameDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                .compareTo(eventDay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        int sameDate = date.compareTo(eventDay.getDate());
 
         return sameDate == 0;
     }
@@ -55,11 +55,11 @@ public class EventDay {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

@@ -7,12 +7,10 @@ import java.util.Date;
 
 public class ReportRequestDTO {
     @NotNull
-    @DateTimeFormat(pattern = "dd.MM.yyyy.")
-    private Date startDate;
+    private Long startDate;
 
     @NotNull
-    @DateTimeFormat(pattern = "dd.MM.yyyy.")
-    private Date endDate;
+    private Long endDate;
 
     private Long locationId;
     private Long eventId;
@@ -20,19 +18,19 @@ public class ReportRequestDTO {
     public ReportRequestDTO() {
     }
 
-    public Date getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
 

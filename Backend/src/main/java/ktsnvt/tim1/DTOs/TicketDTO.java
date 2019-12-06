@@ -1,21 +1,14 @@
 package ktsnvt.tim1.DTOs;
 
-import ktsnvt.tim1.model.EventDay;
-import ktsnvt.tim1.model.ReservableSeatGroup;
-import ktsnvt.tim1.model.Seat;
-import ktsnvt.tim1.model.Ticket;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.stream.Collectors;
 
-public class TicketDTO
-{
+public class TicketDTO {
     private Integer rowNum;
     private Integer colNum;
     private String seatGroupName;
     private Double price;
-    private ArrayList<Date> eventDays;
+    private ArrayList<LocalDateTime> eventDays;
 
     public TicketDTO() {
     }
@@ -52,11 +45,11 @@ public class TicketDTO
         this.price = price;
     }
 
-    public ArrayList<Date> getEventDays() {
+    public ArrayList<LocalDateTime> getEventDays() {
         return eventDays;
     }
 
-    public void setEventDays(ArrayList<Date> eventDays) {
+    public void setEventDays(ArrayList<LocalDateTime> eventDays) {
         this.eventDays = eventDays;
     }
 }

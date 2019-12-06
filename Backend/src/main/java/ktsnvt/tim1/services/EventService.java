@@ -1,9 +1,6 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.*;
-import ktsnvt.tim1.DTOs.EventDTO;
-import ktsnvt.tim1.DTOs.EventDayDTO;
-import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -21,10 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -135,16 +136,15 @@ public class EventService {
 
         if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
-            Date fromDate;
-            Date toDate;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+            LocalDateTime fromDate;
+            LocalDateTime toDate;
             try {
-                fromDate = formatter.parse(searchDTO.getFromDate());
-                toDate = formatter.parse(searchDTO.getToDate());
-            } catch (ParseException e) {
+                fromDate = LocalDateTime.parse(searchDTO.getFromDate(), formatter);
+                toDate = LocalDateTime.parse(searchDTO.getToDate(), formatter);
+            } catch (DateTimeParseException e) {
                 throw new EntityNotValidException("Dates are in invalid format");
             }
-
             events.stream().forEach(e -> {
                 for (EventDay ev : e.getEventDays()) {
                     if (fromDate.compareTo(ev.getDate()) * ev.getDate().compareTo(toDate) >= 0) {
@@ -205,9 +205,9 @@ public class EventService {
     }
 
     private void checkNumberOfReservationDeadlineDays(Event e, EventDTO event) throws EntityNotValidException {
-        Date firstEventDay = e.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
-        int numOfDaysToEvent = (int) TimeUnit.DAYS
-                .convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
+        LocalDateTime firstEventDay =
+                e.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo).get();
+        long numOfDaysToEvent = Math.abs(ChronoUnit.DAYS.between(firstEventDay, LocalDateTime.now()));
         if (event.getReservationDeadlineDays() > numOfDaysToEvent)
             throw new EntityNotValidException("Number of reservation deadline days must " +
                     "be less than number of days left until the event");
@@ -215,7 +215,7 @@ public class EventService {
     }
 
     private void changeLocation(Event e, Location l) throws EntityNotValidException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         for (Event event : l.getEvents()) {
             for (EventDay ev : event.getEventDays()) {
                 if (e.getEventDays().contains(ev)) {

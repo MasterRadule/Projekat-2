@@ -31,7 +31,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
@@ -403,11 +404,11 @@ public class EventServiceUnitTests {
     public void searchEvents_pageReturned() throws EntityNotValidException, ParseException {
         Long id = 1L;
         Long eventDayID = 2L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(eventDayID, formatter.parse("02.12.2019. 15:00")));
+        event.getEventDays().add(new EventDay(eventDayID, LocalDateTime.parse("02.12.2019. 15:00", formatter)));
 
         EventDTO eventDTO = new EventDTO(id, event.getName(), event.getDescription(),
                 EventCategory.Movie.name(), event.getCancelled());
@@ -438,11 +439,11 @@ public class EventServiceUnitTests {
     public void searchEvents_searchDatesAreInvalid_entityNotValidExceptionThrown() throws ParseException {
         Long id = 1L;
         Long eventDayID = 2L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(eventDayID, formatter.parse("02.12.2019. 15:00")));
+        event.getEventDays().add(new EventDay(eventDayID, LocalDateTime.parse("02.12.2019. 15:00", formatter)));
 
         SearchEventsDTO searchDTO = new SearchEventsDTO("", null, "",
                 "01.2019. 12:30", "03.2019. 13:30");
@@ -463,18 +464,18 @@ public class EventServiceUnitTests {
         Long id = 1L;
         Long toRemoveEventDayID = 2L;
         Long toAddEventDayID = 3L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(toRemoveEventDayID, formatter.parse("06.06.2020. 15:00")));
+        event.getEventDays().add(new EventDay(toRemoveEventDayID, LocalDateTime.parse("06.06.2020. 15:00", formatter)));
         ReservableSeatGroup rsg = new ReservableSeatGroup();
         event.getEventDays().iterator().next().getReservableSeatGroups().add(rsg);
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());
         EventDayDTO eventDayToAddDTO = new EventDayDTO(toAddEventDayID, "07.06.2020. 22:00");
-        EventDay eventDayToAdd = new EventDay(toAddEventDayID, formatter.parse("07.06.2020. 22:00"));
+        EventDay eventDayToAdd = new EventDay(toAddEventDayID, LocalDateTime.parse("07.06.2020. 22:00", formatter));
         eventDTO.getEventDays().add(eventDayToAddDTO);
 
         Mockito.when(eventDayMapperMocked.toEntity(eventDayToAddDTO)).thenReturn(eventDayToAdd);
@@ -489,11 +490,11 @@ public class EventServiceUnitTests {
     public void addAndRemoveEventDays_removeEventDayWhichHasReservation_entityNotValidExceptionThrown() throws ParseException {
         Long id = 1L;
         Long toRemoveEventDayID = 2L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(toRemoveEventDayID, formatter.parse("06.06.2020. 15:00")));
+        event.getEventDays().add(new EventDay(toRemoveEventDayID, LocalDateTime.parse("06.06.2020. 15:00", formatter)));
         ReservableSeatGroup rsg = new ReservableSeatGroup();
         Ticket ticket = new Ticket();
         rsg.getTickets().add(ticket);
@@ -528,11 +529,11 @@ public class EventServiceUnitTests {
     @Test
     public void checkNumberOfReservationDeadlineDays_reservationDeadlineDaysSet() throws Exception {
         Long id = 1L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(id, formatter.parse("06.06.2020. 15:00")));
+        event.getEventDays().add(new EventDay(id, LocalDateTime.parse("06.06.2020. 15:00", formatter)));
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());
@@ -540,17 +541,17 @@ public class EventServiceUnitTests {
 
         Whitebox.invokeMethod(eventService, "checkNumberOfReservationDeadlineDays", event, eventDTO);
 
-        assertEquals(5, (int) event.getReservationDeadlineDays());
+        assertEquals(5, event.getReservationDeadlineDays().intValue());
     }
 
     @Test
     public void checkNumberOfReservationDeadlineDays_reservationDeadlineDaysInvalid_entityNotValidExceptionThrown() throws Exception {
         Long id = 1L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(id, formatter.parse("06.12.2019. 15:00")));
+        event.getEventDays().add(new EventDay(id, LocalDateTime.parse("06.12.2019. 15:00", formatter)));
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());
@@ -582,11 +583,11 @@ public class EventServiceUnitTests {
         Long locationID = 2L;
         Long locationsEventID = 3L;
         Long eventDayID = 4L;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(eventID, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        EventDay eventDay = new EventDay(eventDayID, formatter.parse("07.06.2020. 22:00"));
+        EventDay eventDay = new EventDay(eventDayID, LocalDateTime.parse("07.06.2020. 22:00", formatter));
         event.setLocation(new Location());
         event.getEventDays().add(eventDay);
 
