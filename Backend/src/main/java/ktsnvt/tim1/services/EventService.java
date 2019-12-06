@@ -130,10 +130,9 @@ public class EventService {
 
     public Page<EventDTO> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) throws EntityNotValidException {
         String name = searchDTO.getName().toLowerCase() + "%";
-        String category = searchDTO.getCategory().equals("") ? "%" : searchDTO.getCategory();
-        Page<Event> events = eventRepository.searchEvents(name, category, searchDTO.getLocationID(), pageable);
 
         if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
+            Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), Pageable.unpaged());
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
             Date fromDate;
@@ -146,17 +145,16 @@ public class EventService {
             }
 
             events.stream().forEach(e -> {
-                for (EventDay ev : e.getEventDays()) {
-                    if (fromDate.compareTo(ev.getDate()) * ev.getDate().compareTo(toDate) >= 0) {
-                        eventsDTO.add(eventMapper.toDTO(e));
-                        return;
-                    }
+                if (e.getEventDays().stream()
+                        .anyMatch(ev -> ev.getDate().compareTo(fromDate) * toDate.compareTo(ev.getDate()) >= 0)) {
+                    eventsDTO.add(eventMapper.toDTO(e));
                 }
             });
 
-            return new PageImpl<>(eventsDTO);
+            return new PageImpl<>(eventsDTO, pageable, eventsDTO.size());
         } else {
-            return new PageImpl<>(events.stream().map(event -> eventMapper.toDTO(event)).collect(Collectors.toList()));
+            Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), pageable);
+            return new PageImpl<>(events.stream().map(event -> eventMapper.toDTO(event)).collect(Collectors.toList()), pageable, events.getTotalElements());
         }
 
     }

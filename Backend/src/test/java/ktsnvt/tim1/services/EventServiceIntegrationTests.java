@@ -6,7 +6,6 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.model.EventCategory;
-import ktsnvt.tim1.model.EventSeatGroup;
 import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.MediaFileRepository;
@@ -30,6 +29,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -47,7 +47,7 @@ public class EventServiceIntegrationTests {
     private MediaFileRepository mediaFileRepository;
 
     @Test
-    public void getEvents_pageRequestSent_eventsReturned() {
+    void getEvents_pageRequestSent_eventsReturned() {
         int pageSize = 5;
         Pageable pageable = PageRequest.of(0, pageSize);
         Page<EventDTO> page = eventService.getEvents(pageable);
@@ -61,7 +61,7 @@ public class EventServiceIntegrationTests {
     }
 
     @Test
-    public void getEvent_eventExists_eventReturned() throws EntityNotFoundException {
+    void getEvent_eventExists_eventReturned() throws EntityNotFoundException {
         Long id = 1L;
 
         EventDTO event = eventService.getEvent(id);
@@ -105,7 +105,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    public void editEvent_eventExists_eventEditedAndReturned() throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
+    void editEvent_eventExists_eventEdited() throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
         EventDTO newDTO = new EventDTO(1L, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
         newDTO.setReservationDeadlineDays(5);
@@ -185,7 +185,7 @@ public class EventServiceIntegrationTests {
     }
 
     @Test
-    public void uploadPicturesAndVideos_fileContentTypeNotValid_entityNotValidExceptionThrown() {
+    void uploadPicturesAndVideos_fileContentTypeNotValid_entityNotValidExceptionThrown() {
         Random r = new Random();
 
         byte[] txt = new byte[20];
@@ -205,9 +205,8 @@ public class EventServiceIntegrationTests {
         assertEquals(2, files.size());
     }
 
-
     @Test
-    public void getPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
+    void getPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 31L;
 
         assertThrows(EntityNotFoundException.class, () -> eventService.getPicturesAndVideos(id));
@@ -216,7 +215,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    public void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() throws EntityNotFoundException {
+    void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() throws EntityNotFoundException {
         Long eventID = 1L;
         Long fileID = 26L;
 
@@ -226,7 +225,7 @@ public class EventServiceIntegrationTests {
     }
 
     @Test
-    public void deleteMediaFile_eventExistsAndMediaFileDoesNotExist_entityNotFoundExceptionThrown() {
+    void deleteMediaFile_eventExistsAndMediaFileDoesNotExist_entityNotFoundExceptionThrown() {
         Long eventID = 1L;
         Long fileID = 51L;
 
@@ -234,7 +233,7 @@ public class EventServiceIntegrationTests {
     }
 
     @Test
-    public void deleteMediaFile_eventDoesNotExist_entityNotFoundExceptionThrown() {
+    void deleteMediaFile_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long eventID = 31L;
         Long fileID = 26L;
 
@@ -277,5 +276,48 @@ public class EventServiceIntegrationTests {
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO(eventID, locationID);
 
         assertThrows(EntityNotFoundException.class, () -> eventService.setEventLocationAndSeatGroups(seatGroupDTO));
+    }
+
+    @Test
+    void searchEvents_searchParametersProvided_pageReturned() throws EntityNotValidException {
+        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, null,
+                "07.01.2020. 12:30", "13.01.2020. 13:30");
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Page<EventDTO> page = eventService.searchEvents(searchDTO, pageable);
+
+        assertEquals(3, page.getNumberOfElements());
+    }
+
+    @Test
+    void searchEvents_searchParametersEmpty_pageReturned() throws EntityNotValidException {
+        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, null,
+                "", "");
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Page<EventDTO> page = eventService.searchEvents(searchDTO, pageable);
+
+        long totalEventsCount = eventRepository.count();
+        assertEquals(totalEventsCount, page.getTotalElements());
+    }
+
+    @Test
+    void searchEvents_searchParametersDoesNotMatchAnyEvent_emptyPageReturned() throws EntityNotValidException {
+        Pageable pageable = PageRequest.of(0, 5);
+        SearchEventsDTO searchDTO = new SearchEventsDTO("dsadahfghbfghvcs", null, null,
+                "", "");
+
+        Page<EventDTO> page = eventService.searchEvents(searchDTO, pageable);
+
+        assertTrue(page.isEmpty());
+    }
+
+    @Test
+    void searchEvents_searchDatesAreInvalid_entityNotValidExceptionThrown() {
+        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, null,
+                "07.2020. 12:30", "15.2020. 13:30");
+        Pageable pageable = PageRequest.of(0, 5);
+
+        assertThrows(EntityNotValidException.class, () -> eventService.searchEvents(searchDTO, pageable));
     }
 }

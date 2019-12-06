@@ -1,10 +1,12 @@
 package ktsnvt.tim1.repositories;
 
 import ktsnvt.tim1.model.Event;
+import ktsnvt.tim1.model.EventCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -18,6 +20,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Page<Event> findAll(Pageable pageable);
 
-    @Query(value = "select e from Event e join e.location l where lower(e.name) like ?1 and e.category.name like ?2 and (?3 is null or l.id = ?3)")
-    Page<Event> searchEvents(String name, String category, Long locationID, Pageable pageable);
+    @Query(value = "select e from Event e join e.location l where lower(e.name) like :name and (:category is null or e.category = :category) and (:location_id is null or l.id = :location_id)")
+    Page<Event> searchEvents(@Param("name") String name, @Param("category") EventCategory category, @Param("location_id") Long locationID, Pageable pageable);
 }

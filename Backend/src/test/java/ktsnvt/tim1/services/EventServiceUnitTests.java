@@ -409,7 +409,7 @@ public class EventServiceUnitTests {
         EventDTO eventDTO = new EventDTO(id, event.getName(), event.getDescription(),
                 EventCategory.Movie.name(), event.getCancelled());
 
-        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, "",
+        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, null,
                 "01.12.2019. 12:30", "03.12.2019. 13:30");
         Pageable pageable = PageRequest.of(0, 5);
 
@@ -421,8 +421,8 @@ public class EventServiceUnitTests {
         Page<EventDTO> expectedPage = new PageImpl<>(eventDTOs);
         Page<Event> returnPageEvents = new PageImpl<>(events);
 
-        Mockito.when(eventRepositoryMocked.searchEvents("%", "%",
-                searchDTO.getLocationID(), pageable)).thenReturn(returnPageEvents);
+        Mockito.when(eventRepositoryMocked.searchEvents("%", null,
+                searchDTO.getLocationID(), Pageable.unpaged())).thenReturn(returnPageEvents);
         Mockito.when(eventMapperMocked.toDTO(event)).thenReturn(eventDTO);
 
         Page<EventDTO> returnedPage = eventService.searchEvents(searchDTO, pageable);
@@ -441,7 +441,7 @@ public class EventServiceUnitTests {
                 EventCategory.Movie, false);
         event.getEventDays().add(new EventDay(eventDayID, formatter.parse("02.12.2019. 15:00")));
 
-        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, "",
+        SearchEventsDTO searchDTO = new SearchEventsDTO("", null, null,
                 "01.2019. 12:30", "03.2019. 13:30");
         Pageable pageable = PageRequest.of(0, 5);
 
@@ -449,7 +449,7 @@ public class EventServiceUnitTests {
         events.add(event);
         Page<Event> returnPageEvents = new PageImpl<>(events);
 
-        Mockito.when(eventRepositoryMocked.searchEvents("%", "%",
+        Mockito.when(eventRepositoryMocked.searchEvents("%", null,
                 searchDTO.getLocationID(), pageable)).thenReturn(returnPageEvents);
 
         assertThrows(EntityNotValidException.class, () -> eventService.searchEvents(searchDTO, pageable));
