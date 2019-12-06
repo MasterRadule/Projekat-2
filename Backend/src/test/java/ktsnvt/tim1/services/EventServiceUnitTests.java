@@ -32,10 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -532,11 +529,14 @@ public class EventServiceUnitTests {
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(id, formatter.parse("06.06.2020. 15:00")));
+        event.getEventDays().add(new EventDay(id, formatter.parse("06.12.2019. 15:00")));
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());
         eventDTO.setReservationDeadlineDays(5);
+
+        Date testDate = formatter.parse("30.11.2019. 12:30");
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(testDate);
 
         Whitebox.invokeMethod(eventService, "checkNumberOfReservationDeadlineDays", event, eventDTO);
 
@@ -550,7 +550,7 @@ public class EventServiceUnitTests {
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(id, formatter.parse("06.12.2019. 15:00")));
+        event.getEventDays().add(new EventDay(id, formatter.parse("05.12.2019. 15:00")));
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());

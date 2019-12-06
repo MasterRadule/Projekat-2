@@ -207,7 +207,7 @@ public class EventService {
     private void checkNumberOfReservationDeadlineDays(Event e, EventDTO event) throws EntityNotValidException {
         Date firstEventDay = e.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
         int numOfDaysToEvent = (int) TimeUnit.DAYS
-                .convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
+                .convert(firstEventDay.getTime() - new Date().getTime(), TimeUnit.MILLISECONDS);
         if (event.getReservationDeadlineDays() > numOfDaysToEvent)
             throw new EntityNotValidException("Number of reservation deadline days must " +
                     "be less than number of days left until the event");
