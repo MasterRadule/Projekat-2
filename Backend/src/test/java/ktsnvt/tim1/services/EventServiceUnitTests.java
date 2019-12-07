@@ -10,6 +10,7 @@ import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
 import ktsnvt.tim1.repositories.MediaFileRepository;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -30,7 +31,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,6 +68,14 @@ public class EventServiceUnitTests {
 
     @MockBean
     private EventDayMapper eventDayMapperMocked;
+
+    private static DateTimeFormatter formatter;
+
+    @BeforeClass
+    public static void setUpDateTimeFormatter() {
+        formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+    }
+
 
     @Test
     public void getEvents_repositoryMethodCalledOnce() {
@@ -401,10 +409,9 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void searchEvents_pageReturned() throws EntityNotValidException, ParseException {
+    public void searchEvents_pageReturned() throws EntityNotValidException {
         Long id = 1L;
         Long eventDayID = 2L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
@@ -436,10 +443,9 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void searchEvents_searchDatesAreInvalid_entityNotValidExceptionThrown() throws ParseException {
+    public void searchEvents_searchDatesAreInvalid_entityNotValidExceptionThrown() {
         Long id = 1L;
         Long eventDayID = 2L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
@@ -464,7 +470,6 @@ public class EventServiceUnitTests {
         Long id = 1L;
         Long toRemoveEventDayID = 2L;
         Long toAddEventDayID = 3L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
@@ -487,10 +492,9 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void addAndRemoveEventDays_removeEventDayWhichHasReservation_entityNotValidExceptionThrown() throws ParseException {
+    public void addAndRemoveEventDays_removeEventDayWhichHasReservation_entityNotValidExceptionThrown() {
         Long id = 1L;
         Long toRemoveEventDayID = 2L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
@@ -529,18 +533,18 @@ public class EventServiceUnitTests {
     @Test
     public void checkNumberOfReservationDeadlineDays_reservationDeadlineDaysSet() throws Exception {
         Long id = 1L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
-        event.getEventDays().add(new EventDay(id, LocalDateTime.parse("06.06.2020. 15:00", formatter)));
+        event.getEventDays().add(new EventDay(id, LocalDateTime.parse("06.12.2019. 15:00", formatter)));
 
         EventDTO eventDTO = new EventDTO(event.getId(), event.getName(), event.getDescription(),
                 event.getCategory().name(), event.getCancelled());
         eventDTO.setReservationDeadlineDays(5);
 
-        Date testDate = formatter.parse("30.11.2019. 12:30");
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(testDate);
+        LocalDateTime testDate = LocalDateTime.parse("30.11.2019. 12:30", formatter);
+        PowerMockito.mockStatic(LocalDateTime.class);
+        PowerMockito.when(LocalDateTime.now()).thenReturn(testDate);
 
         Whitebox.invokeMethod(eventService, "checkNumberOfReservationDeadlineDays", event, eventDTO);
 
@@ -548,9 +552,8 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void checkNumberOfReservationDeadlineDays_reservationDeadlineDaysInvalid_entityNotValidExceptionThrown() throws Exception {
+    public void checkNumberOfReservationDeadlineDays_reservationDeadlineDaysInvalid_entityNotValidExceptionThrown() {
         Long id = 1L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
@@ -581,12 +584,11 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void changeLocation_locationAlreadyTaken_entityNotValidExceptionThrown() throws ParseException {
+    public void changeLocation_locationAlreadyTaken_entityNotValidExceptionThrown() {
         Long eventID = 1L;
         Long locationID = 2L;
         Long locationsEventID = 3L;
         Long eventDayID = 4L;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
         Event event = new Event(eventID, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
