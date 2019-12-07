@@ -1,5 +1,7 @@
 package ktsnvt.tim1.DTOs;
 
+import ktsnvt.tim1.model.EventCategory;
+
 import javax.validation.constraints.NotNull;
 
 public class SearchEventsDTO {
@@ -9,15 +11,14 @@ public class SearchEventsDTO {
 
     private Long locationID;
 
-    @NotNull(message = "Category must be specified or empty string")
-    private String category;
+    private EventCategory category;
 
     private String fromDate;
     private String toDate;
 
     public SearchEventsDTO() {}
 
-    public SearchEventsDTO(String name, Long locationID, String category, String fromDate, String toDate) {
+    public SearchEventsDTO(String name, Long locationID, EventCategory category, String fromDate, String toDate) {
         this.name = name;
         this.locationID = locationID;
         this.category = category;
@@ -41,11 +42,11 @@ public class SearchEventsDTO {
         this.locationID = locationID;
     }
 
-    public String getCategory() {
+    public EventCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(EventCategory category) {
         this.category = category;
     }
 

@@ -47,7 +47,6 @@ public class EventMapper implements IMapper<Event, EventDTO> {
         eventDTO.setId(event.getId());
         eventDTO.setName(event.getName());
         eventDTO.setDescription(event.getDescription());
-        eventDTO.setDescription(event.getDescription());
         eventDTO.setCategory(event.getCategory().name());
         eventDTO.setActiveForReservations(event.getActiveForReservations());
         eventDTO.setReservationDeadlineDays(event.getReservationDeadlineDays());
