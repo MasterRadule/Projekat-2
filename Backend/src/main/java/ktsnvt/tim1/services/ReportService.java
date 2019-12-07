@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
@@ -30,7 +31,7 @@ public class ReportService {
     @Autowired
     EventRepository eventRepository;
 
-    public List<Object[]> getReport(ReportRequestDTO reportRequest) throws BadParametersException, EntityNotFoundException {
+    public List<ReportDTO> getReport(ReportRequestDTO reportRequest) throws BadParametersException, EntityNotFoundException {
         LocalDateTime startDate =
                 Instant.ofEpochMilli(reportRequest.getStartDate()).atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDate =

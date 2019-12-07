@@ -1,6 +1,6 @@
 package ktsnvt.tim1.repositories;
 
-import org.junit.Assert;
+import ktsnvt.tim1.DTOs.ReportDTO;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,19 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @ActiveProfiles("test")
 public class ReservationRepositoryIntegrationTests {
     @Autowired
@@ -42,20 +39,21 @@ public class ReservationRepositoryIntegrationTests {
         LocalDateTime midDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
 
         int expectedNumberOfDays = 3;
-        List<Object[]> expectedResult = new ArrayList<>();
-        expectedResult.add(new Object[]{startDate, 1, 31});
-        expectedResult.add(new Object[]{midDate, 1, 5});
-        expectedResult.add(new Object[]{endDate, 1, 30});
+        List<ReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new ReportDTO(startDate, 1, 31));
+        expectedResult.add(new ReportDTO(midDate, 1, 5));
+        expectedResult.add(new ReportDTO(endDate, 1, 30));
 
-        List<Object[]> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 null, null);
 
+        assertNotNull(returnedResults);
         assertEquals(expectedNumberOfDays, returnedResults.size());
 
         for (int i = 0; i < expectedNumberOfDays; i++) {
-            assertEquals(expectedResult.get(i)[0], returnedResults.get(i)[0]);
-            assertEquals(expectedResult.get(i)[1], returnedResults.get(i)[1]);
-            assertEquals(expectedResult.get(i)[2], returnedResults.get(i)[2]);
+            assertEquals(expectedResult.get(i).getDate(), returnedResults.get(i).getDate());
+            assertEquals(expectedResult.get(i).getTicketCount(), returnedResults.get(i).getTicketCount());
+            assertEquals(expectedResult.get(i).getEarnings(), returnedResults.get(i).getEarnings());
         }
     }
 
