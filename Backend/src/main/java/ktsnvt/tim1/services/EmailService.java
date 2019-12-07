@@ -10,8 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
@@ -35,19 +35,22 @@ public class EmailService {
     }
 
     @Async
-    public void sendReservationNotificationEmail(RegisteredUser registeredUser, Reservation reservation, Date expirationDate) {
+    public void sendReservationNotificationEmail(RegisteredUser registeredUser, Reservation reservation,
+                                                 LocalDate expirationDate) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         mailMessage.setTo(registeredUser.getEmail());
         mailMessage.setSubject("Reservation expires soon");
         mailMessage.setFrom(emailAddress);
         mailMessage.setText(String.format("Dear %s %s,\nWe want to inform you that your reservation for event %s is about to expire (expires on %s).\nKTSNVT",
-                registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(), sdf.format(expirationDate)));
+                registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
+                formatter.format(expirationDate)));
         javaMailSender.send(mailMessage);
     }
 
     @Async
-    public void sendReservationExpiredEmail(RegisteredUser registeredUser, Reservation reservation, Date expirationDate) {
+    public void sendReservationExpiredEmail(RegisteredUser registeredUser, Reservation reservation,
+                                            LocalDate expirationDate) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(registeredUser.getEmail());
         mailMessage.setSubject("Reservation expired");

@@ -1,11 +1,13 @@
-package ktsnvt.tim1.repositories;
+package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.ReportDTO;
+import ktsnvt.tim1.repositories.ReservationRepository;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -20,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class ReservationRepositoryIntegrationTests {
-    @Autowired
-    private ReservationRepository reservationRepository;
+public class ReportServiceUnitTests {
+    @MockBean
+    ReservationRepository reservationRepository;
 
     private static DateTimeFormatter dateTimeFormatter;
 
@@ -44,6 +46,9 @@ public class ReservationRepositoryIntegrationTests {
         expectedResult.add(new ReportDTO(midDate, 1, 5));
         expectedResult.add(new ReportDTO(endDate, 1, 30));
 
+        Mockito.when(reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate, null, null))
+                .thenReturn(expectedResult);
+
         List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 null, null);
 
@@ -57,13 +62,5 @@ public class ReservationRepositoryIntegrationTests {
         }
     }
 
-/*    @Test
-    public void getAttendanceAndEarningsForPeriod_locationIdIsNotNull_valuesReturned() {
-        // TODO
-    }
 
-    @Test
-    public void getAttendanceAndEarningsForPeriod_bothIdsAreProvided_valuesReturned() {
-
-    }*/
 }

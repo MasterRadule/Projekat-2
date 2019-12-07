@@ -2,8 +2,6 @@ package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
-import ktsnvt.tim1.exceptions.EntityNotFoundException;
-import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Location;
 import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -19,7 +17,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -30,10 +31,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

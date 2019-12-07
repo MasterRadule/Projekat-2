@@ -9,8 +9,8 @@ import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.exceptions.ImpossibleActionException;
 import ktsnvt.tim1.exceptions.PayPalException;
 import ktsnvt.tim1.mappers.ReservationMapper;
-import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.model.Event;
+import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +19,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-
-import javax.validation.Valid;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -58,9 +57,11 @@ public class ReservationService {
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
         switch (type) {
             case BOUGHT:
-                return reservationRepository.findByOrderIdIsNotNullAndIsCancelledFalse(pageable).map(reservationMapper::toDTO);
+                return reservationRepository.findByOrderIdIsNotNullAndIsCancelledFalse(pageable)
+                        .map(reservationMapper::toDTO);
             case RESERVED:
-                return reservationRepository.findByOrderIdIsNullAndIsCancelledFalse(pageable).map(reservationMapper::toDTO);
+                return reservationRepository.findByOrderIdIsNullAndIsCancelledFalse(pageable)
+                        .map(reservationMapper::toDTO);
             default:
                 return reservationRepository.findAll(pageable).map(reservationMapper::toDTO);
 
@@ -73,12 +74,14 @@ public class ReservationService {
     }
 
     public ReservationDTO createReservation(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
-        Event event = eventRepository.findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(newReservationDTO.getEventId())
+        Event event = eventRepository
+                .findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(newReservationDTO.getEventId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (newReservationDTO.getTickets().size() > event.getMaxTicketsPerReservation())
             throw new EntityNotValidException("Too many tickets in the reservation");
-        Date firstEventDay = event.getEventDays().stream().map(EventDay::getDate).min(Date::compareTo).get();
-        int numOfDaysToEvent = (int) TimeUnit.DAYS.convert(Math.abs(firstEventDay.getTime() - new Date().getTime()), TimeUnit.MILLISECONDS);
+        LocalDateTime firstEventDay =
+                event.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo).get();
+        long numOfDaysToEvent = ChronoUnit.DAYS.between(firstEventDay, LocalDateTime.now());
         if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
         if (numOfDaysToEvent <= event.getReservationDeadlineDays())
             throw new ImpossibleActionException("Reservation deadline date passed");
@@ -88,7 +91,8 @@ public class ReservationService {
             makeTicket(t, reservation);
         }
         reservation.setEvent(event);
-        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         reservation.setRegisteredUser(registeredUser);
         registeredUser.getReservations().add(reservation);
         return reservationMapper.toDTO(reservationRepository.save(reservation));
@@ -125,7 +129,8 @@ public class ReservationService {
     }
 
     private void reserveParterreSingleDay(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
-        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
+        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository
+                .findById(ticketDTO.getReservableSeatGroupId())
                 .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
         if (!reservableSeatGroup.decrementFreeSeats())
             throw new ImpossibleActionException("Parterre is already fully taken");
@@ -137,7 +142,8 @@ public class ReservationService {
         Seat seat = seatRepository.findById(ticketDTO.getSeatId())
                 .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
         EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
-        List<Seat> seats = seatRepository.getSeatsByRowNumAndColNum(eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
+        List<Seat> seats = seatRepository
+                .getSeatsByRowNumAndColNum(eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
         if (seats.stream().anyMatch((s) -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
             throw new ImpossibleActionException("Seat is not free for all days");
         seats.forEach((s) -> {
@@ -149,10 +155,12 @@ public class ReservationService {
     }
 
     private void reserveParterreAllDays(Ticket ticket, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
-        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository.findById(ticketDTO.getReservableSeatGroupId())
+        ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository
+                .findById(ticketDTO.getReservableSeatGroupId())
                 .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
         EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
-        List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository.findByEventSeatGroup(eventSeatGroup.getId());
+        List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository
+                .findByEventSeatGroup(eventSeatGroup.getId());
         if (reservableSeatGroups.stream().anyMatch((esg) -> !esg.decrementFreeSeats()))
             throw new ImpossibleActionException("Parterre not free for all days");
         reservableSeatGroups.forEach((rsg) -> {
@@ -212,7 +220,8 @@ public class ReservationService {
     }
 
     public Object payReservationExecutePayment(Long reservationId, PaymentDTO paymentDTO) throws PayPalRESTException, EntityNotFoundException, ImpossibleActionException, PayPalException {
-        Reservation reservation = reservationRepository.findByIdAndIsCancelledFalse(reservationId) //TODO optimistic lock
+        Reservation reservation = reservationRepository
+                .findByIdAndIsCancelledFalse(reservationId) //TODO optimistic lock
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");

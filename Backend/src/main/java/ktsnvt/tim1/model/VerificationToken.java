@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public class VerificationToken {
 
     private String token;
 
-    private Date dateCreated;
+    private LocalDateTime dateCreated;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "user_id")
@@ -27,7 +28,7 @@ public class VerificationToken {
 
     public VerificationToken(User user) {
         this.user = user;
-        this.dateCreated = new Date();
+        this.dateCreated = LocalDateTime.now();
         this.token = UUID.randomUUID().toString();
     }
 
@@ -47,11 +48,11 @@ public class VerificationToken {
         this.token = token;
     }
 
-    public Date getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
     }
 
@@ -64,12 +65,9 @@ public class VerificationToken {
     }
 
     public boolean isExpired() {
-        Date d1 = new Date();
-        if (d1.getTime() - this.dateCreated.getTime() > 86400000) {
-            this.expired = true;
-        } else {
-            this.expired=false;
-        }
+        LocalDateTime d1 = LocalDateTime.now();
+
+        this.expired = d1.minusDays(1).compareTo(this.dateCreated) > 0;
         return expired;
     }
 
