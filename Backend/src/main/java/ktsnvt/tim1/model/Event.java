@@ -21,7 +21,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventCategory category;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MediaFile> picturesAndVideos;
 
     @Column(nullable = false)

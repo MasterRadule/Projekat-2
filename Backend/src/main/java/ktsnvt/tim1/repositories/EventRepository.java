@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -21,5 +22,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAll(Pageable pageable);
 
     @Query(value = "select e from Event e join e.location l where lower(e.name) like :name and (:category is null or e.category = :category) and (:location_id is null or l.id = :location_id)")
-    Page<Event> searchEvents(@Param("name") String name, @Param("category") EventCategory category, @Param("location_id") Long locationID, Pageable pageable);
+    Page<Event> searchEvents(@Param("name") String name, @Nullable @Param("category") EventCategory category, @Nullable @Param("location_id") Long locationID, Pageable pageable);
 }

@@ -8,7 +8,6 @@ import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.model.EventCategory;
 import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.repositories.EventRepository;
-import ktsnvt.tim1.repositories.MediaFileRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -42,9 +42,6 @@ public class EventServiceIntegrationTests {
 
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private MediaFileRepository mediaFileRepository;
 
     @Test
     void getEvents_pageRequestSent_eventsReturned() {
@@ -174,11 +171,17 @@ public class EventServiceIntegrationTests {
 
         eventService.uploadPicturesAndVideos(1L, files);
 
-        assertEquals(4, eventRepository.findByIdAndIsCancelledFalse(1L).get().getPicturesAndVideos().size());
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(1L);
+        Event e = null;
+        if (eventOptional.isPresent())
+            e = eventOptional.get();
+
+        assertNotNull(e);
+        assertEquals(4, e.getPicturesAndVideos().size());
     }
 
     @Test
-    public void uploadPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
+    void uploadPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 31L;
 
         assertThrows(EntityNotFoundException.class, () -> eventService.uploadPicturesAndVideos(id, new MultipartFile[2]));
@@ -198,6 +201,7 @@ public class EventServiceIntegrationTests {
         assertThrows(EntityNotValidException.class, () -> eventService.uploadPicturesAndVideos(1L, files));
     }
 
+    @Transactional
     @Test
     void getPicturesAndVideos_eventExists_picturesAndVideosReturned() throws EntityNotFoundException {
         Set<MediaFile> files = eventService.getPicturesAndVideos(1L);
@@ -221,7 +225,13 @@ public class EventServiceIntegrationTests {
 
         eventService.deleteMediaFile(eventID, fileID);
 
-        assertEquals(1, eventRepository.findByIdAndIsCancelledFalse(eventID).get().getPicturesAndVideos().size());
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(eventID);
+        Event e = null;
+        if (eventOptional.isPresent())
+            e = eventOptional.get();
+
+        assertNotNull(e);
+        assertEquals(1, e.getPicturesAndVideos().size());
     }
 
     @Test
@@ -254,8 +264,12 @@ public class EventServiceIntegrationTests {
 
         eventService.setEventLocationAndSeatGroups(seatGroupDTO);
 
-        Event event = eventRepository.findByIdAndIsCancelledFalse(eventID).get();
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(eventID);
+        Event event = null;
+        if (eventOptional.isPresent())
+            event = eventOptional.get();
 
+        assertNotNull(event);
         assertEquals(locationID, event.getLocation().getId());
         assertEquals(2, event.getEventSeatGroups().size());
     }
