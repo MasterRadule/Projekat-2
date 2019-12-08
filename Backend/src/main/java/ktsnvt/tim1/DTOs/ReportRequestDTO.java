@@ -18,6 +18,13 @@ public class ReportRequestDTO {
     public ReportRequestDTO() {
     }
 
+    public ReportRequestDTO(@NotNull Long startDate, @NotNull Long endDate, Long locationId, Long eventId) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.locationId = locationId;
+        this.eventId = eventId;
+    }
+
     public Long getStartDate() {
         return startDate;
     }

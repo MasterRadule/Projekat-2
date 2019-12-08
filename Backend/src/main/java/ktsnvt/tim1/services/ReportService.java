@@ -47,12 +47,8 @@ public class ReportService {
 
             if (!location.isPresent())
                 throw new EntityNotFoundException("Location not found");
-
-            Location l = location.get();
-
-            if (l.isDisabled())
-                throw new BadParametersException("Cannot generate report for disabled location");
-        } else if (reportRequest.getEventId() != null) {
+        }
+        if (reportRequest.getEventId() != null) {
             Optional<Event> event = eventRepository.findById(reportRequest.getEventId());
 
             if (!event.isPresent())
