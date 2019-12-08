@@ -1,8 +1,8 @@
 package ktsnvt.tim1.repositories;
 
 import ktsnvt.tim1.DTOs.ReportDTO;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,11 +14,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class ReservationRepositoryIntegrationTests {
     @Autowired
@@ -26,8 +25,8 @@ public class ReservationRepositoryIntegrationTests {
 
     private static DateTimeFormatter dateTimeFormatter;
 
-    @BeforeClass
-    public static void setUpSimpleDateFormat() {
+    @BeforeAll
+    public static void setUpDateFormatter() {
         dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     }
 
@@ -49,7 +48,6 @@ public class ReservationRepositoryIntegrationTests {
 
         assertNotNull(returnedResults);
         assertEquals(expectedNumberOfDays, returnedResults.size());
-
         for (int i = 0; i < expectedNumberOfDays; i++) {
             assertEquals(expectedResult.get(i).getDate(), returnedResults.get(i).getDate());
             assertEquals(expectedResult.get(i).getTicketCount(), returnedResults.get(i).getTicketCount());
@@ -57,13 +55,48 @@ public class ReservationRepositoryIntegrationTests {
         }
     }
 
-/*    @Test
+    @Test
     public void getAttendanceAndEarningsForPeriod_locationIdIsNotNull_valuesReturned() {
-        // TODO
+        LocalDateTime startDate = LocalDateTime.parse("2020-01-01 00:00:00", dateTimeFormatter);
+        LocalDateTime endDate = LocalDateTime.parse("2020-01-05 00:00:00", dateTimeFormatter);
+        Long locationId = 1L;
+
+        int expectedNumberOfDays = 1;
+        List<ReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new ReportDTO(startDate, 1, 31));
+
+        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+                locationId, null);
+
+        assertNotNull(returnedResults);
+        assertEquals(expectedNumberOfDays, returnedResults.size());
+        for (int i = 0; i < expectedNumberOfDays; i++) {
+            assertEquals(expectedResult.get(i).getDate(), returnedResults.get(i).getDate());
+            assertEquals(expectedResult.get(i).getTicketCount(), returnedResults.get(i).getTicketCount());
+            assertEquals(expectedResult.get(i).getEarnings(), returnedResults.get(i).getEarnings());
+        }
     }
 
     @Test
     public void getAttendanceAndEarningsForPeriod_bothIdsAreProvided_valuesReturned() {
+        LocalDateTime startDate = LocalDateTime.parse("2020-01-01 00:00:00", dateTimeFormatter);
+        LocalDateTime endDate = LocalDateTime.parse("2020-01-05 00:00:00", dateTimeFormatter);
+        Long locationId = 1L;
+        Long eventId = 1L;
 
-    }*/
+        int expectedNumberOfDays = 1;
+        List<ReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new ReportDTO(startDate, 1, 31));
+
+        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+                locationId, eventId);
+
+        assertNotNull(returnedResults);
+        assertEquals(expectedNumberOfDays, returnedResults.size());
+        for (int i = 0; i < expectedNumberOfDays; i++) {
+            assertEquals(expectedResult.get(i).getDate(), returnedResults.get(i).getDate());
+            assertEquals(expectedResult.get(i).getTicketCount(), returnedResults.get(i).getTicketCount());
+            assertEquals(expectedResult.get(i).getEarnings(), returnedResults.get(i).getEarnings());
+        }
+    }
 }
