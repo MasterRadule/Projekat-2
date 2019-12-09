@@ -54,23 +54,6 @@ public class ReportControllerIntegrationTests {
     }
 
     @Test
-    public void getReport_eventIdNotNullAndLocationIdIsNull_errorMessageReturned() {
-        LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
-        LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
-        Long eventId = 1L;
-
-        Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
-                        "=%d&eventId=%d", startDateMilliseconds, endDateMilliseconds, eventId), HttpMethod.GET, null,
-                String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Location id must be provided if event id is specified", response.getBody());
-    }
-
-    @Test
     public void getReport_locationDoesNotExist_errorMessageReturned() {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);

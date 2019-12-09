@@ -37,8 +37,6 @@ public class ReportService {
 
         if (endDate.compareTo(startDate) <= 0)
             throw new BadParametersException("Start date must be before end date");
-        else if (reportRequest.getLocationId() == null && reportRequest.getEventId() != null)
-            throw new BadParametersException("Location id must be provided if event id is specified");
 
         if (reportRequest.getLocationId() != null) {
             Optional<Location> location = locationRepository.findById(reportRequest.getLocationId());
