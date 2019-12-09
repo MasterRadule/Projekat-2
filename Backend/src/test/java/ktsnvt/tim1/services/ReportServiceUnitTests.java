@@ -67,22 +67,7 @@ public class ReportServiceUnitTests {
 
         assertThrows(BadParametersException.class, () -> reportService.getReport(reportRequestDTO));
     }
-
-    @Test
-    public void getReport_eventIdNotNullAndLocationIdIsNull_badParametersExceptionThrown() {
-        LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
-        LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
-        Long eventId = 1L;
-
-        Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds, null,
-                eventId);
-
-        assertThrows(BadParametersException.class, () -> reportService.getReport(reportRequestDTO));
-    }
-
+    
     @Test
     public void getReport_locationDoesNotExist_entityNotFoundExceptionThrown() {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
