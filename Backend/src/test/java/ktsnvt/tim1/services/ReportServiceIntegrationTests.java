@@ -133,9 +133,6 @@ public class ReportServiceIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        System.out.println(startDateMilliseconds);
-        System.out.println(endDateMilliseconds);
-
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
                 null, null);
 
