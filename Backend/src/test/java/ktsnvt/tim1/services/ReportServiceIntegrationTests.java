@@ -4,13 +4,9 @@ import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
-import ktsnvt.tim1.model.Event;
-import ktsnvt.tim1.model.EventDay;
-import ktsnvt.tim1.model.Location;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,14 +15,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -133,4 +124,27 @@ public class ReportServiceIntegrationTests {
 
         assertThrows(BadParametersException.class, () -> reportService.getReport(reportRequestDTO));
     }
+
+    @Test
+    public void getReport_everythingOk_reportDTOReturned() throws BadParametersException, EntityNotFoundException {
+        LocalDateTime startDate = LocalDateTime.parse("2020-01-01 13:44:33", dateTimeFormatter);
+        LocalDateTime endDate = LocalDateTime.parse("2020-01-05 13:44:33", dateTimeFormatter);
+
+        Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        System.out.println(startDateMilliseconds);
+        System.out.println(endDateMilliseconds);
+
+        ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
+                null, null);
+
+        int expectedNumberOfResults = 2;
+
+        List<ReportDTO> result = reportService.getReport(reportRequestDTO);
+
+        assertNotNull(result);
+        assertEquals(expectedNumberOfResults, result.size());
+    }
+
 }
