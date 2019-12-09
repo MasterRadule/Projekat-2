@@ -4,48 +4,27 @@ import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
-import ktsnvt.tim1.model.Event;
-import ktsnvt.tim1.model.EventDay;
-import ktsnvt.tim1.model.Location;
-import ktsnvt.tim1.repositories.EventRepository;
-import ktsnvt.tim1.repositories.LocationRepository;
-import ktsnvt.tim1.repositories.ReservationRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class ReportServiceUnitTests {
+public class ReportServiceIntegrationTests {
     @Autowired
     private ReportService reportService;
-
-    @MockBean
-    private ReservationRepository reservationRepository;
-
-    @MockBean
-    private LocationRepository locationRepository;
-
-    @MockBean
-    private EventRepository eventRepository;
 
     private static DateTimeFormatter dateTimeFormatter;
 
@@ -87,12 +66,10 @@ public class ReportServiceUnitTests {
     public void getReport_locationDoesNotExist_entityNotFoundExceptionThrown() {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
-        Long locationId = 1L;
+        Long locationId = 31L;
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.empty());
 
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds, locationId,
                 null);
@@ -105,15 +82,10 @@ public class ReportServiceUnitTests {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
         Long locationId = 1L;
-        Long eventId = 2L;
+        Long eventId = 150L;
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        Location location = new Location(locationId, "Spens", 50.0, 50.0, false);
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.of(location));
-        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
                 locationId, eventId);
@@ -126,18 +98,10 @@ public class ReportServiceUnitTests {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
         Long locationId = 1L;
-        Long eventId = 2L;
+        Long eventId = 3L;
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        Location location = new Location(locationId, "Spens", 50.0, 50.0, false);
-        Event event = new Event();
-        event.setId(eventId);
-        event.setCancelled(true);
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.of(location));
-        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
                 locationId, eventId);
@@ -150,19 +114,10 @@ public class ReportServiceUnitTests {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
         Long locationId = 1L;
-        Long eventId = 2L;
+        Long eventId = 1L;
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        Location location = new Location(locationId, "Spens", 50.0, 50.0, false);
-        Event event = new Event();
-        event.setId(eventId);
-        event.setCancelled(false);
-        event.setActiveForReservations(true);
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.of(location));
-        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
                 locationId, eventId);
@@ -171,80 +126,25 @@ public class ReportServiceUnitTests {
     }
 
     @Test
-    public void getReport_eventIsNotFinishedYet_badParametersExceptionThrown() {
-        LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
-        LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
-        Long locationId = 1L;
-        Long eventId = 2L;
+    public void getReport_everythingOk_reportDTOReturned() throws BadParametersException, EntityNotFoundException {
+        LocalDateTime startDate = LocalDateTime.parse("2020-01-01 13:44:33", dateTimeFormatter);
+        LocalDateTime endDate = LocalDateTime.parse("2020-01-05 13:44:33", dateTimeFormatter);
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        Location location = new Location(locationId, "Spens", 50.0, 50.0, false);
-        Event event = new Event();
-        event.setId(eventId);
-        event.setActiveForReservations(false);
-
-        EventDay eventDay = new EventDay(1L, LocalDateTime.now().plusDays(1));
-        eventDay.setEvent(event);
-        event.getEventDays().add(eventDay);
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.of(location));
-        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        System.out.println(startDateMilliseconds);
+        System.out.println(endDateMilliseconds);
 
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
-                locationId, eventId);
+                null, null);
 
-        assertThrows(BadParametersException.class, () -> reportService.getReport(reportRequestDTO));
-    }
-
-    @Test
-    public void getReport_everythingIsOk_reportDTOReturned() throws BadParametersException, EntityNotFoundException {
-        LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
-        LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
-        Long locationId = 1L;
-        Long eventId = 2L;
-
-        Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        Location location = new Location(locationId, "Spens", 50.0, 50.0, false);
-        Event event = new Event();
-        event.setId(eventId);
-        event.setActiveForReservations(false);
-
-        EventDay eventDay = new EventDay(1L, LocalDateTime.now().minusDays(3));
-        eventDay.setEvent(event);
-        event.getEventDays().add(eventDay);
-
-        ReportDTO reportDTO = new ReportDTO(startDate, 1, 31);
-        List<ReportDTO> repositoryResult = new ArrayList<>();
-        repositoryResult.add(reportDTO);
-
-        int resultSize = 1;
-
-        Mockito.when(locationRepository.findById(locationId)).thenReturn(Optional.of(location));
-        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        Mockito.when(reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate, locationId, eventId))
-                .thenReturn(repositoryResult);
-
-        ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
-                locationId, eventId);
+        int expectedNumberOfResults = 2;
 
         List<ReportDTO> result = reportService.getReport(reportRequestDTO);
 
         assertNotNull(result);
-        assertEquals(resultSize, result.size());
-
-        for (int i = 0; i < resultSize; i++) {
-            assertEquals(repositoryResult.get(i).getDate(), result.get(i).getDate());
-            assertEquals(repositoryResult.get(i).getEarnings(), result.get(i).getEarnings());
-            assertEquals(repositoryResult.get(i).getTicketCount(), result.get(i).getTicketCount());
-        }
-
-        verify(reservationRepository, times(1)).getAttendanceAndEarningsForPeriod(startDate, endDate, locationId,
-                eventId);
+        assertEquals(expectedNumberOfResults, result.size());
     }
-
 
 }
