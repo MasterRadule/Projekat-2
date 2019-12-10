@@ -6,10 +6,12 @@ import ktsnvt.tim1.DTOs.EventSeatGroupDTO;
 import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
 import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.model.EventCategory;
+import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.MediaFileRepository;
 import ktsnvt.tim1.utils.RestResponsePage;
 import org.apache.commons.io.FileUtils;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +23,16 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.*;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,6 +52,9 @@ public class EventControllerIntegrationTests {
 
     @Autowired
     MediaFileRepository mediaFileRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     void getEvents_eventsReturned() {
@@ -90,8 +93,6 @@ public class EventControllerIntegrationTests {
         assertEquals("Event not found", errorMessage);
     }
 
-    @Transactional
-    @Rollback
     @Test
     void createEvent_eventCreated() {
         EventDTO newDTO = new EventDTO(null, "Event 1", "Description of Event 1",
@@ -125,6 +126,12 @@ public class EventControllerIntegrationTests {
 
         Page<Event> eventPage = eventRepository.findAll(PageRequest.of(0, 5));
         assertEquals(initialSize + 1, eventPage.getTotalElements());
+
+        // rollback
+        Event e = eventRepository.getOne(event.getId());
+        eventRepository.delete(e);
+        Optional<Event> eventOptional = eventRepository.findById(event.getId());
+        assertFalse(eventOptional.isPresent());
     }
 
     @Test
@@ -149,10 +156,23 @@ public class EventControllerIntegrationTests {
     }
 
     @Transactional
-    @Rollback
     @Test
     void uploadEventsPicturesAndVideos_picturesAndVideosUploaded() throws Exception {
         Long eventID = 1L;
+        Long firstMediaFileID;
+        Long secondMediaFileID;
+        Optional<Event> eventOptional = eventRepository.findById(eventID);
+        Event event = null;
+        if (eventOptional.isPresent())
+            event = eventOptional.get();
+
+        assertNotNull(event);
+
+        Set<MediaFile> mediaFiles = event.getPicturesAndVideos();
+        Iterator<MediaFile> iter = mediaFiles.iterator();
+        firstMediaFileID = iter.next().getId();
+        secondMediaFileID = iter.next().getId();
+
         Random r = new Random();
 
         byte[] image = new byte[20];
@@ -180,15 +200,23 @@ public class EventControllerIntegrationTests {
         file1.delete();
         file2.delete();
 
-        Optional<Event> eventOptional = eventRepository.findById(eventID);
-        Event e = null;
-        if (eventOptional.isPresent())
-            e = eventOptional.get();
+        Session session = (Session) entityManager.getDelegate();
+        session.evict(event);
 
-        assertNotNull(e);
+        eventOptional = eventRepository.findById(eventID);
+        if (eventOptional.isPresent())
+            event = eventOptional.get();
+
+        assertNotNull(event);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("Files uploaded successfully", result.getBody());
-        assertEquals(3, eventRepository.getOne(eventID).getPicturesAndVideos().size());
+        assertEquals(4, event.getPicturesAndVideos().size());
+
+        // rollback
+        event.getPicturesAndVideos().removeIf(mf -> !mf.getId().equals(firstMediaFileID) && !mf.getId()
+                .equals(secondMediaFileID));
+        event = eventRepository.save(event);
+        assertEquals(2, event.getPicturesAndVideos().size());
     }
 
     @Test
@@ -265,21 +293,55 @@ public class EventControllerIntegrationTests {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(files);
-        assertEquals(1, files.size());
+        assertEquals(2, files.size());
     }
 
     @Transactional
-    @Rollback
     @Test
-    void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() {
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos/1"),
+    void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() throws IOException {
+       ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos/1"),
                 HttpMethod.DELETE, null, String.class);
 
         String message = result.getBody();
 
+        Event event = eventRepository.getOne(1L);
+
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("File deleted successfully", message);
-        assertEquals(1, eventRepository.getOne(1L).getPicturesAndVideos().size());
+        assertEquals(1, event.getPicturesAndVideos().size());
+
+        // rollback
+        Random r = new Random();
+
+        byte[] image = new byte[20];
+        r.nextBytes(image);
+
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        File file1 = new File("img.png");
+        FileUtils.writeByteArrayToFile(file1, image);
+        parameters.add("files", new FileSystemResource(file1));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
+
+        ResponseEntity<String> res = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos"),
+                HttpMethod.POST, requestEntity, String.class);
+
+        file1.delete();
+
+        assertEquals(HttpStatus.OK, res.getStatusCode());
+        assertEquals("Files uploaded successfully", res.getBody());
+
+        Session session = (Session) entityManager.getDelegate();
+        session.evict(event);
+
+        Optional<Event> eventOptional = eventRepository.findById(1L);
+        if (eventOptional.isPresent())
+            event = eventOptional.get();
+
+        assertNotNull(event);
+        assertEquals(2, event.getPicturesAndVideos().size());
     }
 
     @Test
@@ -304,8 +366,6 @@ public class EventControllerIntegrationTests {
         assertEquals("File not found", errorMessage);
     }
 
-    @Transactional
-    @Rollback
     @Test
     void editEvent_eventEdited() {
         Long eventID = 1L;
@@ -430,7 +490,6 @@ public class EventControllerIntegrationTests {
     }
 
     @Transactional
-    @Rollback
     @Test
     void setEventLocationAndSeatGroups_locationAndSeatGroupsSet() {
         Long eventID = 1L;
