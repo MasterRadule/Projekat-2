@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-class LocationServiceUnitTests {
+public class LocationServiceUnitTests {
     @Autowired
     private LocationService locationService;
 
