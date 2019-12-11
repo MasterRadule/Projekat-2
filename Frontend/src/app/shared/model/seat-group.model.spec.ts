@@ -1,4 +1,4 @@
-import { SeatGroup } from './seat-group';
+import { SeatGroup } from './seat-group.model';
 
 describe('SeatGroup', () => {
   it('should create an instance', () => {

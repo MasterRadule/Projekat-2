@@ -1,10 +1,13 @@
-import {Deserializable} from './deserializable';
+export class SeatGroup {
+  private _id: number;
+  private _rowsNum: number;
+  private _colsNum: number;
+  private _parterre: boolean;
+  private _xCoordinate: number;
+  private _yCoordinate: number;
+  private _totalSeats: number;
+  private _name: string;
 
-export class SeatGroup implements Deserializable {
-  deserialize(input: any): this {
-    Object.assign(this, input);
-    return this;
-  }
 
   get id(): number {
     return this._id;
@@ -69,13 +72,4 @@ export class SeatGroup implements Deserializable {
   set name(value: string) {
     this._name = value;
   }
-
-  private _id: number;
-  private _rowsNum: number;
-  private _colsNum: number;
-  private _parterre: boolean;
-  private _xCoordinate: number;
-  private _yCoordinate: number;
-  private _totalSeats: number;
-  private _name: string;
 }

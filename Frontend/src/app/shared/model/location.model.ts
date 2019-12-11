@@ -1,6 +1,10 @@
-import {Deserializable} from './deserializable';
+export class Location {
+  private _id: number;
+  private _name: string;
+  private _latitude: number;
+  private _longitude: number;
+  private _disabled: boolean;
 
-export class Location implements Deserializable {
   get id(): number {
     return this._id;
   }
@@ -39,16 +43,5 @@ export class Location implements Deserializable {
 
   set disabled(value: boolean) {
     this._disabled = value;
-  }
-
-  private _id: number;
-  private _name: string;
-  private _latitude: number;
-  private _longitude: number;
-  private _disabled: boolean;
-
-  deserialize(input: any) {
-    Object.assign(this, input);
-    return this;
   }
 }
