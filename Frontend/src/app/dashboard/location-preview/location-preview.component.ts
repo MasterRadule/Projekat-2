@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Location} from '../../shared/model/location.model';
 
 @Component({
@@ -7,7 +7,7 @@ import {Location} from '../../shared/model/location.model';
   styleUrls: ['./location-preview.component.css']
 })
 export class LocationPreviewComponent implements OnInit {
-  private location: Location;
+  @Input() private location: Location;
 
   constructor() {
   }

@@ -5,6 +5,8 @@ import {LocationPreviewComponent} from './location-preview/location-preview.comp
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import {MatSnackBarModule} from '@angular/material';
+import {CoreModule} from '../core/core.module';
 
 
 @NgModule({
@@ -13,7 +15,9 @@ import {MatIconModule} from '@angular/material/icon';
     CommonModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatSnackBarModule,
+    CoreModule
   ]
 })
 export class DashboardModule {
