@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._locationApiService.getLocations(0, 3).subscribe({
+    this._locationApiService.getLocations(0, 5).subscribe({
       next: (result: Page) => {
         this._locations = result.content;
       },

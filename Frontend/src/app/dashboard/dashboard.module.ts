@@ -7,6 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSnackBarModule} from '@angular/material';
 import {CoreModule} from '../core/core.module';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {CoreModule} from '../core/core.module';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    CoreModule
+    CoreModule,
+    MatGridListModule
   ]
 })
 export class DashboardModule {
