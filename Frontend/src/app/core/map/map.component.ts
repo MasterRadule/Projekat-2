@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit {
   @Input() private _latitude: number;

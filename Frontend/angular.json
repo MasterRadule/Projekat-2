@@ -124,5 +124,10 @@
       }
     }
   },
-  "defaultProject": "Frontend"
+  "defaultProject": "Frontend",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
