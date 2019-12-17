@@ -8,12 +8,11 @@
   </div>
   <div class="card-footer">
     <div class="button-row">
-      <button mat-raised-button color="primary">
+      <button mat-raised-button color="primary" matTooltip="Edit location">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-raised-button color="primary">
-        <mat-icon>block</mat-icon>
-      </button>
+      <mat-slide-toggle matTooltip="Enable or disable location" color="primary"
+                        [checked]="!location.disabled" (change)="toggleLocationStatus($event)"></mat-slide-toggle>
     </div>
   </div>
 </div>
