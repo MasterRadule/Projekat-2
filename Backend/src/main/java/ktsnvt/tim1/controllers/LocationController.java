@@ -17,6 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/locations")
+@CrossOrigin
 public class LocationController {
     @Autowired
     private LocationService locationService;
