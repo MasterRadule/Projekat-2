@@ -31,7 +31,16 @@ public class UserDTO {
     public UserDTO() {
     }
 
-     public Long getId() {
+    public UserDTO(Long id, String firstName, String lastName, String password, String email, Boolean verified) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.email = email;
+        this.verified = verified;
+    }
+
+    public Long getId() {
         return id;
     }
 

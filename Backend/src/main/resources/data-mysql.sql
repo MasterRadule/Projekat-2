@@ -17,6 +17,10 @@ SET SQL_SAFE_UPDATES = 0;
 SET NAMES 'utf8';
 USE kts;
 --
+-- Delete data from the table 'verification_token'
+--
+TRUNCATE TABLE verification_token;
+--
 -- Delete data from the table 'user_authority'
 --
 TRUNCATE TABLE user_authority;
