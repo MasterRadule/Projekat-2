@@ -58,11 +58,10 @@ public class AuthenticationService {
             authorities.add(a);
             regUser.setAuthorities(authorities);
 
+            User u = userRepository.save(regUser);
             VerificationToken verificationToken = new VerificationToken(regUser);
             emailService.sendVerificationEmail(regUser,url,verificationToken);
-            User u = userRepository.save(regUser);
             verificationTokenRepository.save(verificationToken);
-
             return userMapper.toDTO(u);
         }
     }

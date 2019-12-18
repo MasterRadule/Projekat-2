@@ -13,7 +13,7 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
 
@@ -40,7 +40,7 @@ public class User implements UserDetails {
     private List<Authority> authorities;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public List<Authority> getAuthorities() {
         return authorities;
     }
 
@@ -51,6 +51,16 @@ public class User implements UserDetails {
     public User() {
         super();
         authorities = new ArrayList<Authority>();
+    }
+
+    public User(Long id, String firstName, String lastName, String password, String email, Boolean isVerified) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isVerified = isVerified;
+        this.authorities = new ArrayList<>();
     }
 
     public Long getId() {
