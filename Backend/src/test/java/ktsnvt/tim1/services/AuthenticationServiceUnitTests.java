@@ -11,6 +11,7 @@ import ktsnvt.tim1.repositories.VerificationTokenRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,7 +91,7 @@ public class AuthenticationServiceUnitTests {
         Assert.assertNull(createdUser.getPassword());
 
         verify(userMapperMocked, times(1)).toDTO(registeredUserSaved);
-        //verify(userRepositoryMocked, times(1)).save(registeredUser);
+        verify(userRepositoryMocked, times(1)).save(ArgumentMatchers.any(RegisteredUser.class));
         verify(passwordEncoderMocked, times(1)).encode(userToRegister.getPassword());
         verify(userRepositoryMocked, times(1)).findByEmail(email);
 
