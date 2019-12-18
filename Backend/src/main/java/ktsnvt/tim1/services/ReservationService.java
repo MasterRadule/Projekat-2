@@ -202,8 +202,14 @@ public class ReservationService {
 
         Item item = new Item();
         item.setDescription("KTSNVT - Reservation");
-        item.setName(String.valueOf(reservationId));
+        item.setName("ReservationID: " + reservationId);
+        item.setCurrency("USD");
+        item.setPrice(String.valueOf(price));
+        item.setQuantity("1");
         Transaction transaction = new Transaction();
+        ItemList itemList = new ItemList();
+        itemList.setItems(new ArrayList<>());
+        transaction.setItemList(itemList);
         transaction.setAmount(amount);
         transaction.getItemList().getItems().add(item);
         List<Transaction> transactions = new ArrayList<>();
@@ -212,10 +218,15 @@ public class ReservationService {
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
 
+        RedirectUrls redirectUrls = new RedirectUrls();
+        redirectUrls.setReturnUrl("/");
+        redirectUrls.setCancelUrl("/");
+
         Payment payment = new Payment();
         payment.setIntent("sale");
         payment.setPayer(payer);
         payment.setTransactions(transactions);
+        payment.setRedirectUrls(redirectUrls);
         return payment;
     }
 

@@ -448,7 +448,7 @@ INSERT INTO reservation(id, is_cancelled, order_id, event_id, user_id) VALUES
 (17, False, '182639827', 17, 22),
 (18, False, '1304539646', 18, 23),
 (19, False, '278955818', 19, 24),
-(20, False, '1400855637', 20, 25),
+(20, False, NULL, 20, 25),
 (21, True, NULL, 21, 26),
 (22, True, NULL, 22, 27),
 (23, True, NULL, 23, 28),
