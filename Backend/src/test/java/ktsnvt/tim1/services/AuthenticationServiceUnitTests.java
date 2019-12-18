@@ -70,7 +70,6 @@ public class AuthenticationServiceUnitTests {
     }
 
     @Test
-    @Transactional
     void register_userOk_user() throws EntityAlreadyExistsException, MalformedURLException {
         String email = "mmarkovic@gmail.com";
         Long id = 1L;
