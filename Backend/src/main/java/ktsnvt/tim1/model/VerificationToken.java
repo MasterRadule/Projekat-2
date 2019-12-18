@@ -26,6 +26,13 @@ public class VerificationToken {
     public VerificationToken() {
     }
 
+    public VerificationToken(Long id, String token, LocalDateTime dateCreated, User user) {
+        this.id = id;
+        this.token = token;
+        this.dateCreated = dateCreated;
+        this.user = user;
+    }
+
     public VerificationToken(User user) {
         this.user = user;
         this.dateCreated = LocalDateTime.now();

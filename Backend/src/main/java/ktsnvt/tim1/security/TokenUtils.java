@@ -19,7 +19,7 @@ public class TokenUtils {
 	
 	@Value("18000") //in seconds (5 hours)
 	private Long expiration;
-	
+
 	public String getEmailFromToken(String token) {
 		String email;
 		try {

@@ -31,5 +31,27 @@ public class RegisteredUser extends User {
         this.reservations = reservations;
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof RegisteredUser)) {
+            return false;
+        }
+        RegisteredUser user = (RegisteredUser) o;
+        if (this.getId()!=null ? !this.getId().equals(user.getId()): user.getId()!=null) return false;
+        if (this.getFirstName()!=null ? !this.getFirstName().equals(user.getFirstName()): user.getFirstName()!=null) return false;
+        if (this.getLastName()!=null ? !this.getLastName().equals(user.getLastName()): user.getLastName()!=null) return false;
+        if (this.getEmail()!=null ? !this.getEmail().equals(user.getEmail()): user.getEmail()!=null) return false;
+        if (this.getVerified()!=null ? !this.getVerified().equals(user.getVerified()): user.getVerified()!=null) return false;
+        if (this.getPassword()!=null ? !this.getPassword().equals(user.getPassword()): user.getPassword()!=null) return false;
+        if (this.getUsername()!=null ? !this.getUsername().equals(user.getUsername()): user.getUsername()!=null) return false;
+        if (this.getAuthorities()!=null ? !this.getAuthorities().equals(user.getAuthorities()): user.getAuthorities()!=null) return false;
+        return (this.getReservations()!=null ? this.getReservations().equals(user.getReservations()): user.getReservations()==null);
+
+    }
 
 }
