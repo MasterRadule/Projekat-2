@@ -55,7 +55,6 @@ public class AuthenticationServiceUnitTests {
 
 
     @Test
-    @Transactional
     void register_emailExists_entityAlreadyExistsExceptionThrown(){
         String email = "mmarkovic@gmail.com";
         User user = new User(1L, "Marko", "Markovic", "$2y$12$FDOJQfuSrC7UAvBaUaX7UuP9NwZcZGI2joxQcHlzjEMXJBr57XAX6", email, true);
