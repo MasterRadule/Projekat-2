@@ -55,6 +55,9 @@ public class AuthenticationController {
         catch (BadCredentialsException ex) {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.BAD_REQUEST);
         }
+        catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping(value = "/register")
