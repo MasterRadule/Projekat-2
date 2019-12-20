@@ -47,6 +47,7 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/login"),
                 HttpMethod.POST, entity, String.class);
 
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("Invalid email or password", result.getBody());
     }
@@ -60,6 +61,7 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/login"),
                 HttpMethod.POST, entity, String.class);
 
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("Invalid email or password", result.getBody());
     }
@@ -73,6 +75,7 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/login"),
                 HttpMethod.POST, entity, String.class);
 
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("Your account is not verified!", result.getBody());
     }
@@ -86,6 +89,8 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/login"),
                 HttpMethod.POST, entity, String.class);
 
+        String token = result.getBody();
+        assertNotNull(token);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -100,9 +105,9 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/register"),
                 HttpMethod.POST, entity, String.class);
 
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("Email already taken!", result.getBody());
-
     }
 
     @Test
@@ -126,7 +131,6 @@ public class AuthenticationControllerIntegrationTests {
         assertNotNull(registeredUser.getId());
         assertNull(registeredUser.getPassword());
         assertEquals(initialSize + 1, userRepository.count());
-
     }
 
     @Transactional
@@ -136,6 +140,8 @@ public class AuthenticationControllerIntegrationTests {
         String token = "afksdjlfjs111";
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/verify-account?token="+token),
                 HttpMethod.GET, null, String.class);
+
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("The link is invalid or broken!", result.getBody());
     }
@@ -147,9 +153,10 @@ public class AuthenticationControllerIntegrationTests {
         String token = "$2a$04$Vbug2lwwJGrvUXTj6z7ff";
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/verify-account?token="+token),
                 HttpMethod.GET, null, String.class);
+
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("The link is invalid or broken!", result.getBody());
-
     }
 
     @Transactional
@@ -160,23 +167,12 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<Boolean> result = testRestTemplate.exchange(createURLWithPort("/verify-account?token="+token),
                 HttpMethod.GET, null, Boolean.class);
 
+        assertNotNull(result.getBody());
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.getBody());
-
-
     }
-
-
-
-
-
-
-
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + "/api" + uri;
     }
-
-
-
 }
