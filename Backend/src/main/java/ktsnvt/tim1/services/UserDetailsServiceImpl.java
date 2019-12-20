@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.repositories.UserRepository;
@@ -28,9 +29,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
   }
 
-  public UserDetails checkIsVerified(String email) throws EntityNotValidException {
+  public UserDetails checkIsVerified(String email) throws EntityNotValidException, EntityNotFoundException{
     User user = userRepository.findByEmail(email);
-    if(user.getVerified()){
+    if(user == null){
+      throw new EntityNotFoundException("Account not found");
+    }
+    else if(user.getVerified()){
       return user;
     }else{
       throw new EntityNotValidException("Your account is not verified!");

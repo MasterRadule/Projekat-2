@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.repositories.UserRepository;
@@ -56,7 +57,7 @@ public class UserDetailsServiceImplUnitTests {
     }
 
     @Test
-    void checkIsVerified_accountIsNotVerified_entityNotValidException(){
+    void checkIsVerified_accountIsNotVerified_entityNotValidExceptionThrown(){
         String email = "ppetrovic@gmail.com";
         User user = new User(1L,"Petar","Petrovic","$2y$12$UPsAA8iwVtUJmUX0VX.a4eTKqFexiz2t2nXQBZWTozKsvPnMAj3Om",email,false);
 
@@ -68,7 +69,17 @@ public class UserDetailsServiceImplUnitTests {
     }
 
     @Test
-    void checkIsVerified_accountIsVerified_user() throws EntityNotValidException{
+    void checkIsVerified_accountNotFound_entityNotFoundExceptionThrown(){
+        String email = "ppetrovic@gmail.com";
+        Mockito.when(userRepositoryMocked.findByEmail(email)).thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> userDetailsService.checkIsVerified(email));
+
+        verify(userRepositoryMocked, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void checkIsVerified_accountIsVerified_user() throws EntityNotValidException, EntityNotFoundException{
         String email = "ppetrovic@gmail.com";
         User user = new User(1L,"Petar","Petrovic","$2y$12$UPsAA8iwVtUJmUX0VX.a4eTKqFexiz2t2nXQBZWTozKsvPnMAj3Om",email,true);
 
