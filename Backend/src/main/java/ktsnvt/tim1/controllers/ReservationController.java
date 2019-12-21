@@ -75,7 +75,7 @@ public class ReservationController {
         }
     }
 
-    @PostMapping(value = "/{id}/executePayment", consumes = "application/x-www-form-urlencoded")
+    @PostMapping(value = "/{id}/execute-payment", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity<Object> payReservationExecutePayment(@Valid PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
         try {
             return new ResponseEntity<>(reservationService.payReservationExecutePayment(reservationId, paymentDTO), HttpStatus.OK);

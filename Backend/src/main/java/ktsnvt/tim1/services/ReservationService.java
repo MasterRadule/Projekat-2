@@ -184,34 +184,30 @@ public class ReservationService {
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");
 
-        APIContext context = new APIContext(clientId, clientSecret, "sandbox");
-        Payment createdPayment = createPaymentObject(reservationId, reservation.getTickets().stream().mapToDouble(
-                t -> t.getReservableSeatGroups().stream().mapToDouble(
-                        rsg -> rsg.getEventSeatGroup().getPrice()).sum()).sum())
-                .create(context);
-        if (createdPayment == null) {
-            throw new PayPalException("Payment not created");
-        }
+        Payment createdPayment = createPaymentObject(reservation);
         return new PaymentDTO(createdPayment.getId());
     }
 
-    private Payment createPaymentObject(long reservationId, double price) {
-        Amount amount = new Amount();
-        amount.setCurrency("USD");
-        amount.setTotal(String.valueOf(price));
-
-        Item item = new Item();
-        item.setDescription("KTSNVT - Reservation");
-        item.setName("ReservationID: " + reservationId);
-        item.setCurrency("USD");
-        item.setPrice(String.valueOf(price));
-        item.setQuantity("1");
-        Transaction transaction = new Transaction();
+    private Payment createPaymentObject(Reservation reservation) throws PayPalRESTException, PayPalException {
         ItemList itemList = new ItemList();
         itemList.setItems(new ArrayList<>());
+        reservation.getTickets().forEach((ticket) -> {
+            Item item = new Item();
+            item.setDescription("KTSNVT - Ticket");
+            item.setName("TicketID: " + ticket.getId());
+            item.setCurrency("EUR");
+            item.setPrice(String.valueOf(ticket.getReservableSeatGroups().stream().mapToDouble(
+                    rsg -> rsg.getEventSeatGroup().getPrice()).sum()));
+            item.setQuantity("1");
+            itemList.getItems().add(item);
+        });
+
+        Transaction transaction = new Transaction();
         transaction.setItemList(itemList);
+        Amount amount = new Amount();
+        amount.setCurrency("EUR");
+        amount.setTotal(String.valueOf(itemList.getItems().stream().mapToDouble(item -> Double.parseDouble(item.getPrice())).sum()));
         transaction.setAmount(amount);
-        transaction.getItemList().getItems().add(item);
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
 
@@ -227,7 +223,13 @@ public class ReservationService {
         payment.setPayer(payer);
         payment.setTransactions(transactions);
         payment.setRedirectUrls(redirectUrls);
-        return payment;
+
+        APIContext context = new APIContext(clientId, clientSecret, "sandbox");
+        Payment createdPayment = payment.create(context);
+        if (createdPayment == null) {
+            throw new PayPalException("Payment not created");
+        }
+        return createdPayment;
     }
 
     public Object payReservationExecutePayment(Long reservationId, PaymentDTO paymentDTO) throws PayPalRESTException, EntityNotFoundException, ImpossibleActionException, PayPalException {
@@ -243,12 +245,12 @@ public class ReservationService {
         PaymentExecution paymentExecution = new PaymentExecution();
         paymentExecution.setPayerId(paymentDTO.getPayerID());
         APIContext context = new APIContext(clientId, clientSecret, "sandbox");
-        Payment createdPayment = payment.execute(context, paymentExecution);
-        if (createdPayment == null) {
+        Payment executedPayment = payment.execute(context, paymentExecution);
+        if (executedPayment == null) {
             throw new PayPalException("Payment not executed");
         }
 
-        reservation.setOrderId(createdPayment.getId());
+        reservation.setOrderId(executedPayment.getId());
         return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 }
