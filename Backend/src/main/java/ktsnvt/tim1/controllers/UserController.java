@@ -32,8 +32,13 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<Object> getUser(){
-	    User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    return new ResponseEntity<>(u, HttpStatus.OK);
+	    try{
+	    	User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return new ResponseEntity<>(u, HttpStatus.OK);
+		}catch(ClassCastException e){
+	    	return new ResponseEntity<>("No User Logged In!", HttpStatus.BAD_REQUEST);
+		}
+
     }
 
 }

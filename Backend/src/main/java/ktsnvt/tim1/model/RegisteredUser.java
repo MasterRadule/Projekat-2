@@ -1,5 +1,7 @@
 package ktsnvt.tim1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import java.util.*;
 @Entity
 public class RegisteredUser extends User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "registeredUser")
+    @JsonIgnore
     private Set<Reservation> reservations;
 
     public RegisteredUser(Long id, String firstName, String lastName, String password, String email, Boolean isVerified) {
