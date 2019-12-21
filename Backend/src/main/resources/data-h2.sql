@@ -15,6 +15,10 @@
 SET NAMES 'utf8';
 --USE kts;
 --
+-- Delete data from the table 'verification_token'
+--
+TRUNCATE TABLE verification_token;
+--
 -- Delete data from the table 'user_authority'
 --
 TRUNCATE TABLE user_authority;
@@ -219,16 +223,31 @@ INSERT INTO user(id, dtype, email, first_name, is_verified, last_name, password)
 (38, 'RegisteredUser', 'Trout@example.com', 'Edwardo', True, 'Owens', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (39, 'RegisteredUser', 'BonitaMaples@nowhere.com', 'Anabel', True, 'Wilkes', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (40, 'RegisteredUser', 'Stanley.Carl@example.com', 'Eva', True, 'Steele', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(41, 'RegisteredUser', 'Bumgarner26@example.com', 'Erick', True, 'Wilkins', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(42, 'RegisteredUser', 'AdanWise@nowhere.com', 'Kris', True, 'Forsyth', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(43, 'RegisteredUser', 'ErynDonaldson931@nowhere.com', 'Rudy', True, 'Boyce', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(44, 'RegisteredUser', 'Kay_Khan71@nowhere.com', 'Shari', True, 'Steen', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(45, 'RegisteredUser', 'Homer@nowhere.com', 'Kaylee', True, 'Cromwell', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(46, 'RegisteredUser', 'OrethaPerdue2@example.com', 'Angelika', True, 'Forsythe', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(47, 'RegisteredUser', 'CristyCouch@nowhere.com', 'Barney', True, 'Rust', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(48, 'RegisteredUser', 'Katelyn.Angel@example.com', 'Hong', True, 'Wilkinson', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(49, 'RegisteredUser', 'GertrudConroy143@example.com', 'Maryrose', True, 'Steffen', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(50, 'RegisteredUser', 'Colby126@example.com', 'Valeria', True, 'Lloyd', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+(41, 'RegisteredUser', 'Bumgarner26@example.com', 'Erick', False, 'Wilkins', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(42, 'RegisteredUser', 'AdanWise@nowhere.com', 'Kris', False, 'Forsyth', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(43, 'RegisteredUser', 'ErynDonaldson931@nowhere.com', 'Rudy', False, 'Boyce', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(44, 'RegisteredUser', 'Kay_Khan71@nowhere.com', 'Shari', False, 'Steen', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(45, 'RegisteredUser', 'Homer@nowhere.com', 'Kaylee', False, 'Cromwell', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(46, 'RegisteredUser', 'OrethaPerdue2@example.com', 'Angelika', False, 'Forsythe', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(47, 'RegisteredUser', 'CristyCouch@nowhere.com', 'Barney', False, 'Rust', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(48, 'RegisteredUser', 'Katelyn.Angel@example.com', 'Hong', False, 'Wilkinson', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(49, 'RegisteredUser', 'GertrudConroy143@example.com', 'Maryrose', False, 'Steffen', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(50, 'RegisteredUser', 'Colby126@example.com', 'Valeria', False, 'Lloyd', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+
+--
+-- Inserting data into table verification_token
+--
+INSERT INTO verification_token(token_id, date_created, expired, token, user_id) VALUES
+(41, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7ff', 41),
+(42, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fd', 42),
+(43, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fs', 43),
+(44, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fa', 44),
+(45, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fw', 45),
+(46, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fq', 46),
+(47, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fr', 47),
+(48, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7ft', 48),
+(49, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fy', 49),
+(50, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fu', 50);
 
 --
 -- Inserting data into table event
