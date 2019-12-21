@@ -23,6 +23,7 @@ public class Ticket {
 
     public Ticket() {
         this.reservableSeatGroups = new HashSet<>();
+        this.seats = new HashSet<>();
     }
 
     public Long getId() {

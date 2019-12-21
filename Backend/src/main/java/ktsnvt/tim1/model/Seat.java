@@ -9,6 +9,9 @@ public class Seat {
     @Column(unique = true, nullable = false)
     private Long id;
 
+    @Version
+    private Integer version;
+
     @ManyToOne
     @JoinColumn(name = "reservable_seat_group_id", nullable = false)
     private ReservableSeatGroup reservableSeatGroup;

@@ -66,7 +66,7 @@ public class PeriodicCheckService {
     }
 
     private boolean expiresSoon(LocalDate expirationDate) {
-        long numOfHoursBeforeExpiration = ChronoUnit.HOURS.between(expirationDate, LocalDate.now());
+        long numOfHoursBeforeExpiration = ChronoUnit.HOURS.between(LocalDate.now(), expirationDate);
         return numOfHoursBeforeExpiration < notifyHoursBeforeExpiration;
     }
 }

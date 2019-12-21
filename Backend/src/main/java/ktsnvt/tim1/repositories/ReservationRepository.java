@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    Page<Reservation> findByOrderIdIsNullAndIsCancelledFalse(Pageable pageable);
+    Page<Reservation> findByRegisteredUserIdAndOrderIdIsNullAndIsCancelledFalse(Long registeredUserId, Pageable pageable);
 
-    Page<Reservation> findByOrderIdIsNotNullAndIsCancelledFalse(Pageable pageable);
+    Page<Reservation> findByRegisteredUserIdAndOrderIdIsNotNullAndIsCancelledFalse(Long registeredUserId, Pageable pageable);
+
+    Page<Reservation> findByRegisteredUserIdAndIsCancelledFalse(Long registeredUserId, Pageable pageable);
 
     List<Reservation> findByOrderIdIsNullAndIsCancelledFalse();
 
