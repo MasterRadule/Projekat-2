@@ -105,6 +105,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @Transactional
     void getUser_userLoggedIn_userReturned(){
         UserDetails userDetails = new User(6L, "Jack", "Bowlin", "$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra", "JennifferHooker@example.com", true);
         String token = tokenUtils.generateToken(userDetails);

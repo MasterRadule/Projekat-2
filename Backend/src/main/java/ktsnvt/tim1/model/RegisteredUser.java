@@ -11,7 +11,6 @@ import java.util.*;
 @Entity
 public class RegisteredUser extends User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "registeredUser")
-    @JsonIgnore
     private Set<Reservation> reservations;
 
     public RegisteredUser(Long id, String firstName, String lastName, String password, String email, Boolean isVerified) {
