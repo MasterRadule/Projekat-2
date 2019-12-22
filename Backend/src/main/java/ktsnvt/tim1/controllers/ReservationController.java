@@ -88,4 +88,35 @@ public class ReservationController {
         }
     }
 
+    @PostMapping(value = "/create-and-pay")
+    public ResponseEntity<Object> createAndPayReservationCreatePayment(@Valid @RequestBody NewReservationDTO newReservationDTO) {
+        try {
+            return new ResponseEntity<>(reservationService.createAndPayReservationCreatePayment(newReservationDTO), HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    @PostMapping(value = "/create-and-pay/execute", consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewResrvationAndPaymentDTO newResrvationAndPaymentDTO) {
+        try {
+            return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newResrvationAndPaymentDTO.getNewReservationDTO(),
+                    newResrvationAndPaymentDTO.getPaymentDTO()), HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
 }

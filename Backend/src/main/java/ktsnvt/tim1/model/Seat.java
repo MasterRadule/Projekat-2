@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Seat {
@@ -8,9 +9,6 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, nullable = false)
     private Long id;
-
-    @Version
-    private Integer version;
 
     @ManyToOne
     @JoinColumn(name = "reservable_seat_group_id", nullable = false)
