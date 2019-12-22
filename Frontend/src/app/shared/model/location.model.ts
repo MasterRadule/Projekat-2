@@ -5,6 +5,15 @@ export class Location {
   private _longitude: number;
   private _disabled: boolean;
 
+
+  constructor(id: number, name: string, latitude: number, longitude: number, disabled: boolean) {
+    this._id = id;
+    this._name = name;
+    this._latitude = latitude;
+    this._longitude = longitude;
+    this._disabled = disabled;
+  }
+
   get id(): number {
     return this._id;
   }
