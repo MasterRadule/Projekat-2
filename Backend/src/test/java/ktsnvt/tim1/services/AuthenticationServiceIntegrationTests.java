@@ -89,7 +89,6 @@ public class AuthenticationServiceIntegrationTests {
         String token = "ajkdsadkslo7d6";
 
         assertThrows(EntityNotFoundException.class, () -> authenticationService.verifyUser(token));
-
     }
 
     @Test
@@ -97,7 +96,6 @@ public class AuthenticationServiceIntegrationTests {
         String token = "$2a$04$Vbug2lwwJGrvUXTj6z7fw";
 
         assertThrows(EntityNotFoundException.class, () -> authenticationService.verifyUser(token));
-
     }
 
     @Test
@@ -111,10 +109,4 @@ public class AuthenticationServiceIntegrationTests {
 
         assertTrue(user.getVerified());
     }
-
-
-
-
-
-
 }
