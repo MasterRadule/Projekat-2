@@ -1,4 +1,4 @@
-import {Component, AfterViewInit, Input} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
@@ -36,6 +36,5 @@ export class MapComponent implements AfterViewInit {
         draggable: false
       }).addTo(this._map);
   }
+
 }
-
-

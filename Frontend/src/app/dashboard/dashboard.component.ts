@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {LocationApiService} from '../core/location-api.service';
 import {Page} from '../shared/model/page.model';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {LocationApiService} from '../core/location-api.service';
+import {MatSnackBar} from '@angular/material';
+import {Location} from '../shared/model/location.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,15 @@ export class DashboardComponent implements OnInit {
   private _locations: Location[];
 
   constructor(private _locationApiService: LocationApiService, private _snackBar: MatSnackBar) {
+  }
+
+
+  get locations(): Location[] {
+    return this._locations;
+  }
+
+  set locations(value: Location[]) {
+    this._locations = value;
   }
 
   ngOnInit() {

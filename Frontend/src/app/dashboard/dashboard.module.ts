@@ -1,16 +1,18 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DashboardComponent} from './dashboard.component';
-import {LocationPreviewComponent} from './location-preview/location-preview.component';
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MatSnackBarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCardModule,
+  MatGridListModule,
+  MatIconModule, MatInputModule, MatSlideToggleModule,
+  MatSnackBarModule, MatToolbarModule,
+  MatTooltipModule
+} from '@angular/material';
 import {CoreModule} from '../core/core.module';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { LocationPreviewComponent } from './location-preview/location-preview.component';
+import {FlexModule} from '@angular/flex-layout';
 
 
 @NgModule({
@@ -25,7 +27,10 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatGridListModule,
     MatTooltipModule,
     MatButtonToggleModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatToolbarModule,
+    MatInputModule,
+    FlexModule,
   ]
 })
 export class DashboardModule {

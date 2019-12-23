@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Location} from '../shared/model/location.model';
 import {SeatGroup} from '../shared/model/seat-group.model';
+import {Location} from '../shared/model/location.model';
 
 @Injectable({
   providedIn: 'root'

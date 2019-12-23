@@ -1,18 +1,20 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {MapComponent} from './map/map.component';
 import {LocationApiService} from './location-api.service';
-import { MapComponent } from './map/map.component';
 
 
 @NgModule({
   declarations: [MapComponent],
   imports: [
-    CommonModule,
+    CommonModule
   ],
   exports: [
     MapComponent
   ],
-  providers: [LocationApiService]
+  providers: [
+    LocationApiService
+  ]
 })
 export class CoreModule {
 }
