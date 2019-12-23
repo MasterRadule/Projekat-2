@@ -22,7 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByOrderIdIsNullAndIsCancelledFalse();
 
-    Optional<Reservation> findByIdAndIsCancelledFalse(Long id);
+    Optional<Reservation> findByIdAndByAndRegisteredUserIdAndIsCancelledFalse(Long id, Long registeredUserId);
 
     @Query(value = "select new ktsnvt.tim1.DTOs.ReportDTO(ed.date, count(t), sum(esg.price)) from Reservation r join " +
             "r.tickets t join t" +
