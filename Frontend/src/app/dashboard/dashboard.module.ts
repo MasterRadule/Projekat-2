@@ -8,7 +8,8 @@ import {
   MatGridListModule,
   MatIconModule, MatInputModule, MatSlideToggleModule,
   MatSnackBarModule, MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatPaginatorModule
 } from '@angular/material';
 import {CoreModule} from '../core/core.module';
 import { LocationPreviewComponent } from './location-preview/location-preview.component';
@@ -31,6 +32,7 @@ import {FlexModule} from '@angular/flex-layout';
     MatToolbarModule,
     MatInputModule,
     FlexModule,
+    MatPaginatorModule
   ]
 })
 export class DashboardModule {

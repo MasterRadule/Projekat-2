@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ToolbarComponent } from './toolbar.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ToolbarComponent} from './toolbar.component';
 import {MatButtonModule, MatToolbarModule} from '@angular/material';
-
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 
 @NgModule({
@@ -10,10 +10,12 @@ import {MatButtonModule, MatToolbarModule} from '@angular/material';
   imports: [
     CommonModule,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    FlexLayoutModule
   ],
   exports: [
     ToolbarComponent
   ]
 })
-export class ToolbarModule { }
+export class ToolbarModule {
+}
