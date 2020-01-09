@@ -14,10 +14,11 @@ import {
 import {CoreModule} from '../core/core.module';
 import { LocationPreviewComponent } from './location-preview/location-preview.component';
 import {FlexModule} from '@angular/flex-layout';
+import { EventPreviewComponent } from './event-preview/event-preview.component';
 
 
 @NgModule({
-  declarations: [DashboardComponent, LocationPreviewComponent],
+  declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent],
   imports: [
     CommonModule,
     MatCardModule,
