@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import {Page} from '../shared/model/page.model';
 import {LocationApiService} from '../core/location-api.service';
 import {MatSnackBar, PageEvent} from '@angular/material';
@@ -15,9 +16,18 @@ export class DashboardComponent implements OnInit {
   private _events: Event[];
   private _pageLocations: Page;
   private _pageEvents: Page;
+  private _contentType: String;
 
   constructor(private _locationApiService: LocationApiService, private _eventApiService: EventApiService,
-              private _snackBar: MatSnackBar) {
+              private _snackBar: MatSnackBar, private route: ActivatedRoute) {
+  }
+
+  get contentType(): String {
+    return this._contentType;
+  }
+
+  set contentType(value: String) {
+    this._contentType = value;
   }
 
   get pageLocations(): Page {
@@ -53,20 +63,32 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getLocations(0, 6);
-    this.getEvents(0, 6);
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this._contentType = params.get('contentType');
+      switch (this._contentType) {
+        case "events":
+          this.getEvents(0, 6);
+          break;
+        case "locations":
+          this.getLocations(0, 6);
+          break;
+      }
+    });
   }
 
   private pageChanged(event: PageEvent) {
-    /*this._pageLocations.size = event.pageSize;
-    this._pageLocations.number = event.pageIndex;
+    if (this._contentType === 'locations') {
+      this._pageLocations.size = event.pageSize;
+      this._pageLocations.number = event.pageIndex;
 
-    this.getLocations(this._pageLocations.size, this._pageLocations.number);*/
+      this.getLocations(this._pageLocations.number, this._pageLocations.size);
+    }
+    else {
+      this._pageEvents.size = event.pageSize;
+      this._pageEvents.number = event.pageIndex;
 
-    this._pageEvents.size = event.pageSize;
-    this._pageEvents.number = event.pageIndex;
-
-    this.getEvents(this._pageEvents.number, this._pageEvents.size);
+      this.getEvents(this._pageEvents.number, this._pageEvents.size);
+    }
   }
 
   private getLocations(page: number, size: number) {

@@ -7,10 +7,13 @@
 </div>
 
 
-<!--<div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
+<div *ngIf="_contentType==='locations'" fxLayout="row wrap" fxLayout.xs="column" 
+fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
-</div>-->
-<div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
+</div>
+
+<div *ngIf="_contentType==='events'" fxLayout="row wrap" fxLayout.xs="column" 
+fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-event-preview *ngFor="let event of _events" [event]="event"></app-event-preview>
 </div>
 
@@ -20,12 +23,12 @@
   </button>
 </div>
 
-<!--<mat-paginator *ngIf="_pageLocations!==undefined" [length]="_pageLocations.totalElements" [pageSize]="_pageLocations.size"
+<mat-paginator *ngIf="_pageLocations!==undefined && _contentType==='locations'" [length]="_pageLocations.totalElements" [pageSize]="_pageLocations.size"
                [pageSizeOptions]="[3, 6, 9]"
                (page)="pageChanged($event)">
-</mat-paginator>-->
+</mat-paginator>
 
-<mat-paginator *ngIf="_pageEvents!==undefined" [length]="_pageEvents.totalElements" [pageSize]="_pageEvents.size"
+<mat-paginator *ngIf="_pageEvents!==undefined && _contentType==='events'" [length]="_pageEvents.totalElements" [pageSize]="_pageEvents.size"
                [pageSizeOptions]="[3, 6, 9]"
                (page)="pageChanged($event)">
 </mat-paginator>
