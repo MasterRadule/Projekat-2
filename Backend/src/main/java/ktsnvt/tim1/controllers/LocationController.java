@@ -1,6 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.DTOs.LocationOptionDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -14,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/locations")
@@ -34,6 +36,11 @@ public class LocationController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "options")
+    public ResponseEntity<List<LocationOptionDTO>> getLocationsOptions() {
+        return new ResponseEntity<>(locationService.getLocationsOptions(), HttpStatus.OK);
     }
 
     @GetMapping(value = "search")
