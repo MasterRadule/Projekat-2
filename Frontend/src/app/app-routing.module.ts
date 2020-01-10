@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {LocationComponent} from './location/location.component';
 
 
 const routes: Routes = [
+  {
+    path: 'locations/:id',
+    component: LocationComponent
+  },
   {
     path: 'dashboard/:content',
     component: DashboardComponent

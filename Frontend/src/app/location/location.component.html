@@ -1,0 +1,13 @@
+<form>
+  <mat-form-field appearance="standard">
+    <label>
+      <input matInput placeholder="Name" [(ngModel)]="location.name">
+    </label>
+  </mat-form-field>
+  <mat-checkbox [(ngModel)]="location.disabled">
+    Disabled
+  </mat-checkbox>
+  <app-map [_latitude]="location.latitude" [_longitude]="location.longitude" [_zoom]="9" [_maxZoom]="13"
+           [_mapName]="location.name" [_draggable]="true"></app-map>
+  <button mat-raised-button color="primary" type="submit">Primary</button>
+</form>

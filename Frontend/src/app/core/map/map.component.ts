@@ -11,6 +11,7 @@ export class MapComponent implements AfterViewInit {
   @Input() private _longitude: number;
   @Input() private _zoom: number;
   @Input() private _maxZoom: number;
+  @Input() private _draggable: boolean;
 
   private _map;
   @Input() private _mapName: string;
@@ -20,6 +21,14 @@ export class MapComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initMap();
+  }
+
+  get latitude(): number {
+    return this._latitude;
+  }
+
+  get longitude(): number {
+    return this._longitude;
   }
 
   private initMap(): void {
@@ -33,7 +42,7 @@ export class MapComponent implements AfterViewInit {
 
     L.marker([this._latitude, this._longitude],
       {
-        draggable: false
+        draggable: this._draggable
       }).addTo(this._map);
   }
 
