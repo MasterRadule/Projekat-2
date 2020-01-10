@@ -16,18 +16,18 @@ export class DashboardComponent implements OnInit {
   private _events: Event[];
   private _pageLocations: Page;
   private _pageEvents: Page;
-  private _contentType: String;
+  private _content: string;
 
   constructor(private _locationApiService: LocationApiService, private _eventApiService: EventApiService,
               private _snackBar: MatSnackBar, private route: ActivatedRoute) {
   }
 
-  get contentType(): String {
-    return this._contentType;
+  get content(): string {
+    return this._content;
   }
 
-  set contentType(value: String) {
-    this._contentType = value;
+  set content(value: string) {
+    this._content = value;
   }
 
   get pageLocations(): Page {
@@ -64,12 +64,12 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this._contentType = params.get('contentType');
-      switch (this._contentType) {
-        case "events":
+      this._content = params.get('content');
+      switch (this._content) {
+        case 'events':
           this.getEvents(0, 6);
           break;
-        case "locations":
+        case 'locations':
           this.getLocations(0, 6);
           break;
       }
@@ -77,13 +77,12 @@ export class DashboardComponent implements OnInit {
   }
 
   private pageChanged(event: PageEvent) {
-    if (this._contentType === 'locations') {
+    if (this._content === 'locations') {
       this._pageLocations.size = event.pageSize;
       this._pageLocations.number = event.pageIndex;
 
       this.getLocations(this._pageLocations.number, this._pageLocations.size);
-    }
-    else {
+    } else {
       this._pageEvents.size = event.pageSize;
       this._pageEvents.number = event.pageIndex;
 
