@@ -1,0 +1,41 @@
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="paypal-button"></div>
+
+<script>
+let axiosInstance = axios.create({
+  timeout: 10000,
+});
+axiosInstance.interceptors.request.use(
+  config => {
+    config.headers["X-Auth-Token"] = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaWdlbExhbmcyMkBleGFtcGxlLmNvbSIsImNyZWF0ZWQiOjE1Nzg3NDcxNDIwODYsImV4cCI6MTU3ODc2NTE0Mn0.OQU_pmx71u9L9Ehpj-NXzSo_nZdzFLr4FNWxWqPQ5LJoh9nNGM5TfSZDvzeFiUEUC1zRkhPie1dtYMXLm7O38w';
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+
+  paypal.Button.render({
+    env: 'sandbox', // Or 'production'
+    // Set up the payment:
+    // 1. Add a payment callback
+    payment: function(data, actions) {
+      // 2. Make a request to your server
+      return axiosInstance.post('http://localhost:8080/api/reservations/20')
+        .then(function(res) {
+          // 3. Return res.id from the response
+          return res.data.paymentID;
+        });
+    },
+    // Execute the payment:
+    // 1. Add an onAuthorize callback
+    onAuthorize: function(data, actions) {
+      // 2. Make a request to your server
+      return axiosInstance.post('http://localhost:8080/api/reservations/20/execute-payment', {
+        paymentID: data.paymentID,
+        payerID:   data.payerID
+      });
+    }
+  }, '#paypal-button');
+</script>

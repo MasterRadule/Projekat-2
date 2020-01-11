@@ -187,7 +187,7 @@ public class ReservationService {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         Reservation reservation = reservationRepository
-                .findByIdAndByAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
@@ -199,7 +199,7 @@ public class ReservationService {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         Reservation reservation = reservationRepository
-                .findByIdAndByAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");
@@ -212,7 +212,7 @@ public class ReservationService {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         Reservation reservation = reservationRepository
-                .findByIdAndByAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");
@@ -297,7 +297,6 @@ public class ReservationService {
             throw new PayPalException("Payment with sent payment ID does not exist");
         }
         Payment paymentMade = makePaymentObject(reservation);
-        paymentMade.setId(paymentDTO.getPaymentID());
         paymentMade.getTransactions().get(0).setPayee(payment.getTransactions().get(0).getPayee());
         paymentMade.getTransactions().get(0).getItemList().setShippingAddress(payment.getTransactions().get(0).getItemList().getShippingAddress());
         return !payment.getTransactions().equals(paymentMade.getTransactions());

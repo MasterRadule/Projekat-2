@@ -75,8 +75,8 @@ public class ReservationController {
         }
     }
 
-    @PostMapping(value = "/{id}/execute-payment", consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity<Object> payReservationExecutePayment(@Valid PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
+    @PostMapping(value = "/{id}/execute-payment")
+    public ResponseEntity<Object> payReservationExecutePayment(@Valid @RequestBody PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
         try {
             return new ResponseEntity<>(reservationService.payReservationExecutePayment(reservationId, paymentDTO), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
@@ -103,7 +103,7 @@ public class ReservationController {
         }
     }
 
-    @PostMapping(value = "/create-and-pay/execute", consumes = "application/x-www-form-urlencoded")
+    @PostMapping(value = "/create-and-pay/execute")
     public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewResrvationAndPaymentDTO newResrvationAndPaymentDTO) {
         try {
             return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newResrvationAndPaymentDTO.getNewReservationDTO(),
