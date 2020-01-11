@@ -2,15 +2,15 @@ export class SearchEventsDTO {
 	private _name: string;
     private _locationID: number;
     private _category: string;
-    private _fromDate: string;
+    private _startDate: string;
     private _endDate: string;
 
     constructor(name: string, locationID: number, category: string,
-    			fromDate: string, endDate: string) {
+    			startDate: string, endDate: string) {
     	this._name = name;
     	this._locationID = locationID;
     	this._category = category;
-    	this._fromDate = fromDate;
+    	this._startDate = startDate;
     	this._endDate = endDate;
     }
 
@@ -38,12 +38,12 @@ export class SearchEventsDTO {
     	this._category = category;
     }
 
-    get fromDate() : string {
-    	return this._fromDate;
+    get startDate() : string {
+    	return this._startDate;
     }
 
-    set fromDate(fromDate: string) {
-    	this._fromDate = fromDate;
+    set startDate(startDate: string) {
+    	this._startDate = startDate;
     }
 
     get endDate() : string {

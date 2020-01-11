@@ -18,8 +18,8 @@ export class EventApiService {
   }
 
   searchEvents(parameters: SearchEventsDTO, page: number, size: number) {
-  	let locationID: string = parameters.locationID == null ? "": parameters.locationID;
+  	let locationID: number|string = parameters.locationID == null ? "": parameters.locationID;
   	let category: string = parameters.category == null ? "" : parameters.category;
-  	return this._http.get(`${this._baseUrl}/events/search?name=${parameters.name}&locationID=${locationID}&category=${category}&fromDate=${parameters.fromDate}&endDate=${parameters.endDate}&page=${page}&size=${size}`);
+  	return this._http.get(`${this._baseUrl}/events/search?name=${parameters.name}&locationID=${locationID}&category=${category}&startDate=${parameters.startDate}&endDate=${parameters.endDate}&page=${page}&size=${size}`);
   }
 }

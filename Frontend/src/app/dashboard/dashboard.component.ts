@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit {
     if (this._content === 'locations') {
       this.getLocations(this._page.number, this._page.size);
     } else {
-      this.getEvents(this._page.number, this._page.size);
+      this.searchEvents(this._page.number, this._page.size);
     }
   }
 
@@ -129,17 +129,20 @@ export class DashboardComponent implements OnInit {
   }
 
   private onSubmit() {
+    this.searchEvents(this._page.number, this._page.size);
+  }
+
+  private searchEvents(page: number, size: number) {
     let parameters: SearchEventsDTO = new SearchEventsDTO(this._searchParameters.name,
       this._searchParameters.locationID, this._searchParameters.category, 
-      this._searchParameters.fromDate, this._searchParameters.endDate);
-    if (parameters.fromDate !== "") {
-      parameters.fromDate = moment(parameters.fromDate).format("DD.MM.YYYY. HH:mm");
+      this._searchParameters.startDate, this._searchParameters.endDate);
+    if (parameters.startDate !== "") {
+      parameters.startDate = moment(parameters.startDate).format("DD.MM.YYYY.");
     }
     if (parameters.endDate !== "") {
       parameters.endDate = moment(parameters.endDate).format("DD.MM.YYYY. HH:mm");
     }
-
-    this._eventApiService.searchEvents(parameters, 0, 6).subscribe({
+    this._eventApiService.searchEvents(parameters, page, size).subscribe({
       next: (result: Page) => {
         this._page = result;
         this._events = result.content;
@@ -148,5 +151,11 @@ export class DashboardComponent implements OnInit {
         this._snackBar.open(message);
       }
     });
+  }
+
+  private resetForm(form) {
+    form.reset();
+    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    this.searchEvents(this._page.number, this._page.size);
   }
 }
