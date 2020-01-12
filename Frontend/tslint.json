@@ -43,6 +43,11 @@
         ]
       }
     ],
+    "variable-name": {
+      "options": [
+        "allow-leading-underscore"
+      ]
+    },
     "no-consecutive-blank-lines": false,
     "no-console": [
       true,

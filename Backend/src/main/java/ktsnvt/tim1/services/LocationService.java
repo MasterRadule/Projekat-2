@@ -1,6 +1,7 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.DTOs.LocationOptionDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -97,5 +100,9 @@ public class LocationService {
         locationRepository.save(location);
 
         return seatGroupMapper.toDTO(newSeatGroup);
+    }
+
+    public List<LocationOptionDTO> getLocationsOptions() {
+        return locationRepository.findAll().stream().map(LocationOptionDTO::new).collect(Collectors.toList());
     }
 }

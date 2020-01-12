@@ -1,0 +1,51 @@
+<div>
+  <form #searchForm="ngForm" (ngSubmit)="onSubmit()" fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column" fxLayoutAlign="center">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <mat-icon color="primary" matPrefix>search</mat-icon>
+      <input id="searchInput" matInput type="text" [(ngModel)]="_searchParameters.name" name="name">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Event category</mat-label>
+      <mat-select [(ngModel)]="_searchParameters.category" name="category">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let category of _eventCategories" [value]="category">
+          {{category}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="dp1" placeholder="Start date" disabled
+      [(ngModel)]="_searchParameters.startDate" [max]="_searchParameters.endDate" name="startDate">
+      <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+      <mat-datepicker #dp1 disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="dp2" placeholder="End date" disabled 
+      [(ngModel)]="_searchParameters.endDate" [min]="_searchParameters.startDate" name="endDate">
+      <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+      <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Location</mat-label>
+      <mat-select [(ngModel)]="_searchParameters.locationID" name="locationID">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let location of _locationsOptions" [value]="location.id">
+          {{location.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button type="submit" mat-raised-button class="searchButton">Search</button>
+    <button type="button" mat-raised-button class="searchButton" (click)="resetForm(searchForm)">Reset</button>
+  </form>
+</div>
+
+<div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
+  <app-event-preview *ngFor="let event of _events" [event]="event"></app-event-preview>
+</div>
+
+<div fxLayout="row">
+  <button mat-icon-button color="primary">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
