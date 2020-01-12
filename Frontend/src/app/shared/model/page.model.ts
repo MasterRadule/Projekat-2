@@ -7,7 +7,6 @@ export class Page {
   private _size: number;
   private _number: number;
 
-
   get content(): [] {
     return this._content;
   }
