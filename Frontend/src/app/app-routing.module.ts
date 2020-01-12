@@ -6,21 +6,27 @@ import {LocationComponent} from './location/location.component';
 
 const routes: Routes = [
   {
-    path: 'locations/:id',
-    component: LocationComponent
-  },
-  {
-    path: 'dashboard/:content',
+    path: 'dashboard/:content/preview',
     component: DashboardComponent
   },
   {
+    path: 'dashboard/locations/:id',
+    component: LocationComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'dashboard/locations',
+    component: LocationComponent,
+    pathMatch: 'full'
+  },
+  {
     path: 'dashboard',
-    redirectTo: '/dashboard/events',
+    redirectTo: '/dashboard/events/preview',
     pathMatch: 'full'
   },
   {
     path: '',
-    redirectTo: '/dashboard/events',
+    redirectTo: '/dashboard/events/preview',
     pathMatch: 'full'
   }
 ];

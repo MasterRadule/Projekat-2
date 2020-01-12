@@ -27,11 +27,11 @@ export class LocationApiService {
   }
 
   createLocation(location: Location) {
-    return this._http.post<Location>(`${this._baseUrl}/locations`, location);
+    return this._http.post(`${this._baseUrl}/locations`, location.serialize());
   }
 
   editLocation(location: Location) {
-    return this._http.put<Location>(`${this._baseUrl}/locations`, location);
+    return this._http.put(`${this._baseUrl}/locations`, location.serialize());
   }
 
   getSeatGroups(locationId: number, page: number, size: number) {
