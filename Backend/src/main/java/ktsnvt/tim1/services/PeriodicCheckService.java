@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -39,9 +38,9 @@ public class PeriodicCheckService {
                     LocalDateTime firstEventDay =
                             reservation.getEvent().getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo)
                                     .get();
-                    LocalDate expirationDate =
-                            LocalDate.now().minusDays(reservation.getEvent().getReservationDeadlineDays());
-                    if (expirationDate.isBefore(LocalDate.now())) {
+                    LocalDateTime expirationDate =
+                            firstEventDay.minusDays(reservation.getEvent().getReservationDeadlineDays());
+                    if (expirationDate.isBefore(LocalDateTime.now())) {
                         reservation.setCancelled(true);
                         reservationRepository.save(reservation);
                         emailService.sendReservationExpiredEmail(reservation.getRegisteredUser(), reservation, expirationDate);
@@ -65,8 +64,8 @@ public class PeriodicCheckService {
         });
     }
 
-    private boolean expiresSoon(LocalDate expirationDate) {
-        long numOfHoursBeforeExpiration = ChronoUnit.HOURS.between(LocalDate.now(), expirationDate);
+    private boolean expiresSoon(LocalDateTime expirationDate) {
+        long numOfHoursBeforeExpiration = ChronoUnit.HOURS.between(LocalDateTime.now(), expirationDate);
         return numOfHoursBeforeExpiration < notifyHoursBeforeExpiration;
     }
 }

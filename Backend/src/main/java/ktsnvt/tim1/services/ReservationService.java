@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
@@ -87,10 +86,10 @@ public class ReservationService {
     }
 
     public ReservationDTO createReservation(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
-        return reservationMapper.toDTO(makeReservationObject(newReservationDTO));
+        return reservationMapper.toDTO(reservationRepository.save(makeReservationObject(newReservationDTO)));
     }
 
-    public Reservation makeReservationObject(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
+    private Reservation makeReservationObject(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
         Event event = eventRepository
                 .findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(newReservationDTO.getEventId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
@@ -114,7 +113,7 @@ public class ReservationService {
                 .getPrincipal();
         reservation.setRegisteredUser(registeredUser);
         registeredUser.getReservations().add(reservation);
-        return reservationRepository.save(reservation);
+        return reservation;
     }
 
     private Ticket makeTicketObject(NewTicketDTO ticketDTO, Event event) throws EntityNotFoundException, ImpossibleActionException {
@@ -238,8 +237,6 @@ public class ReservationService {
 
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO);
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-
         Payment createdPayment = makePaymentObject(reservation);
         return new PaymentDTO(createdPayment.getId());
     }
@@ -253,13 +250,21 @@ public class ReservationService {
 
         executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
 
-        return reservationMapper.toDTO(reservation);
+        ReservationDTO reservationDTO = reservationMapper.toDTO(reservationRepository.save(reservation));
+        try {
+            emailService.sendReservationBoughtEmail(reservation);
+        } catch (MessagingException e) {
+            System.out.println("Message not send because of exception: " + e.getMessage());
+        }
+        return reservationDTO;
     }
 
     private Payment makePaymentObject(Reservation reservation) throws PayPalRESTException, PayPalException {
         ItemList itemList = new ItemList();
+        List<Ticket> tickets = new ArrayList<>(reservation.getTickets());
+        tickets.sort((t1, t2) -> (int) (t1.getId() - t2.getId())); // sorting to avoid randomness of items' order
         itemList.setItems(new ArrayList<>());
-        reservation.getTickets().forEach((ticket) -> {
+        for (Ticket ticket : tickets) {
             Item item = new Item();
             item.setDescription("KTSNVT - Ticket");
             item.setName("TicketID: " + ticket.getId());
@@ -268,7 +273,7 @@ public class ReservationService {
                     rsg -> rsg.getEventSeatGroup().getPrice()).sum()));
             item.setQuantity("1");
             itemList.getItems().add(item);
-        });
+        }
 
         Transaction transaction = new Transaction();
         transaction.setItemList(itemList);
