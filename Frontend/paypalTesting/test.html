@@ -9,7 +9,7 @@ let axiosInstance = axios.create({
 });
 axiosInstance.interceptors.request.use(
   config => {
-    config.headers["X-Auth-Token"] = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaWdlbExhbmcyMkBleGFtcGxlLmNvbSIsImNyZWF0ZWQiOjE1Nzg3NDcxNDIwODYsImV4cCI6MTU3ODc2NTE0Mn0.OQU_pmx71u9L9Ehpj-NXzSo_nZdzFLr4FNWxWqPQ5LJoh9nNGM5TfSZDvzeFiUEUC1zRkhPie1dtYMXLm7O38w';
+    config.headers["X-Auth-Token"] = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJrdHNudnQudGltMUBnbWFpbC5jb20iLCJjcmVhdGVkIjoxNTc4Nzg3NjIyNjA1LCJleHAiOjE1Nzg4MDU2MjJ9.hjVZl-pfYYXyUN5Ddm9m9fdwLolfKzhwLnBI3XNM4Z4jy7lDQfoeAG61d4yA3E432k0rhDspEGK5Wj_NPMG0Fg';
     return config;
   },
   error => Promise.reject(error)

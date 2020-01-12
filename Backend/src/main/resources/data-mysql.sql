@@ -209,7 +209,7 @@ INSERT INTO user(id, dtype, email, first_name, is_verified, last_name, password)
 (22, 'RegisteredUser', 'Richmond@nowhere.com', 'Lindsey', True, 'Wilkerson', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (23, 'RegisteredUser', 'AdaIsaac6@nowhere.com', 'Zandra', True, 'Bowman', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (24, 'RegisteredUser', 'Gaffney@example.com', 'Ada', True, 'Forrester', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
-(25, 'RegisteredUser', 'NigelLang22@example.com', 'Mirella', True, 'Howe', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
+(25, 'RegisteredUser', 'ktsnvt.tim1@gmail.com', 'Mirella', True, 'Howe', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (26, 'RegisteredUser', 'ogqojyxj5136@example.com', 'Anibal', True, 'Russell', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (27, 'RegisteredUser', 'Camacho48@nowhere.com', 'Ailene', True, 'Acuna', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),
 (28, 'RegisteredUser', 'Duncan_Shin664@nowhere.com', 'Raye', True, 'Bowser', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra'),

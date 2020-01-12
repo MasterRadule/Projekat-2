@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -57,6 +58,9 @@ public class ReservationService {
 
     @Autowired
     private ReservationMapper reservationMapper;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
@@ -223,7 +227,13 @@ public class ReservationService {
 
         Payment executedPayment = executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
         reservation.setOrderId(executedPayment.getId());
-        return reservationMapper.toDTO(reservationRepository.save(reservation));
+        ReservationDTO reservationDTO = reservationMapper.toDTO(reservationRepository.save(reservation));
+        try {
+            emailService.sendReservationBoughtEmail(reservation);
+        } catch (MessagingException e) {
+            System.out.println("Message not send because of exception: " + e.getMessage());
+        }
+        return reservationDTO;
     }
 
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
