@@ -129,15 +129,15 @@ public class EventService {
     public Page<EventDTO> searchEvents(SearchEventsDTO searchDTO, Pageable pageable) throws EntityNotValidException {
         String name = searchDTO.getName().toLowerCase() + "%";
 
-        if (!searchDTO.getFromDate().equals("") && !searchDTO.getToDate().equals("")) {
+        if (!searchDTO.getStartDate().equals("") && !searchDTO.getEndDate().equals("")) {
             Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), Pageable.unpaged());
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
             LocalDateTime fromDate;
             LocalDateTime toDate;
             try {
-                fromDate = LocalDateTime.parse(searchDTO.getFromDate(), formatter);
-                toDate = LocalDateTime.parse(searchDTO.getToDate(), formatter);
+                fromDate = LocalDateTime.parse(searchDTO.getStartDate(), formatter);
+                toDate = LocalDateTime.parse(searchDTO.getEndDate(), formatter);
             } catch (DateTimeParseException e) {
                 throw new EntityNotValidException("Dates are in invalid format");
             }
@@ -148,7 +148,9 @@ public class EventService {
                 }
             });
 
-            return new PageImpl<>(eventsDTO, pageable, eventsDTO.size());
+            int start = (int) pageable.getOffset();
+            int end = (start + pageable.getPageSize()) > eventsDTO.size() ? eventsDTO.size() : (start + pageable.getPageSize());
+            return new PageImpl<>(eventsDTO.subList(start, end), pageable, eventsDTO.size());
         } else {
             Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), pageable);
             return new PageImpl<>(events.stream().map(event -> eventMapper.toDTO(event)).collect(Collectors.toList()), pageable, events.getTotalElements());

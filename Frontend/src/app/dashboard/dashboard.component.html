@@ -1,3 +1,16 @@
-<div class="card-deck">
-  <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
+<div class="page">
+  <div class="content">
+
+    <div *ngIf="_content==='locations'">
+      <app-location-preview-list (locationsPageChanged)="contentPageChanged($event)">
+      </app-location-preview-list>
+    </div>
+
+    <div *ngIf="_content==='events'">
+      <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)" (resetPaginator)="resetPaginator()"></app-event-preview-list>
+    </div>
+
+  </div>
+
+  <app-paginator class="footer" (pageChangedEvent)="pageChanged($event)"></app-paginator>
 </div>

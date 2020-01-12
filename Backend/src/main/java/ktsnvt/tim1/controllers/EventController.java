@@ -20,6 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/events")
+@CrossOrigin
 public class EventController {
     @Autowired
     private EventService eventService;

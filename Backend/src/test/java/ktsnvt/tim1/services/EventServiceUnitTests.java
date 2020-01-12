@@ -31,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -273,6 +274,27 @@ public class EventServiceUnitTests {
 
         Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
         Mockito.when(eventRepositoryMocked.save(event)).thenReturn(event);
+
+        assertThrows(EntityNotValidException.class, () -> eventService.uploadPicturesAndVideos(id, files));
+    }
+
+    @Test
+    public void uploadPicturesAndVideos_fileDataNotValid_entityNotValidExceptionThrown() throws IOException {
+        Long id = 1L;
+        Event event = new Event(id, "Event 1", "Description of Event 1",
+                EventCategory.Movie, false);
+        Random r = new Random();
+
+        byte[] image = new byte[20];
+        r.nextBytes(image);
+        MultipartFile mf1 = new MockMultipartFile("1.jpg", "1.jpg", "image/jpeg", image);
+        MultipartFile mf1Spy = PowerMockito.spy(mf1);
+
+        MultipartFile[] files = new MultipartFile[1];
+        files[0] = mf1Spy;
+
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
+        Mockito.when(mf1Spy.getBytes()).thenThrow(IOException.class);
 
         assertThrows(EntityNotValidException.class, () -> eventService.uploadPicturesAndVideos(id, files));
     }

@@ -1,21 +1,25 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Location} from '../../shared/model/location.model';
-import {MatSlideToggleChange} from '@angular/material';
+import {Component, Input} from '@angular/core';
 import {LocationApiService} from '../../core/location-api.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSlideToggleChange, MatSnackBar} from '@angular/material';
+import {Location} from '../../shared/model/location.model';
 
 @Component({
   selector: 'app-location-preview',
   templateUrl: './location-preview.component.html',
   styleUrls: ['./location-preview.component.scss']
 })
-export class LocationPreviewComponent implements OnInit {
+export class LocationPreviewComponent {
   @Input() private location: Location;
 
   constructor(private locationApiService: LocationApiService, private snackBar: MatSnackBar) {
   }
 
-  ngOnInit() {
+  get getLocation(): Location {
+    return this.location;
+  }
+
+  set setLocation(value: Location) {
+    this.location = value;
   }
 
   private toggleLocationStatus($event: MatSlideToggleChange) {

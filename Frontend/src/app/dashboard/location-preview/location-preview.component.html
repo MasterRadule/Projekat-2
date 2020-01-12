@@ -1,18 +1,17 @@
-<div class="card">
-  <div class="card-header">
-    {{location.name}}
-  </div>
-  <div class="card-body">
+<mat-card>
+  <mat-card-header>
+    <mat-icon mat-card-avatar>place</mat-icon>
+    <mat-card-title>{{location.name}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
     <app-map [_latitude]="location.latitude" [_longitude]="location.longitude" [_zoom]="9" [_maxZoom]="13"
              [_mapName]="location.name"></app-map>
-  </div>
-  <div class="card-footer">
-    <div class="button-row">
-      <button mat-raised-button color="primary" matTooltip="Edit location">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <mat-slide-toggle matTooltip="Enable or disable location" color="primary"
-                        [checked]="!location.disabled" (change)="toggleLocationStatus($event)"></mat-slide-toggle>
-    </div>
-  </div>
-</div>
+  </mat-card-content>
+  <mat-card-actions fxLayout="row" fxLayoutGap="3%">
+    <button mat-raised-button color="primary" matTooltip="Edit location">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <mat-slide-toggle matTooltip="Enable or disable location" color="primary"
+                      [checked]="!location.disabled" (change)="toggleLocationStatus($event)"></mat-slide-toggle>
+  </mat-card-actions>
+</mat-card>

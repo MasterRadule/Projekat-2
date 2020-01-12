@@ -1,28 +1,56 @@
-import {Component, OnInit} from '@angular/core';
-import {LocationApiService} from '../core/location-api.service';
-import {Page} from '../shared/model/page.model';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {Component, Input, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
+import { LocationPreviewListComponent } from './location-preview-list/location-preview-list.component';
+import { PaginatorComponent } from './paginator/paginator.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-  private _locations: Location[];
+export class DashboardComponent implements AfterViewInit {
+  @ViewChild(PaginatorComponent, {static: false}) paginator: PaginatorComponent;
+  @ViewChild(EventPreviewListComponent, {static: false}) eventListComponent: EventPreviewListComponent;
+  @ViewChild(LocationPreviewListComponent, {static: false}) locationListComponent: LocationPreviewListComponent;
+  private _content: string;
 
-  constructor(private _locationApiService: LocationApiService, private _snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute) {
   }
 
+  get content(): string {
+    return this._content;
+  }
+
+  set content(value: string) {
+    this._content = value;
+  }
+
+  ngAfterViewInit() {}
+  
   ngOnInit() {
-    this._locationApiService.getLocations(0, 5).subscribe({
-      next: (result: Page) => {
-        this._locations = result.content;
-      },
-      error: (message: string) => {
-        this._snackBar.open(message);
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this._content = params.get('content');
+      if (this.paginator !== undefined) {
+        this.resetPaginator();
       }
     });
   }
 
+  private pageChanged($event) {
+    if (this._content === 'locations') {
+      this.locationListComponent.pageChanged($event);
+    }
+    else {
+      this.eventListComponent.pageChanged($event);
+    }
+  }
+
+  private contentPageChanged($event) {
+    this.paginator.page = $event;
+  }
+
+  private resetPaginator() {
+    this.paginator.matPaginator.firstPage();
+  }
 }
