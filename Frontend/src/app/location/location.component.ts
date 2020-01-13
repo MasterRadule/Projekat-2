@@ -39,10 +39,6 @@ export class LocationComponent implements OnInit {
       });
   }
 
-  cancelEditOrCreate() {
-    this.urlLocation.back();
-  }
-
   createOrEditLocation() {
     if (this.location.id) {
       this.locationApiService.editLocation(this.location).subscribe(

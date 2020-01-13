@@ -9,6 +9,7 @@ import {DashboardModule} from './dashboard/dashboard.module';
 import {HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
+import {ToolbarModule} from './toolbar/toolbar.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {LocationModule} from './location/location.module';
     HttpClientModule,
     CoreModule,
     FlexLayoutModule,
-    LocationModule
+    LocationModule,
+    ToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

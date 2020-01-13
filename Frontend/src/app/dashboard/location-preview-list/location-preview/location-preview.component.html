@@ -8,7 +8,8 @@
              [_mapName]="location.name" [_draggable]="false"></app-map>
   </mat-card-content>
   <mat-card-actions fxLayout="row" fxLayoutGap="3%">
-    <button mat-raised-button color="primary" matTooltip="Edit location">
+    <button mat-raised-button color="primary" matTooltip="Edit location" [routerLink]="['/dashboard/locations/',
+    this.location.id]">
       <mat-icon>edit</mat-icon>
     </button>
     <mat-slide-toggle matTooltip="Enable or disable location" color="primary"

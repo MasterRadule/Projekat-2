@@ -43,4 +43,18 @@ export class LocationPreviewListComponent implements OnInit {
     this._page.number = event.pageIndex;
     this.getLocations(this._page.number, this._page.size);
   }
+
+  private searchLocations(event: any) {
+    this._locationApiService.searchLocations(event.target.value, this._page.number, this._page.size).subscribe(
+      {
+        next: (result: Page) => {
+          this._page = result;
+          this._locations = result.content;
+        },
+        error: (message: string) => {
+          this._snackBar.open(message);
+        }
+      }
+    );
+  }
 }

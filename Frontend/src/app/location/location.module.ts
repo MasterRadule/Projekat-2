@@ -10,22 +10,24 @@ import {FlexModule} from '@angular/flex-layout';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
+import {ToolbarModule} from '../toolbar/toolbar.module';
 
 
 @NgModule({
   declarations: [LocationComponent, SeatGroupsComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
-    FormsModule,
-    CoreModule,
-    MatButtonModule,
-    FlexModule,
-    RouterModule,
-    MatTooltipModule,
-  ],
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCheckboxModule,
+        FormsModule,
+        CoreModule,
+        MatButtonModule,
+        FlexModule,
+        RouterModule,
+        MatTooltipModule,
+        ToolbarModule,
+    ],
   exports: [
     LocationComponent
   ]

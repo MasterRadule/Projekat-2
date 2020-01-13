@@ -1,3 +1,15 @@
+<div fxLayout="row">
+  <mat-form-field appearance="outline">
+    <mat-label>Search</mat-label>
+    <mat-icon color="primary" matPrefix>search</mat-icon>
+    <input id="search" matInput type="text" (keyup.enter)="searchLocations($event)">
+  </mat-form-field>
+</div>
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
+</div>
+<div fxLayout="row">
+  <button mat-icon-button color="primary" routerLink="/dashboard/locations">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>

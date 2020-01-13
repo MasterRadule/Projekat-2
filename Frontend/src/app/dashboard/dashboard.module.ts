@@ -23,13 +23,13 @@ import {EventPreviewComponent} from './event-preview-list/event-preview/event-pr
 import {EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
 import {PaginatorComponent} from './paginator/paginator.component';
 import {LocationPreviewListComponent} from './location-preview-list/location-preview-list.component';
-import {ToolbarComponent} from './toolbar/toolbar.component';
 import {RouterModule} from '@angular/router';
+import {ToolbarModule} from '../toolbar/toolbar.module';
 
 
 @NgModule({
   declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent,
-    EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent, ToolbarComponent],
+    EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -51,6 +51,7 @@ import {RouterModule} from '@angular/router';
     MatNativeDateModule,
     MatFormFieldModule,
     RouterModule,
+    ToolbarModule
   ],
   providers: [
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
