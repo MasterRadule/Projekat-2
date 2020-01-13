@@ -13,17 +13,17 @@ public class SearchEventsDTO {
 
     private EventCategory category;
 
-    private String fromDate;
-    private String toDate;
+    private String startDate;
+    private String endDate;
 
     public SearchEventsDTO() {}
 
-    public SearchEventsDTO(String name, Long locationID, EventCategory category, String fromDate, String toDate) {
+    public SearchEventsDTO(String name, Long locationID, EventCategory category, String startDate, String endDate) {
         this.name = name;
         this.locationID = locationID;
         this.category = category;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public String getName() {
@@ -50,19 +50,19 @@ public class SearchEventsDTO {
         this.category = category;
     }
 
-    public String getFromDate() {
-        return fromDate;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getToDate() {
-        return toDate;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setToDate(String toDate) {
-        this.toDate = toDate;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

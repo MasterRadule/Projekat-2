@@ -1,25 +1,21 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import {Page} from '../shared/model/page.model';
-import {LocationApiService} from '../core/location-api.service';
-import {MatSnackBar, PageEvent} from '@angular/material';
-import {Location} from '../shared/model/location.model';
-import {EventApiService} from '../core/event-api.service';
+import { EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
+import { LocationPreviewListComponent } from './location-preview-list/location-preview-list.component';
+import { PaginatorComponent } from './paginator/paginator.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-  private _locations: Location[];
-  private _events: Event[];
-  private _pageLocations: Page;
-  private _pageEvents: Page;
+export class DashboardComponent implements AfterViewInit {
+  @ViewChild(PaginatorComponent, {static: false}) paginator: PaginatorComponent;
+  @ViewChild(EventPreviewListComponent, {static: false}) eventListComponent: EventPreviewListComponent;
+  @ViewChild(LocationPreviewListComponent, {static: false}) locationListComponent: LocationPreviewListComponent;
   private _content: string;
 
-  constructor(private _locationApiService: LocationApiService, private _eventApiService: EventApiService,
-              private _snackBar: MatSnackBar, private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute) {
   }
 
   get content(): string {
@@ -30,89 +26,31 @@ export class DashboardComponent implements OnInit {
     this._content = value;
   }
 
-  get pageLocations(): Page {
-    return this._pageLocations;
-  }
-
-  set pageLocations(value: Page) {
-    this._pageLocations = value;
-  }
-
-  get locations(): Location[] {
-    return this._locations;
-  }
-
-  set locations(value: Location[]) {
-    this._locations = value;
-  }
-
-  get events(): Event[] {
-    return this._events;
-  }
-
-  set events(value: Event[]) {
-    this._events = value;
-  }
-
-  get pageEvents(): Page {
-    return this._pageEvents;
-  }
-
-  set pageEvents(value: Page) {
-    this._pageEvents = value;
-  }
-
+  ngAfterViewInit() {}
+  
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this._content = params.get('content');
-      switch (this._content) {
-        case 'events':
-          this.getEvents(0, 6);
-          break;
-        case 'locations':
-          this.getLocations(0, 6);
-          break;
+      if (this.paginator !== undefined) {
+        this.resetPaginator();
       }
     });
   }
 
-  private pageChanged(event: PageEvent) {
+  private pageChanged($event) {
     if (this._content === 'locations') {
-      this._pageLocations.size = event.pageSize;
-      this._pageLocations.number = event.pageIndex;
-
-      this.getLocations(this._pageLocations.number, this._pageLocations.size);
-    } else {
-      this._pageEvents.size = event.pageSize;
-      this._pageEvents.number = event.pageIndex;
-
-      this.getEvents(this._pageEvents.number, this._pageEvents.size);
+      this.locationListComponent.pageChanged($event);
+    }
+    else {
+      this.eventListComponent.pageChanged($event);
     }
   }
 
-  private getLocations(page: number, size: number) {
-    this._locationApiService.getLocations(page, size).subscribe({
-      next: (result: Page) => {
-        this._pageLocations = result;
-        this._locations = result.content;
-      },
-      error: (message: string) => {
-        this._snackBar.open(message);
-      }
-    });
+  private contentPageChanged($event) {
+    this.paginator.page = $event;
   }
 
-  private getEvents(page: number, size: number) {
-    this._eventApiService.getEvents(page, size).subscribe({
-      next: (result: Page) => {
-        this._pageEvents = result;
-        this._events = result.content;
-      },
-      error: (message: string) => {
-        this._snackBar.open(message);
-      }
-    });
+  private resetPaginator() {
+    this.paginator.matPaginator.firstPage();
   }
-
-
 }

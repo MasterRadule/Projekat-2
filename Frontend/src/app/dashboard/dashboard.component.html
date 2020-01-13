@@ -1,34 +1,16 @@
-<div fxLayout="row">
-  <mat-form-field appearance="outline">
-    <mat-label>Search</mat-label>
-    <mat-icon color="primary" matPrefix>search</mat-icon>
-    <input matInput type="text">
-  </mat-form-field>
+<div class="page">
+  <div class="content">
+
+    <div *ngIf="_content==='locations'">
+      <app-location-preview-list (locationsPageChanged)="contentPageChanged($event)">
+      </app-location-preview-list>
+    </div>
+
+    <div *ngIf="_content==='events'">
+      <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)" (resetPaginator)="resetPaginator()"></app-event-preview-list>
+    </div>
+
+  </div>
+
+  <app-paginator class="footer" (pageChangedEvent)="pageChanged($event)"></app-paginator>
 </div>
-
-
-<div *ngIf="_content==='locations'" fxLayout="row wrap" fxLayout.xs="column" 
-fxLayoutGap="0.5%" fxLayoutAlign="center">
-  <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
-</div>
-
-<div *ngIf="_content==='events'" fxLayout="row wrap" fxLayout.xs="column" 
-fxLayoutGap="0.5%" fxLayoutAlign="center">
-  <app-event-preview *ngFor="let event of _events" [event]="event"></app-event-preview>
-</div>
-
-<div fxLayout="row">
-  <button mat-icon-button color="primary">
-    <mat-icon>add</mat-icon>
-  </button>
-</div>
-
-<mat-paginator *ngIf="_pageLocations!==undefined && _content==='locations'" [length]="_pageLocations.totalElements" [pageSize]="_pageLocations.size"
-               [pageSizeOptions]="[3, 6, 9]"
-               (page)="pageChanged($event)">
-</mat-paginator>
-
-<mat-paginator *ngIf="_pageEvents!==undefined && _content==='events'" [length]="_pageEvents.totalElements" [pageSize]="_pageEvents.size"
-               [pageSizeOptions]="[3, 6, 9]"
-               (page)="pageChanged($event)">
-</mat-paginator>
