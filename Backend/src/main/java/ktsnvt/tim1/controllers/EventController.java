@@ -1,6 +1,5 @@
 package ktsnvt.tim1.controllers;
 
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import ktsnvt.tim1.DTOs.EventDTO;
 import ktsnvt.tim1.DTOs.LocationSeatGroupDTO;
 import ktsnvt.tim1.DTOs.SearchEventsDTO;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/events")

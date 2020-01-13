@@ -1,6 +1,7 @@
 package ktsnvt.tim1.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Seat {

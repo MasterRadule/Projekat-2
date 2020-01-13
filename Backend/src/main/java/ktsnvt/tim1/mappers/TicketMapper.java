@@ -20,6 +20,7 @@ public class TicketMapper implements IMapper<Ticket, TicketDTO> {
     @Override
     public TicketDTO toDTO(Ticket ticket) {
         TicketDTO ticketDTO = new TicketDTO();
+        ticketDTO.setId(ticket.getId());
         if (!ticket.getSeats().isEmpty()) {
             Seat seat = ticket.getSeats().iterator().next();
             ticketDTO.setRowNum(seat.getRowNum());

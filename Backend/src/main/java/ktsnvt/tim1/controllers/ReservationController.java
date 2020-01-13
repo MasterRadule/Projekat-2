@@ -75,12 +75,43 @@ public class ReservationController {
         }
     }
 
-    @PostMapping(value = "/{id}/execute-payment", consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity<Object> payReservationExecutePayment(@Valid PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
+    @PostMapping(value = "/{id}/execute-payment")
+    public ResponseEntity<Object> payReservationExecutePayment(@Valid @RequestBody PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
         try {
             return new ResponseEntity<>(reservationService.payReservationExecutePayment(reservationId, paymentDTO), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    @PostMapping(value = "/create-and-pay")
+    public ResponseEntity<Object> createAndPayReservationCreatePayment(@Valid @RequestBody NewReservationDTO newReservationDTO) {
+        try {
+            return new ResponseEntity<>(reservationService.createAndPayReservationCreatePayment(newReservationDTO), HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ImpossibleActionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (PayPalRESTException | PayPalException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    @PostMapping(value = "/create-and-pay/execute")
+    public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewResrvationAndPaymentDTO newResrvationAndPaymentDTO) {
+        try {
+            return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newResrvationAndPaymentDTO.getNewReservationDTO(),
+                    newResrvationAndPaymentDTO.getPaymentDTO()), HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (EntityNotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (ImpossibleActionException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (PayPalRESTException | PayPalException e) {
