@@ -104,10 +104,10 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/create-and-pay/execute")
-    public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewResrvationAndPaymentDTO newResrvationAndPaymentDTO) {
+    public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewReservationAndPaymentDTO newReservationAndPaymentDTO) {
         try {
-            return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newResrvationAndPaymentDTO.getNewReservationDTO(),
-                    newResrvationAndPaymentDTO.getPaymentDTO()), HttpStatus.CREATED);
+            return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newReservationAndPaymentDTO.getNewReservationDTO(),
+                    newReservationAndPaymentDTO.getPaymentDTO()), HttpStatus.CREATED);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (EntityNotValidException e) {

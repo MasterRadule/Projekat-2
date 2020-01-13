@@ -195,6 +195,17 @@ public class ReservationService {
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
         reservation.setCancelled(true);
+        reservation.getTickets().forEach(ticket -> {
+            for (ReservableSeatGroup rsg : ticket.getReservableSeatGroups()) {
+                rsg.getTickets().remove(ticket);
+                rsg.incrementFreeSeats();
+            }
+            ticket.getReservableSeatGroups().clear();
+            for(Seat seat : ticket.getSeats()){
+                seat.setTicket(null);
+            }
+            ticket.getSeats().clear();
+        });
         return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 
