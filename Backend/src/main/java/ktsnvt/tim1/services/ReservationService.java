@@ -86,20 +86,21 @@ public class ReservationService {
     }
 
     public ReservationDTO createReservation(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
-        return reservationMapper.toDTO(reservationRepository.save(makeReservationObject(newReservationDTO)));
+        return reservationMapper.toDTO(reservationRepository.save(makeReservationObject(newReservationDTO, true)));
     }
 
-    private Reservation makeReservationObject(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
+    private Reservation makeReservationObject(NewReservationDTO newReservationDTO, boolean checkReservationDeadline) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException {
         Event event = eventRepository
                 .findByIsActiveForReservationsTrueAndIsCancelledFalseAndId(newReservationDTO.getEventId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (newReservationDTO.getTickets().size() > event.getMaxTicketsPerReservation())
             throw new EntityNotValidException("Too many tickets in the reservation");
         LocalDateTime firstEventDay =
-                event.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo).get();
+                event.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo)
+                        .orElseThrow(() -> new ImpossibleActionException("Event does not have event days!"));
         long numOfDaysToEvent = ChronoUnit.DAYS.between(LocalDateTime.now(), firstEventDay);
         if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
-        if (numOfDaysToEvent <= event.getReservationDeadlineDays())
+        if (checkReservationDeadline && numOfDaysToEvent <= event.getReservationDeadlineDays())
             throw new ImpossibleActionException("Reservation deadline date passed");
 
         Reservation reservation = new Reservation();
@@ -161,9 +162,9 @@ public class ReservationService {
         EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
         List<Seat> seats = seatRepository
                 .getSeatsByRowNumAndColNum(event.getId(), eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
-        if (seats.stream().anyMatch((s) -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
+        if (seats.stream().anyMatch(s -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
             throw new ImpossibleActionException("Seat is not free for all days");
-        seats.forEach((s) -> {
+        seats.forEach(s -> {
             ticket.getReservableSeatGroups().add(s.getReservableSeatGroup());
             s.getReservableSeatGroup().getTickets().add(ticket);
             ticket.getSeats().add(s);
@@ -178,9 +179,9 @@ public class ReservationService {
         EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
         List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository
                 .findByEventAndByEventSeatGroup(event.getId(), eventSeatGroup.getId());
-        if (reservableSeatGroups.stream().anyMatch((esg) -> !esg.decrementFreeSeats()))
+        if (reservableSeatGroups.stream().anyMatch(esg -> !esg.decrementFreeSeats()))
             throw new ImpossibleActionException("Parterre not free for all days");
-        reservableSeatGroups.forEach((rsg) -> {
+        reservableSeatGroups.forEach(rsg -> {
             ticket.getReservableSeatGroups().add(rsg);
             rsg.getTickets().add(ticket);
         });
@@ -247,13 +248,13 @@ public class ReservationService {
     }
 
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
-        Reservation reservation = makeReservationObject(newReservationDTO);
+        Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
         return new PaymentDTO(createdPayment.getId());
     }
 
     public ReservationDTO createAndPayReservationExecutePayment(NewReservationDTO newReservationDTO, PaymentDTO paymentDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
-        Reservation reservation = makeReservationObject(newReservationDTO);
+        Reservation reservation = makeReservationObject(newReservationDTO, false);
 
         if (paymentIsNotForReservation(reservation, paymentDTO)) {
             throw new ImpossibleActionException("Sent payment ID matches the payment which does not correspond to sent reservation");
