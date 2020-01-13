@@ -1,4 +1,4 @@
-<div fxLayout="row">
+<div id="search-row" fxLayout="row">
   <mat-form-field appearance="outline">
     <mat-label>Search</mat-label>
     <mat-icon color="primary" matPrefix>search</mat-icon>
@@ -7,9 +7,4 @@
 </div>
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
-</div>
-<div fxLayout="row">
-  <button mat-icon-button color="primary" routerLink="/dashboard/locations">
-    <mat-icon>add</mat-icon>
-  </button>
 </div>

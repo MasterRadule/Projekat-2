@@ -31,7 +31,8 @@ export class LocationPreviewComponent {
         next: (result: Location) => {
           this.location = result;
           this.snackBar.open(`Location ${state} successfully`, 'Dismiss', {
-            duration: 3000
+            duration: 3000,
+            panelClass: ['snackbar'] // css should be added
           });
         },
         error: (message: string) => {

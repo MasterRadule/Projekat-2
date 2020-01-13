@@ -12,5 +12,12 @@
     </div>
   </div>
 
-  <app-paginator class="footer" (pageChangedEvent)="pageChanged($event)"></app-paginator>
+  <div class="footer">
+    <div fxLayoutAlign="end" id="add">
+      <button mat-fab color="primary" [routerLink]='["/dashboard", _content]'>
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <app-paginator class="footer" (pageChangedEvent)="pageChanged($event)"></app-paginator>
+  </div>
 </div>
