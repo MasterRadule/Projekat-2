@@ -47,6 +47,6 @@ export class LocationApiService {
   }
 
   createSeatGroup(locationId: number, seatGroup: SeatGroup) {
-    return this._http.post<SeatGroup>(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup);
+    return this._http.post(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup.serialize());
   }
 }

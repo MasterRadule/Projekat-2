@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {LocationApiService} from '../../core/location-api.service';
+import {LocationApiService} from '../../../core/location-api.service';
 import {MatSlideToggleChange, MatSnackBar} from '@angular/material';
-import {Location} from '../../shared/model/location.model';
+import {Location} from '../../../shared/model/location.model';
 
 @Component({
   selector: 'app-location-preview',

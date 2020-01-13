@@ -17,16 +17,16 @@ import {
   DateAdapter
 } from '@angular/material';
 import {CoreModule} from '../core/core.module';
-import { LocationPreviewComponent } from './location-preview/location-preview.component';
+import { LocationPreviewComponent } from './location-preview-list/location-preview/location-preview.component';
 import {FlexModule} from '@angular/flex-layout';
-import { EventPreviewComponent } from './event-preview/event-preview.component';
+import { EventPreviewComponent } from './event-preview-list/event-preview/event-preview.component';
 import { EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
 import { PaginatorComponent } from './paginator/paginator.component';
 import { LocationPreviewListComponent } from './location-preview-list/location-preview-list.component';
 
 
 @NgModule({
-  declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent, 
+  declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent,
         EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent],
   imports: [
     CommonModule,

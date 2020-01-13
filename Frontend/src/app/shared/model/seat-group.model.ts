@@ -1,11 +1,45 @@
-export class SeatGroup {
+import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
+
+@Serialize({})
+export class SeatGroup extends Serializable {
+  @SerializeProperty({
+    map: 'id'
+  })
   private _id: number;
+
+  @SerializeProperty({
+    map: 'rowsNum'
+  })
   private _rowsNum: number;
+
+  @SerializeProperty({
+    map: 'colsNum'
+  })
   private _colsNum: number;
+
+  @SerializeProperty({
+    map: 'parterre'
+  })
   private _parterre: boolean;
+
+  @SerializeProperty({
+    map: 'xCoordinate'
+  })
   private _xCoordinate: number;
+
+  @SerializeProperty({
+    map: 'yCoordinate'
+  })
   private _yCoordinate: number;
+
+  @SerializeProperty({
+    map: 'totalSeats'
+  })
   private _totalSeats: number;
+
+  @SerializeProperty({
+    map: 'name'
+  })
   private _name: string;
 
 

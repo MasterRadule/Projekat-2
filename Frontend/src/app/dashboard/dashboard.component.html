@@ -7,7 +7,8 @@
     </div>
 
     <div *ngIf="_content==='events'">
-      <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)" (resetPaginator)="resetPaginator()"></app-event-preview-list>
+      <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)"
+                              (resetPaginator)="resetPaginator()"></app-event-preview-list>
     </div>
 
   </div>

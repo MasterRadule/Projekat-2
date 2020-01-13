@@ -1,12 +1,12 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LocationPreviewComponent} from './location-preview.component';
-import {CoreModule} from '../../core/core.module';
+import {CoreModule} from '../../../core/core.module';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {Location} from '../../shared/model/location.model';
+import {Location} from '../../../shared/model/location.model';
 
 describe('LocationPreviewComponent', () => {
   let component: LocationPreviewComponent;

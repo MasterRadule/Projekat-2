@@ -71,6 +71,4 @@ export class Location extends Serializable {
   set disabled(value: boolean) {
     this._disabled = value;
   }
-
-
 }
