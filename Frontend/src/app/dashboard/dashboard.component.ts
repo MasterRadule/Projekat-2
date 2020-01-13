@@ -1,15 +1,15 @@
-import {Component, Input, OnInit, ViewChild, AfterViewInit} from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
-import { LocationPreviewListComponent } from './location-preview-list/location-preview-list.component';
-import { PaginatorComponent } from './paginator/paginator.component';
+import {Component, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import {ActivatedRoute, ParamMap} from '@angular/router';
+import {EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
+import {LocationPreviewListComponent} from './location-preview-list/location-preview-list.component';
+import {PaginatorComponent} from './paginator/paginator.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(PaginatorComponent, {static: false}) paginator: PaginatorComponent;
   @ViewChild(EventPreviewListComponent, {static: false}) eventListComponent: EventPreviewListComponent;
   @ViewChild(LocationPreviewListComponent, {static: false}) locationListComponent: LocationPreviewListComponent;
@@ -26,8 +26,9 @@ export class DashboardComponent implements AfterViewInit {
     this._content = value;
   }
 
-  ngAfterViewInit() {}
-  
+  ngAfterViewInit() {
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this._content = params.get('content');
@@ -40,8 +41,7 @@ export class DashboardComponent implements AfterViewInit {
   private pageChanged($event) {
     if (this._content === 'locations') {
       this.locationListComponent.pageChanged($event);
-    }
-    else {
+    } else {
       this.eventListComponent.pageChanged($event);
     }
   }

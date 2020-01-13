@@ -20,11 +20,11 @@ export class EventPreviewListComponent implements OnInit {
   @Output() eventsPageChanged = new EventEmitter<Page>();
   @Output() resetPaginator = new EventEmitter<any>();
 
-  constructor(private _eventApiService: EventApiService, private _locationApiService: LocationApiService, 
-  	private _snackBar: MatSnackBar) {
-    this._eventCategories = ["Music", "Sport", "Fair", "Movie", "Performance", "Competition"];
+  constructor(private _eventApiService: EventApiService, private _locationApiService: LocationApiService,
+              private _snackBar: MatSnackBar) {
+    this._eventCategories = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
     this.getLocationsOptions();
-    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
   }
 
   get events(): Event[] {
@@ -51,8 +51,16 @@ export class EventPreviewListComponent implements OnInit {
     this._eventCategories = value;
   }
 
+  get locationsOptions(): Location[] {
+    return this._locationsOptions;
+  }
+
+  set locationsOptions(value: Location[]) {
+    this._locationsOptions = value;
+  }
+
   ngOnInit() {
-  	this.getEvents(0, 6);
+    this.getEvents(0, 6);
   }
 
   private getLocationsOptions() {
@@ -90,14 +98,14 @@ export class EventPreviewListComponent implements OnInit {
   }
 
   private searchEvents(page: number, size: number) {
-    let parameters: SearchEventsDTO = new SearchEventsDTO(this._searchParameters.name,
-      this._searchParameters.locationID, this._searchParameters.category, 
+    const parameters: SearchEventsDTO = new SearchEventsDTO(this._searchParameters.name,
+      this._searchParameters.locationID, this._searchParameters.category,
       this._searchParameters.startDate, this._searchParameters.endDate);
-    if (parameters.startDate !== "") {
-      parameters.startDate = moment(parameters.startDate).format("DD.MM.YYYY.");
+    if (parameters.startDate !== '') {
+      parameters.startDate = moment(parameters.startDate).format('DD.MM.YYYY.');
     }
-    if (parameters.endDate !== "") {
-      parameters.endDate = moment(parameters.endDate).format("DD.MM.YYYY. HH:mm");
+    if (parameters.endDate !== '') {
+      parameters.endDate = moment(parameters.endDate).format('DD.MM.YYYY. HH:mm');
     }
     this._eventApiService.searchEvents(parameters, page, size).subscribe({
       next: (result: Page) => {
@@ -113,7 +121,7 @@ export class EventPreviewListComponent implements OnInit {
 
   private resetForm(form) {
     form.reset();
-    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
     this.resetPaginator.emit();
     this.searchEvents(0, 6);
   }

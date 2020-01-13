@@ -9,7 +9,8 @@ import {Event} from '../../../shared/model/event.model';
 export class EventPreviewComponent implements OnInit {
   @Input() private event: Event;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

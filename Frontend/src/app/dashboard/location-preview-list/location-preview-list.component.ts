@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import {Page} from '../../shared/model/page.model';
 import {LocationApiService} from '../../core/location-api.service';
 import {MatSnackBar, PageEvent} from '@angular/material';
@@ -15,10 +14,15 @@ export class LocationPreviewListComponent implements OnInit {
   private _page: Page;
   @Output() locationsPageChanged = new EventEmitter<Page>();
 
-  constructor(private _locationApiService: LocationApiService, private _snackBar: MatSnackBar) { }
+  constructor(private _locationApiService: LocationApiService, private _snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     this.getLocations(0, 6);
+  }
+
+  get locations(): Location[] {
+    return this._locations;
   }
 
   public getLocations(page: number, size: number) {
