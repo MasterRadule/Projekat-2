@@ -2,13 +2,13 @@ package ktsnvt.tim1.DTOs;
 
 import javax.validation.constraints.NotNull;
 
-public class NewResrvationAndPaymentDTO {
+public class NewReservationAndPaymentDTO {
     @NotNull
     private NewReservationDTO newReservationDTO;
     @NotNull
     private PaymentDTO paymentDTO;
 
-    public NewResrvationAndPaymentDTO() {
+    public NewReservationAndPaymentDTO() {
     }
 
     public NewReservationDTO getNewReservationDTO() {
