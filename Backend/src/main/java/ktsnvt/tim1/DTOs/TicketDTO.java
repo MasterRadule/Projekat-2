@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class TicketDTO {
+    private Long id;
     private Integer rowNum;
     private Integer colNum;
     private String seatGroupName;
@@ -51,5 +52,13 @@ public class TicketDTO {
 
     public void setEventDays(ArrayList<LocalDateTime> eventDays) {
         this.eventDays = eventDays;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
