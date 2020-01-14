@@ -10,6 +10,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
+import { ReportsComponent } from './reports/reports.component';
 
 @NgModule({
   declarations: [

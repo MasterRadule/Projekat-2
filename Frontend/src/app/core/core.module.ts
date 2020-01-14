@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {MapComponent} from './map/map.component';
 import {LocationApiService} from './location-api.service';
 import {EventApiService} from './event-api.service';
+import {ReportsApiService} from './reports-api.service';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import {EventApiService} from './event-api.service';
   ],
   providers: [
     LocationApiService,
-    EventApiService
+    EventApiService,
+    ReportsApiService
   ]
 })
 export class CoreModule {
