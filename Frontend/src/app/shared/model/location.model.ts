@@ -1,12 +1,30 @@
-export class Location {
+import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
+
+@Serialize({})
+export class Location extends Serializable {
+  @SerializeProperty({
+    map: 'id'
+  })
   private _id: number;
+  @SerializeProperty({
+    map: 'name'
+  })
   private _name: string;
+  @SerializeProperty({
+    map: 'latitude'
+  })
   private _latitude: number;
+  @SerializeProperty({
+    map: 'longitude'
+  })
   private _longitude: number;
+  @SerializeProperty({
+    map: 'disabled'
+  })
   private _disabled: boolean;
 
-
-  constructor(id: number, name: string, latitude: number, longitude: number, disabled: boolean) {
+  constructor(id?: number, name?: string, latitude?: number, longitude?: number, disabled?: boolean) {
+    super();
     this._id = id;
     this._name = name;
     this._latitude = latitude;

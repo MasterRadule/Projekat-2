@@ -5,7 +5,7 @@
 }
 
 .content {
-  margin-top:2%;
+  margin-top: 2%;
   flex: 1;
 }
 
@@ -14,4 +14,18 @@
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 2;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+#add {
+  margin-right: 0.5%;
+  margin-bottom: 0.5%;
 }

@@ -27,15 +27,15 @@ export class LocationApiService {
   }
 
   searchLocations(name: string, page: number, size: number) {
-    return this._http.get(`${this._baseUrl}/locations?page=${page}&size=${size}&name=${name}`);
+    return this._http.get(`${this._baseUrl}/locations/search?page=${page}&size=${size}&name=${name}`);
   }
 
   createLocation(location: Location) {
-    return this._http.post<Location>(`${this._baseUrl}/locations`, location);
+    return this._http.post(`${this._baseUrl}/locations`, location.serialize());
   }
 
   editLocation(location: Location) {
-    return this._http.put<Location>(`${this._baseUrl}/locations`, location);
+    return this._http.put(`${this._baseUrl}/locations`, location);
   }
 
   getSeatGroups(locationId: number, page: number, size: number) {
@@ -47,6 +47,6 @@ export class LocationApiService {
   }
 
   createSeatGroup(locationId: number, seatGroup: SeatGroup) {
-    return this._http.post<SeatGroup>(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup);
+    return this._http.post(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup);
   }
 }

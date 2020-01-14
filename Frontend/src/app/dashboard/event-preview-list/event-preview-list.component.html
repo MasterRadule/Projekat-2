@@ -1,5 +1,6 @@
 <div>
-  <form #searchForm="ngForm" (ngSubmit)="onSubmit()" fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column" fxLayoutAlign="center">
+  <form #searchForm="ngForm" (ngSubmit)="onSubmit()" fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column"
+        fxLayoutAlign="center">
     <mat-form-field appearance="outline">
       <mat-label>Search</mat-label>
       <mat-icon color="primary" matPrefix>search</mat-icon>
@@ -16,13 +17,13 @@
     </mat-form-field>
     <mat-form-field>
       <input matInput [matDatepicker]="dp1" placeholder="Start date" disabled
-      [(ngModel)]="_searchParameters.startDate" [max]="_searchParameters.endDate" name="startDate">
+             [(ngModel)]="_searchParameters.startDate" [max]="_searchParameters.endDate" name="startDate">
       <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
       <mat-datepicker #dp1 disabled="false"></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [matDatepicker]="dp2" placeholder="End date" disabled 
-      [(ngModel)]="_searchParameters.endDate" [min]="_searchParameters.startDate" name="endDate">
+      <input matInput [matDatepicker]="dp2" placeholder="End date" disabled
+             [(ngModel)]="_searchParameters.endDate" [min]="_searchParameters.startDate" name="endDate">
       <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
       <mat-datepicker #dp2 disabled="false"></mat-datepicker>
     </mat-form-field>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
 import {Page} from '../../shared/model/page.model';
 import {PageEvent, MatPaginator} from '@angular/material';
 
@@ -8,11 +8,12 @@ import {PageEvent, MatPaginator} from '@angular/material';
   styleUrls: ['./paginator.component.scss']
 })
 export class PaginatorComponent implements OnInit {
-  private _page : Page;
+  private _page: Page;
   @Output() pageChangedEvent = new EventEmitter<PageEvent>();
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
     this._page = new Page();

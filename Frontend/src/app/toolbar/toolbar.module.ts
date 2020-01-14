@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ToolbarComponent} from './toolbar.component';
 import {MatButtonModule, MatToolbarModule} from '@angular/material';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import { RouterModule } from '@angular/router';
+import {FlexModule} from '@angular/flex-layout';
+import {RouterModule} from '@angular/router';
 
 
 @NgModule({
@@ -11,13 +11,11 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     MatToolbarModule,
-    MatButtonModule,
-    FlexLayoutModule,
-    RouterModule
+    FlexModule,
+    RouterModule,
+    MatButtonModule
   ],
-  exports: [
-    ToolbarComponent
-  ]
+  exports: [ToolbarComponent]
 })
 export class ToolbarModule {
 }
