@@ -44,12 +44,6 @@ public class ReservationService {
     private EventRepository eventRepository;
 
     @Autowired
-    private EventDayRepository eventDayRepository;
-
-    @Autowired
-    private EventSeatGroupRepository eventSeatGroupRepository;
-
-    @Autowired
     private SeatRepository seatRepository;
 
     @Autowired
@@ -80,8 +74,11 @@ public class ReservationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public ReservationDTO getReservation(Long id) throws EntityNotFoundException {
-        return reservationMapper.toDTO(reservationRepository.findByIdAndIsCancelledFalse(id)
+    public ReservationDTO getReservation(Long reservationId) throws EntityNotFoundException {
+        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        return reservationMapper.toDTO(reservationRepository
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found")));
     }
 
@@ -162,7 +159,7 @@ public class ReservationService {
         EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
         List<Seat> seats = seatRepository
                 .getSeatsByRowNumAndColNum(event.getId(), eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
-        if (seats.stream().anyMatch(s -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
+        if (seats.stream().anyMatch(s -> s.getTicket() != null || !s.getReservableSeatGroup().decrementFreeSeats()))
             throw new ImpossibleActionException("Seat is not free for all days");
         seats.forEach(s -> {
             ticket.getReservableSeatGroups().add(s.getReservableSeatGroup());
@@ -174,7 +171,7 @@ public class ReservationService {
 
     private void reserveParterreAllDays(Ticket ticket, Event event, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
         ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository
-                .findById(ticketDTO.getReservableSeatGroupId())
+                .findByEventAndById(event.getId(), ticketDTO.getReservableSeatGroupId())
                 .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
         EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
         List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository

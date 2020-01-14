@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,11 +26,13 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @GetMapping()
+    @Secured("ROLE_USER")
     public ResponseEntity<Page<ReservationDTO>> getReservations(@RequestParam("type") ReservationTypeDTO type, Pageable pageable) {
         return new ResponseEntity<>(reservationService.getReservations(type, pageable), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> getReservation(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(reservationService.getReservation(id), HttpStatus.OK);
@@ -39,6 +42,7 @@ public class ReservationController {
     }
 
     @PostMapping()
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> createReservation(@Valid @RequestBody NewReservationDTO newReservationDTO) {
         try {
             return new ResponseEntity<>(reservationService.createReservation(newReservationDTO), HttpStatus.CREATED);
@@ -52,6 +56,7 @@ public class ReservationController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> cancelReservation(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(reservationService.cancelReservation(id), HttpStatus.OK);
@@ -63,6 +68,7 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/{id}")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> payReservationCreatePayment(@PathVariable("id") Long reservationId) {
         try {
             return new ResponseEntity<>(reservationService.payReservationCreatePayment(reservationId), HttpStatus.OK);
@@ -76,6 +82,7 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/{id}/execute-payment")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> payReservationExecutePayment(@Valid @RequestBody PaymentDTO paymentDTO, @PathVariable("id") Long reservationId) {
         try {
             return new ResponseEntity<>(reservationService.payReservationExecutePayment(reservationId, paymentDTO), HttpStatus.OK);
@@ -89,6 +96,7 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/create-and-pay")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> createAndPayReservationCreatePayment(@Valid @RequestBody NewReservationDTO newReservationDTO) {
         try {
             return new ResponseEntity<>(reservationService.createAndPayReservationCreatePayment(newReservationDTO), HttpStatus.CREATED);
@@ -104,6 +112,7 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/create-and-pay/execute")
+    @Secured("ROLE_USER")
     public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewReservationAndPaymentDTO newReservationAndPaymentDTO) {
         try {
             return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newReservationAndPaymentDTO.getNewReservationDTO(),

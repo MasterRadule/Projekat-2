@@ -24,9 +24,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByOrderIdIsNullAndIsCancelledFalse();
 
-    @Lock(LockModeType.PESSIMISTIC_READ)
-    Optional<Reservation> findByIdAndIsCancelledFalse(Long id);
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Reservation> findByIdAndRegisteredUserIdAndIsCancelledFalse(Long id, Long registeredUserId);
 

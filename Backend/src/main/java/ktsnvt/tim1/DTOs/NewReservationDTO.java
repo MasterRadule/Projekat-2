@@ -14,6 +14,11 @@ public class NewReservationDTO {
     public NewReservationDTO() {
     }
 
+    public NewReservationDTO(@NotNull Long eventId, @NotEmpty ArrayList<NewTicketDTO> tickets) {
+        this.eventId = eventId;
+        this.tickets = tickets;
+    }
+
     public Long getEventId() {
         return eventId;
     }
