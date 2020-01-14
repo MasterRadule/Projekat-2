@@ -83,7 +83,7 @@ public class EventController {
         }
     }
 
-    @PutMapping()
+    @PutMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editEvent(@Valid @RequestBody EventDTO event) {
         try {

@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -103,13 +105,13 @@ public class EventServiceIntegrationTests {
     @Rollback
     @Test
     void editEvent_eventExists_eventEdited() throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
-        EventDTO newDTO = new EventDTO(1L, "Event 1", "Description of Event 1",
+        EventDTO newDTO = new EventDTO(5L, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
         newDTO.setReservationDeadlineDays(5);
-        EventDayDTO eventDayDTO1 = new EventDayDTO(1L, "01.01.2020. 00:00");
-        EventDayDTO eventDayDTO2 = new EventDayDTO(26L, "20.02.2020. 00:00");
+        LocalDateTime eventDayDate = LocalDateTime.now().plusDays(6);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+        EventDayDTO eventDayDTO1 = new EventDayDTO(51L, formatter.format(eventDayDate));
         newDTO.getEventDays().add(eventDayDTO1);
-        newDTO.getEventDays().add(eventDayDTO2);
 
         EventDTO newEventSaved = eventService.editEvent(newDTO);
 
@@ -169,9 +171,9 @@ public class EventServiceIntegrationTests {
         files[0] = mf1;
         files[1] = mf2;
 
-        eventService.uploadPicturesAndVideos(1L, files);
+        eventService.uploadPicturesAndVideos(5L, files);
 
-        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(1L);
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(5L);
         Event e = null;
         if (eventOptional.isPresent())
             e = eventOptional.get();
@@ -204,7 +206,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Test
     void getPicturesAndVideos_eventExists_picturesAndVideosReturned() throws EntityNotFoundException {
-        Set<MediaFile> files = eventService.getPicturesAndVideos(1L);
+        Set<MediaFile> files = eventService.getPicturesAndVideos(4L);
 
         assertEquals(2, files.size());
     }
@@ -220,8 +222,8 @@ public class EventServiceIntegrationTests {
     @Rollback
     @Test
     void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() throws EntityNotFoundException {
-        Long eventID = 1L;
-        Long fileID = 26L;
+        Long eventID = 6L;
+        Long fileID = 31L;
 
         eventService.deleteMediaFile(eventID, fileID);
 

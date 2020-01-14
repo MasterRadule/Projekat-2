@@ -32,6 +32,8 @@ import org.springframework.util.MultiValueMap;
 import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -158,7 +160,7 @@ public class EventControllerIntegrationTests {
     @Transactional
     @Test
     void uploadEventsPicturesAndVideos_picturesAndVideosUploaded() throws Exception {
-        Long eventID = 1L;
+        Long eventID = 2L;
         Long firstMediaFileID;
         Long secondMediaFileID;
         Optional<Event> eventOptional = eventRepository.findById(eventID);
@@ -194,7 +196,7 @@ public class EventControllerIntegrationTests {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos"),
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/2/pictures-and-videos"),
               HttpMethod.POST, requestEntity, String.class);
 
         file1.delete();
@@ -368,19 +370,21 @@ public class EventControllerIntegrationTests {
 
     @Test
     void editEvent_eventEdited() {
-        Long eventID = 1L;
-        EventDTO newDTO = new EventDTO(eventID, "Event 1", "Description of Event 1",
+        Long eventID = 7L;
+        EventDTO newDTO = new EventDTO(eventID, "Event 7", "Description of Event 7",
                 EventCategory.Movie.name(), false);
         newDTO.setActiveForReservations(true);
         newDTO.setReservationDeadlineDays(1);
         newDTO.setMaxTicketsPerReservation(3);
-        EventDayDTO eventDayDTO1 = new EventDayDTO(1L, "01.01.2020. 00:00");
-        EventDayDTO eventDayDTO2 = new EventDayDTO(26L, "20.02.2020. 00:00");
+        LocalDateTime eventDayDate = LocalDateTime.now().plusDays(6);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+        EventDayDTO eventDayDTO1 = new EventDayDTO(52L, formatter.format(eventDayDate));
         newDTO.getEventDays().add(eventDayDTO1);
-        newDTO.getEventDays().add(eventDayDTO2);
+
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO);
 
         ResponseEntity<EventDTO> result = testRestTemplate.exchange(createURLWithPort("/events"),
-                HttpMethod.PUT, new HttpEntity<>(newDTO), EventDTO.class);
+                HttpMethod.PUT, entity, EventDTO.class);
 
         EventDTO event = result.getBody();
 
@@ -393,7 +397,7 @@ public class EventControllerIntegrationTests {
         assertTrue(event.isActiveForReservations());
         assertEquals(1, (int) event.getReservationDeadlineDays());
         assertEquals(3, (int) event.getMaxTicketsPerReservation());
-        assertEquals(2, event.getEventDays().size());
+        assertEquals(1, event.getEventDays().size());
         assertEquals(eventID, event.getId());
     }
 
@@ -468,7 +472,7 @@ public class EventControllerIntegrationTests {
         };
 
         ResponseEntity<RestResponsePage<EventDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/events/search?name=&category=&locationID=&fromDate=07.01.2020. 12:30&toDate=13.01.2020. 13:30&page=0&size=5"),
+                "/events/search?name=&category=&locationID=&startDate=07.01.2020. 12:30&endDate=13.01.2020. 13:30&page=0&size=5"),
                 HttpMethod.GET, null, responseType);
 
         List<EventDTO> events = result.getBody().getContent();
@@ -480,7 +484,7 @@ public class EventControllerIntegrationTests {
     @Test
     void searchEvents_searchDatesAreInvalid_errorMessageReturned() {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
-                "/events/search?name=&category=&locationID=&fromDate=07.2020. 12:30&toDate=13.2020. 13:30&page=0&size=5"),
+                "/events/search?name=&category=&locationID=&startDate=07.2020. 12:30&endDate=13.2020. 13:30&page=0&size=5"),
                 HttpMethod.GET, null, String.class);
 
         String errorMessage = result.getBody();
