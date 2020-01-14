@@ -27,7 +27,7 @@ export class LocationApiService {
   }
 
   searchLocations(name: string, page: number, size: number) {
-    return this._http.get(`${this._baseUrl}/locations?page=${page}&size=${size}&name=${name}`);
+    return this._http.get(`${this._baseUrl}/locations/search?page=${page}&size=${size}&name=${name}`);
   }
 
   createLocation(location: Location) {

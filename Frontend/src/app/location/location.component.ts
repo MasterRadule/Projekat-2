@@ -29,8 +29,7 @@ export class LocationComponent implements OnInit {
     this.locationApiService.getLocation(id).subscribe(
       {
         next: (result: Location) => {
-          // this.location = result;
-          this.router.navigate(['/dashboard/locations', result.id]);
+          this.location = result;
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
@@ -46,6 +45,9 @@ export class LocationComponent implements OnInit {
         {
           next: (result: Location) => {
             this.location = result;
+            this.snackBar.open('Location edited successfully', 'Dismiss', {
+              duration: 3000
+            });
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -58,13 +60,16 @@ export class LocationComponent implements OnInit {
       this.locationApiService.createLocation(this.location).subscribe(
         {
           next: (result: Location) => {
-            this.location = result;
+            this.snackBar.open('Location created successfully', 'Dismiss', {
+              duration: 3000
+            });
+            this.router.navigate(['/dashboard/locations/', result.id]).then(r => {
+            });
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
               duration: 3000
             });
-            console.log(message);
           }
         }
       );

@@ -1,10 +1,13 @@
-<div id="search-row" fxLayout="row">
+<form #searchForm="ngForm" (ngSubmit)="onSubmit()" fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column"
+      fxLayoutAlign="center">
   <mat-form-field appearance="outline">
     <mat-label>Search</mat-label>
     <mat-icon color="primary" matPrefix>search</mat-icon>
-    <input id="search" matInput type="text" (keyup.enter)="searchLocations($event)">
+    <input [(ngModel)]="this._searchParameter" id="search" matInput type="text" name="_searchParameter">
   </mat-form-field>
-</div>
+  <button type="submit" mat-raised-button class="searchButton">Search</button>
+  <button type="button" mat-raised-button class="searchButton" (click)="resetForm(searchForm)">Reset</button>
+</form>
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
-  <app-location-preview *ngFor="let location of _locations" [location]="location"></app-location-preview>
+  <app-location-preview *ngFor="let location of this._locations" [location]="location"></app-location-preview>
 </div>
