@@ -11,14 +11,24 @@ export class ReportRequestDTO extends Serializable {
   })
   private _endDate: number;
   @SerializeProperty({
-    map: 'locationId'
+    map: 'locationId',
+    optional: true
   })
   private _locationId: number;
   @SerializeProperty({
-    map: 'eventId'
+    map: 'eventId',
+    optional: true
   })
   private _eventId: number;
 
+
+  constructor(startDate: number, endDate: number, locationId?: number, eventId?: number) {
+    super();
+    this._startDate = startDate;
+    this._endDate = endDate;
+    this._locationId = locationId;
+    this._eventId = eventId;
+  }
 
   get startDate(): number {
     return this._startDate;

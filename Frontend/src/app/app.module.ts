@@ -10,7 +10,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
-import { ReportsComponent } from './reports/reports.component';
+import {ReportsModule} from './reports/reports.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,8 @@ import { ReportsComponent } from './reports/reports.component';
     CoreModule,
     FlexLayoutModule,
     LocationModule,
-    ToolbarModule
+    ToolbarModule,
+    ReportsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

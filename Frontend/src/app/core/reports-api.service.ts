@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {ReportRequestDTO} from '../shared/model/report-request-dto.model';
 
 @Injectable({
@@ -14,6 +14,17 @@ export class ReportsApiService {
   }
 
   getReport(reportRequest: ReportRequestDTO) {
-    return this._http.get(`${this._baseUrl}/reports?startDate=${reportRequest.startDate}&endDate=${reportRequest.endDate}&locationId=${reportRequest.locationId}&eventId=${reportRequest.eventId}`);
+    Object.keys(reportRequest)
+      .forEach(key => reportRequest[key] === undefined || reportRequest[key] === null ? delete reportRequest[key] : {});
+
+    const params = new HttpParams({
+      fromObject: {
+        startDate: String(reportRequest.startDate),
+        endDate: String(reportRequest.endDate),
+        locationId: reportRequest.locationId ? String(reportRequest.locationId) : '',
+        eventId: reportRequest.eventId ? String(reportRequest.eventId) : ''
+      }
+    });
+    return this._http.get(`${this._baseUrl}/reports`, {params});
   }
 }
