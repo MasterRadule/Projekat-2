@@ -1,6 +1,6 @@
 <div class="footer">
   <mat-paginator *ngIf="_page!==undefined" [length]="_page.totalElements" [pageSize]="_page.size"
-                 [pageSizeOptions]="[3, 6, 9]"
+                 [pageIndex]="_page.number" [pageSizeOptions]="[3, 6, 9]"
                  (page)="pageChanged($event)">
   </mat-paginator>
 </div>

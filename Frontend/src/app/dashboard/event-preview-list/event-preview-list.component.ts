@@ -17,6 +17,7 @@ export class EventPreviewListComponent implements OnInit {
   private _eventCategories: string[];
   private _locationsOptions: Location[];
   private _searchParameters: SearchEventsDTO;
+  private _activeSearchParameters: SearchEventsDTO;
   @Output() eventsPageChanged = new EventEmitter<Page>();
   @Output() resetPaginator = new EventEmitter<any>();
 
@@ -24,7 +25,8 @@ export class EventPreviewListComponent implements OnInit {
               private _snackBar: MatSnackBar) {
     this._eventCategories = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
     this.getLocationsOptions();
-    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
+    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    this._activeSearchParameters = new SearchEventsDTO("", null, null, "", "");
   }
 
   get events(): Event[] {
@@ -57,6 +59,22 @@ export class EventPreviewListComponent implements OnInit {
 
   set locationsOptions(value: Location[]) {
     this._locationsOptions = value;
+  }
+
+  get searchParameters(): SearchEventsDTO {
+    return this._searchParameters;
+  }
+
+  set searchParameters(value: SearchEventsDTO) {
+    this._searchParameters = value;
+  }
+
+  get activeSearchParameters(): SearchEventsDTO {
+    return this._activeSearchParameters;
+  }
+
+  set activeSearchParameters(value: SearchEventsDTO) {
+    this._activeSearchParameters = value;
   }
 
   ngOnInit() {
@@ -94,15 +112,16 @@ export class EventPreviewListComponent implements OnInit {
   }
 
   private onSubmit() {
-    this.searchEvents(this._page.number, this._page.size);
+    Object.assign(this._activeSearchParameters, this._searchParameters);
+    this.searchEvents(0, this._page.size);
   }
 
   private searchEvents(page: number, size: number) {
-    const parameters: SearchEventsDTO = new SearchEventsDTO(this._searchParameters.name,
-      this._searchParameters.locationID, this._searchParameters.category,
-      this._searchParameters.startDate, this._searchParameters.endDate);
-    if (parameters.startDate !== '') {
-      parameters.startDate = moment(parameters.startDate).format('DD.MM.YYYY.');
+    let parameters: SearchEventsDTO = new SearchEventsDTO(this._activeSearchParameters.name,
+      this._activeSearchParameters.locationID, this._activeSearchParameters.category, 
+      this._activeSearchParameters.startDate, this._activeSearchParameters.endDate);
+    if (parameters.startDate !== "") {
+      parameters.startDate = moment(parameters.startDate).format("DD.MM.YYYY. HH:mm");
     }
     if (parameters.endDate !== '') {
       parameters.endDate = moment(parameters.endDate).format('DD.MM.YYYY. HH:mm');
@@ -121,9 +140,9 @@ export class EventPreviewListComponent implements OnInit {
 
   private resetForm(form) {
     form.reset();
-    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
-    this.resetPaginator.emit();
-    this.searchEvents(0, 6);
+    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    Object.assign(this._activeSearchParameters, this._searchParameters);
+    this.searchEvents(0, this._page.size);
   }
 
 }
