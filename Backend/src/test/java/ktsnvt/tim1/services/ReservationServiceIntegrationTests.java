@@ -48,7 +48,7 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void getReservations_parameterALL_allReturned() {
+    public void getReservations_parameterALL_allReturned() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -63,7 +63,7 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void getReservations_parameterBOUGHT_boughtReturned() {
+    public void getReservations_parameterBOUGHT_boughtReturned() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -78,7 +78,7 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void getReservations_parameterRESERVED_reservedReturned() {
+    public void getReservations_parameterRESERVED_reservedReturned() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -93,7 +93,7 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void getReservations_userHasNoUncancelledReservations_emptyReturned() {
+    public void getReservations_userHasNoUncancelledReservations_emptyReturned() {
         Long registeredUserId = 26L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -109,7 +109,7 @@ class ReservationServiceIntegrationTests {
 
 
     @Test
-    void getReservation_reservationExists_reservationReturned() throws EntityNotFoundException {
+    public void getReservation_reservationExists_reservationReturned() throws EntityNotFoundException {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -122,20 +122,21 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void getReservation_reservationDoesNotExist_entityNotFoundExceptionThrown() {
+    public void getReservation_reservationDoesNotExist_entityNotFoundExceptionThrown() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
         setUpPrincipal(registeredUser);
 
         Long reservationId = 100L;
-        assertThrows(EntityNotFoundException.class, () -> reservationService.getReservation(reservationId));
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> reservationService.getReservation(reservationId));
+        assertEquals("Reservation not found", exception.getMessage());
     }
 
     @Transactional
     @Rollback
     @Test
-    void createReservation_validSeatTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
+    public void createReservation_validSeatTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -165,7 +166,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_validSeatTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
+    public void createReservation_validSeatTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -196,7 +197,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_validParterreTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
+    public void createReservation_validParterreTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -226,7 +227,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_validParterreTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
+    public void createReservation_validParterreTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -257,7 +258,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_noSuchEvent_entityNotFoundException() {
+    public void createReservation_noSuchEvent_entityNotFoundException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -275,7 +276,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_tooManyTickets_entityNotValidException() {
+    public void createReservation_tooManyTickets_entityNotValidException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -294,7 +295,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_eventStarted_impossibleActionException() {
+    public void createReservation_eventStarted_impossibleActionException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -312,7 +313,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_seatDoesNotExist_entityNotFoundException() {
+    public void createReservation_seatDoesNotExist_entityNotFoundException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -330,7 +331,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_seatTaken_impossibleActionException() {
+    public void createReservation_seatTaken_impossibleActionException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -348,7 +349,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_seatNotFreeAllDays_impossibleActionException() {
+    public void createReservation_seatNotFreeAllDays_impossibleActionException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -366,7 +367,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_parterreDoesNotExist_entityNotFoundException() {
+    public void createReservation_parterreDoesNotExist_entityNotFoundException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -384,7 +385,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_parterreFull_impossibleActionException() {
+    public void createReservation_parterreFull_impossibleActionException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -402,7 +403,7 @@ class ReservationServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createReservation_parterreNotFreeAllDays_impossibleActionException() {
+    public void createReservation_parterreNotFreeAllDays_impossibleActionException() {
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -418,22 +419,22 @@ class ReservationServiceIntegrationTests {
     }
 
     @Test
-    void cancelReservation() {
+    public void cancelReservation() {
     }
 
     @Test
-    void payReservationCreatePayment() {
+    public void payReservationCreatePayment() {
     }
 
     @Test
-    void payReservationExecutePayment() {
+    public void payReservationExecutePayment() {
     }
 
     @Test
-    void createAndPayReservationCreatePayment() {
+    public void createAndPayReservationCreatePayment() {
     }
 
     @Test
-    void createAndPayReservationExecutePayment() {
+    public void createAndPayReservationExecutePayment() {
     }
 }

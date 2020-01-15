@@ -22,7 +22,7 @@ public class SeatRepositoryIntegrationTest {
     private SeatRepository seatRepository;
 
     @Test
-    void findByEventAndById_noSuchSeat_returnedNullOptional() {
+    public void findByEventAndById_noSuchSeat_returnedNullOptional() {
         Long eventId = 1l;
         Long seatId = 10l;
 
@@ -31,7 +31,7 @@ public class SeatRepositoryIntegrationTest {
     }
 
     @Test
-    void findByEventAndById_suchSeatExists_returnedSuchEvent() {
+    public void findByEventAndById_suchSeatExists_returnedSuchEvent() {
         Long eventId = 1L;
         Long seatId = 1L;
 
@@ -47,7 +47,7 @@ public class SeatRepositoryIntegrationTest {
 
 
     @Test
-    void getSeatsByRowNumAndColNum_noSuchSeats_returnedEmptyList() {
+    public void getSeatsByRowNumAndColNum_noSuchSeats_returnedEmptyList() {
         Long eventId = 2L;
         Long eventSeatGroupId = 1L;
         Integer rowNum = 1;
@@ -58,7 +58,7 @@ public class SeatRepositoryIntegrationTest {
     }
 
     @Test
-    void getSeatsByRowNumAndColNum_suchSeatsExist_returnedSuchSeats() {
+    public void getSeatsByRowNumAndColNum_suchSeatsExist_returnedSuchSeats() {
         Long eventId = 1L;
         Long eventSeatGroupId = 1L;
         Integer rowNum = 1;

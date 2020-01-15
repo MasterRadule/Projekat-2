@@ -94,7 +94,7 @@ public class ReservationService {
             throw new EntityNotValidException("Too many tickets in the reservation");
         LocalDateTime firstEventDay =
                 event.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo)
-                        .orElseThrow(() -> new ImpossibleActionException("Event does not have event days!"));
+                        .orElseThrow(() -> new ImpossibleActionException("Event does not have event days"));
         long numOfDaysToEvent = ChronoUnit.DAYS.between(LocalDateTime.now(), firstEventDay);
         if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
         if (checkReservationDeadline && numOfDaysToEvent <= event.getReservationDeadlineDays())
@@ -154,7 +154,7 @@ public class ReservationService {
     }
 
     private void reserveSeatAllDays(Ticket ticket, Event event, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
-        Seat seat = seatRepository.findById(ticketDTO.getSeatId())
+        Seat seat = seatRepository.findByEventAndById(event.getId(), ticketDTO.getSeatId())
                 .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
         EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
         List<Seat> seats = seatRepository
