@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
@@ -247,6 +248,7 @@ public class ReservationService {
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         return new PaymentDTO(createdPayment.getId());
     }
 
@@ -258,6 +260,7 @@ public class ReservationService {
         }
 
         executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
+        reservation.setOrderId(paymentDTO.getPaymentID());
 
         ReservationDTO reservationDTO = reservationMapper.toDTO(reservationRepository.save(reservation));
         try {

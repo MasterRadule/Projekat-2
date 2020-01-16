@@ -26,11 +26,13 @@ public class TicketMapper implements IMapper<Ticket, TicketDTO> {
             ticketDTO.setRowNum(seat.getRowNum());
             ticketDTO.setColNum(seat.getColNum());
         }
-        ReservableSeatGroup reservableSeatGroup = ticket.getReservableSeatGroups().iterator().next();
-        ticketDTO.setSeatGroupName(reservableSeatGroup.getEventSeatGroup().getSeatGroup().getName());
-        ticketDTO.setPrice(reservableSeatGroup.getEventSeatGroup().getPrice());
-        ticketDTO.setEventDays(ticket.getReservableSeatGroups().stream().map(ReservableSeatGroup::getEventDay)
-                .map(EventDay::getDate).collect(Collectors.toCollection(ArrayList::new)));
+        if (!ticket.getReservableSeatGroups().isEmpty()) {
+            ReservableSeatGroup reservableSeatGroup = ticket.getReservableSeatGroups().iterator().next();
+            ticketDTO.setSeatGroupName(reservableSeatGroup.getEventSeatGroup().getSeatGroup().getName());
+            ticketDTO.setPrice(reservableSeatGroup.getEventSeatGroup().getPrice());
+            ticketDTO.setEventDays(ticket.getReservableSeatGroups().stream().map(ReservableSeatGroup::getEventDay)
+                    .map(EventDay::getDate).collect(Collectors.toCollection(ArrayList::new)));
+        }
         return ticketDTO;
     }
 }
