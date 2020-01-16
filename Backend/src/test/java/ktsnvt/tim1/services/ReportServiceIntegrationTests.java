@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.DailyReportDTO;
 import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
@@ -123,10 +124,10 @@ public class ReportServiceIntegrationTests {
 
         int expectedNumberOfResults = 2;
 
-        List<ReportDTO> result = reportService.getReport(reportRequestDTO);
+        ReportDTO result = reportService.getReport(reportRequestDTO);
 
         assertNotNull(result);
-        assertEquals(expectedNumberOfResults, result.size());
+        assertEquals(expectedNumberOfResults, result.getLabels().size());
     }
 
 }

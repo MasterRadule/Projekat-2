@@ -17,6 +17,10 @@ export class EventApiService {
     return this._http.get(`${this._baseUrl}/events?page=${page}&size=${size}`);
   }
 
+  getEventsOptions() {
+    return this._http.get(`${this._baseUrl}/events/options`);
+  }
+
   searchEvents(parameters: SearchEventsDTO, page: number, size: number) {
     const locationID: number | string = parameters.locationID == null ? '' : parameters.locationID;
     const category: string = parameters.category == null ? '' : parameters.category;

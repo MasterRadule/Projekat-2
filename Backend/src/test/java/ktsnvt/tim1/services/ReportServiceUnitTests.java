@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.DailyReportDTO;
 import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
@@ -67,7 +68,7 @@ public class ReportServiceUnitTests {
 
         assertThrows(BadParametersException.class, () -> reportService.getReport(reportRequestDTO));
     }
-    
+
     @Test
     public void getReport_locationDoesNotExist_entityNotFoundExceptionThrown() {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
@@ -202,9 +203,9 @@ public class ReportServiceUnitTests {
         eventDay.setEvent(event);
         event.getEventDays().add(eventDay);
 
-        ReportDTO reportDTO = new ReportDTO(startDate, 1, 31);
-        List<ReportDTO> repositoryResult = new ArrayList<>();
-        repositoryResult.add(reportDTO);
+        DailyReportDTO dailyReportDTO = new DailyReportDTO(startDate, 1, 31);
+        List<DailyReportDTO> repositoryResult = new ArrayList<>();
+        repositoryResult.add(dailyReportDTO);
 
         int resultSize = 1;
 
@@ -216,15 +217,15 @@ public class ReportServiceUnitTests {
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO(startDateMilliseconds, endDateMilliseconds,
                 locationId, eventId);
 
-        List<ReportDTO> result = reportService.getReport(reportRequestDTO);
+        ReportDTO result = reportService.getReport(reportRequestDTO);
 
         assertNotNull(result);
-        assertEquals(resultSize, result.size());
+        assertEquals(resultSize, result.getLabels().size());
 
         for (int i = 0; i < resultSize; i++) {
-            assertEquals(repositoryResult.get(i).getDate(), result.get(i).getDate());
-            assertEquals(repositoryResult.get(i).getEarnings(), result.get(i).getEarnings());
-            assertEquals(repositoryResult.get(i).getTicketCount(), result.get(i).getTicketCount());
+            assertEquals(repositoryResult.get(i).getDate(), result.getLabels().get(i));
+            assertEquals(repositoryResult.get(i).getEarnings(), result.getEarnings().get(i));
+            assertEquals(repositoryResult.get(i).getTicketCount(), result.getTickets().get(i));
         }
 
         verify(reservationRepository, times(1)).getAttendanceAndEarningsForPeriod(startDate, endDate, locationId,
