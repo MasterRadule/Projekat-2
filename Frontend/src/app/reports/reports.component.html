@@ -1,6 +1,46 @@
-<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="50px">
-  <app-chart class="chart" [lineChartData]="lineChartData" [lineChartLabels]="lineChartLabels"
-             [lineChartOptions]="lineChartOptions"></app-chart>
-  <app-chart class="chart" [lineChartData]="lineChartData" [lineChartLabels]="lineChartLabels"
-             [lineChartOptions]="lineChartOptions"></app-chart>
+<app-toolbar></app-toolbar>
+<div id="content">
+  <form #reportForm="ngForm" (ngSubmit)="onSubmit()" fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column"
+        fxLayoutAlign="center">
+    <mat-form-field>
+      <input matInput [matDatepicker]="dp1" placeholder="Start date" disabled
+             [(ngModel)]="startDate" [max]="endDate" name="startDate">
+      <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+      <mat-datepicker #dp1 disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="dp2" placeholder="End date" disabled
+             [(ngModel)]="endDate" [min]="startDate" name="endDate">
+      <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+      <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Location</mat-label>
+      <mat-select [(ngModel)]="reportRequest.locationId" name="location">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let location of _locationOptions" [value]="location.id">
+          {{location.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Event</mat-label>
+      <mat-select [(ngModel)]="reportRequest.eventId" name="category">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let event of _eventOptions" [value]="event.id">
+          {{event.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button type="submit" mat-raised-button class="reportButton">Get Report</button>
+  </form>
+  <div id="chartDiv" fxLayout="row" fxLayoutAlign="center" fxLayoutGap="50px">
+    <app-chart class="chart" [lineChartData]="chart1Settings.lineChartData"
+               [lineChartLabels]="chart1Settings.lineChartLabels"
+               [lineChartOptions]="chart1Settings.lineChartOptions"></app-chart>
+    <app-chart class="chart" [lineChartData]="chart2Settings.lineChartData"
+               [lineChartLabels]="chart2Settings.lineChartLabels"
+               [lineChartOptions]="chart2Settings.lineChartOptions"></app-chart>
+  </div>
 </div>
+

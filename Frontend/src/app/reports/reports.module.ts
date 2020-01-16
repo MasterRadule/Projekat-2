@@ -4,6 +4,9 @@ import {ReportsComponent} from './reports.component';
 import {ChartsModule} from 'ng2-charts';
 import {FlexModule} from '@angular/flex-layout';
 import {CoreModule} from '../core/core.module';
+import {ToolbarModule} from '../toolbar/toolbar.module';
+import {FormsModule} from '@angular/forms';
+import {MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSelectModule} from '@angular/material';
 
 
 @NgModule({
@@ -12,7 +15,14 @@ import {CoreModule} from '../core/core.module';
     CommonModule,
     ChartsModule,
     FlexModule,
-    CoreModule
+    CoreModule,
+    ToolbarModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule
   ],
   exports: [ReportsComponent]
 })

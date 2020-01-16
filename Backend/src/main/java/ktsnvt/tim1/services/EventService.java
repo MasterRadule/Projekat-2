@@ -130,7 +130,8 @@ public class EventService {
         String name = searchDTO.getName().toLowerCase() + "%";
 
         if (!searchDTO.getStartDate().equals("") && !searchDTO.getEndDate().equals("")) {
-            Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), Pageable.unpaged());
+            Page<Event> events = eventRepository
+                    .searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), Pageable.unpaged());
             ArrayList<EventDTO> eventsDTO = new ArrayList<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
             LocalDateTime fromDate;
@@ -149,11 +150,14 @@ public class EventService {
             });
 
             int start = (int) pageable.getOffset();
-            int end = (start + pageable.getPageSize()) > eventsDTO.size() ? eventsDTO.size() : (start + pageable.getPageSize());
+            int end = (start + pageable.getPageSize()) > eventsDTO.size() ? eventsDTO.size() : (start + pageable
+                    .getPageSize());
             return new PageImpl<>(eventsDTO.subList(start, end), pageable, eventsDTO.size());
         } else {
-            Page<Event> events = eventRepository.searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), pageable);
-            return new PageImpl<>(events.stream().map(event -> eventMapper.toDTO(event)).collect(Collectors.toList()), pageable, events.getTotalElements());
+            Page<Event> events = eventRepository
+                    .searchEvents(name, searchDTO.getCategory(), searchDTO.getLocationID(), pageable);
+            return new PageImpl<>(events.stream().map(event -> eventMapper.toDTO(event))
+                    .collect(Collectors.toList()), pageable, events.getTotalElements());
         }
 
     }
@@ -285,5 +289,9 @@ public class EventService {
                 e.getEventSeatGroups().add(esg);
             }
         }
+    }
+
+    public List<EventOptionDTO> getEventsOptions() {
+        return eventRepository.findAll().stream().map(EventOptionDTO::new).collect(Collectors.toList());
     }
 }

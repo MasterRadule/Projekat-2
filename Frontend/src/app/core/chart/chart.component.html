@@ -1,4 +1,4 @@
-<canvas baseChart
+<canvas *ngIf="lineChartData" baseChart
         [datasets]="lineChartData"
         [labels]="lineChartLabels"
         [options]="lineChartOptions"

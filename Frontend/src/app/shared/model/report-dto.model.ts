@@ -3,40 +3,44 @@ import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 @Serialize({})
 export class ReportDTO extends Serializable {
   @SerializeProperty({
-    map: 'date'
+    map: 'tickets',
+    list: true
   })
-  private _date: Date;
+  private _tickets: number[];
   @SerializeProperty({
-    map: 'ticketCount'
+    map: 'earnings',
+    list: true
   })
-  private _ticketCount: number;
+  private _earnings: number[];
   @SerializeProperty({
-    map: 'earnings'
+    map: 'labels',
+    list: true
   })
-  private _earnings: number;
+  private _labels: string[];
 
 
-  get date(): Date {
-    return this._date;
+  get tickets(): number[] {
+    return this._tickets;
   }
 
-  set date(value: Date) {
-    this._date = value;
+  set tickets(value: number[]) {
+    this._tickets = value;
   }
 
-  get ticketCount(): number {
-    return this._ticketCount;
-  }
-
-  set ticketCount(value: number) {
-    this._ticketCount = value;
-  }
-
-  get earnings(): number {
+  get earnings(): number[] {
     return this._earnings;
   }
 
-  set earnings(value: number) {
+  set earnings(value: number[]) {
     this._earnings = value;
   }
+
+  get labels(): string[] {
+    return this._labels;
+  }
+
+  set labels(value: string[]) {
+    this._labels = value;
+  }
 }
+

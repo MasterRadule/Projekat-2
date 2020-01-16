@@ -1,6 +1,6 @@
 package ktsnvt.tim1.repositories;
 
-import ktsnvt.tim1.DTOs.ReportDTO;
+import ktsnvt.tim1.DTOs.DailyReportDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,12 +38,12 @@ public class ReservationRepositoryIntegrationTests {
         LocalDateTime midDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
 
         int expectedNumberOfDays = 3;
-        List<ReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new ReportDTO(startDate, 1, 31));
-        expectedResult.add(new ReportDTO(midDate, 1, 5));
-        expectedResult.add(new ReportDTO(endDate, 1, 30));
+        List<DailyReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
+        expectedResult.add(new DailyReportDTO(midDate, 1, 5));
+        expectedResult.add(new DailyReportDTO(endDate, 1, 30));
 
-        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+        List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 null, null);
 
         assertNotNull(returnedResults);
@@ -62,10 +62,10 @@ public class ReservationRepositoryIntegrationTests {
         Long locationId = 1L;
 
         int expectedNumberOfDays = 1;
-        List<ReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new ReportDTO(startDate, 1, 31));
+        List<DailyReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
 
-        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+        List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 locationId, null);
 
         assertNotNull(returnedResults);
@@ -85,10 +85,10 @@ public class ReservationRepositoryIntegrationTests {
         Long eventId = 1L;
 
         int expectedNumberOfDays = 1;
-        List<ReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new ReportDTO(startDate, 1, 31));
+        List<DailyReportDTO> expectedResult = new ArrayList<>();
+        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
 
-        List<ReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
+        List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 locationId, eventId);
 
         assertNotNull(returnedResults);

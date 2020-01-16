@@ -3,8 +3,12 @@ import {ReportsApiService} from '../core/reports-api.service';
 import {ReportRequestDTO} from '../shared/model/report-request-dto.model';
 import {ReportDTO} from '../shared/model/report-dto.model';
 import {MatSnackBar} from '@angular/material';
-import {ChartDataSets, ChartOptions} from 'chart.js';
-import {Label} from 'ng2-charts';
+import {ChartSettings} from '../core/chart/chart-settings';
+import {Location} from '../shared/model/location.model';
+import {Event} from '../shared/model/event.model';
+import {LocationApiService} from '../core/location-api.service';
+import {EventApiService} from '../core/event-api.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-reports',
@@ -12,94 +16,105 @@ import {Label} from 'ng2-charts';
   styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {
-  public lineChartData: ChartDataSets[] = [
-    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'},
-    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'},
-    {data: [180, 480, 770, 90, 1000, 270, 400], label: 'Series C', yAxisID: 'y-axis-1'}
-  ];
-  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
-    responsive: true,
-    scales: {
-      // We use this empty structure as a placeholder for dynamic theming.
-      xAxes: [{}],
-      yAxes: [
-        {
-          id: 'y-axis-0',
-          position: 'left',
-        },
-        {
-          id: 'y-axis-1',
-          position: 'right',
-          gridLines: {
-            color: 'rgba(255,0,0,0.3)',
-          },
-          ticks: {
-            fontColor: 'red',
-          }
-        }
-      ]
-    },
-    annotation: {
-      annotations: [
-        {
-          type: 'line',
-          mode: 'vertical',
-          scaleID: 'x-axis-0',
-          value: 'March',
-          borderColor: 'orange',
-          borderWidth: 2,
-          label: {
-            enabled: true,
-            fontColor: 'orange',
-            content: 'LineAnno'
-          }
-        },
-      ],
-    },
-  };
+  private chart1Settings: ChartSettings = new ChartSettings();
+  private chart2Settings: ChartSettings = new ChartSettings();
 
-  constructor(private reportsApiService: ReportsApiService, private snackBar: MatSnackBar) {
+  private startDate: Date;
+  private endDate: Date;
+  private _locationOptions: Location[] = [];
+  private _eventOptions: Event[] = [];
+
+  private reportRequest: ReportRequestDTO = new ReportRequestDTO(null, null, null, null);
+
+  constructor(private reportsApiService: ReportsApiService, private snackBar: MatSnackBar,
+              private locationApiService: LocationApiService, private eventApiService: EventApiService) {
   }
 
 
   ngOnInit() {
-    this.reportsApiService.getReport(new ReportRequestDTO((new Date()).getTime(), ((new Date()).getTime() * 2))).subscribe(
+    this.getLocationsOptions();
+    this.getEventsOptions();
+  }
+
+
+  get locationOptions(): Location[] {
+    return this._locationOptions;
+  }
+
+  set locationOptions(value: Location[]) {
+    this._locationOptions = value;
+  }
+
+  get eventOptions(): Event[] {
+    return this._eventOptions;
+  }
+
+  set eventOptions(value: Event[]) {
+    this._eventOptions = value;
+  }
+
+  private getLocationsOptions() {
+    this.locationApiService.getLocationsOptions().subscribe({
+      next: (result: Location[]) => {
+        this._locationOptions = result;
+      },
+      error: (message: string) => {
+        this.snackBar.open(message);
+      }
+    });
+  }
+
+  private getEventsOptions() {
+    this.eventApiService.getEventsOptions().subscribe({
+      next: (result: Event[]) => {
+        this._eventOptions = result;
+      },
+      error: (message: string) => {
+        this.snackBar.open(message);
+      }
+    });
+  }
+
+  private getReport(reportRequest: ReportRequestDTO) {
+    this.reportsApiService.getReport(reportRequest).subscribe(
       {
-        next: (result: ReportDTO[]) => {
-          this.transformData(result);
+        next: (result: ReportDTO) => {
+          this.chart1Settings.lineChartLabels = result.labels;
+          this.chart2Settings.lineChartLabels = result.labels;
+
+          this.chart1Settings.lineChartData = [
+            {
+              data: result.tickets,
+              label: 'Tickets'
+            }
+          ];
+
+          this.chart2Settings.lineChartData = [
+            {
+              data: result.earnings,
+              label: 'Earnings'
+            }
+          ];
         },
-        error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+        error: (message: any) => {
+          this.snackBar.open(message.error, 'Dismiss', {
             duration: 3000
           });
         }
       });
   }
 
-  private transformData(data: ReportDTO[]) {
-    const attendance = {
-      name: 'Attendance',
-      series: []
-    };
 
-    const earnings = {
-      name: 'Earnings',
-      series: []
-    };
-
-    for (const dayReport of data) {
-      attendance.series.push({
-        name: dayReport.date,
-        value: dayReport.ticketCount
+  private onSubmit() {
+    if (this.startDate === undefined || this.endDate === undefined) {
+      this.snackBar.open('Start and end date must be specified', 'Dismiss', {
+        duration: 3000
       });
-
-      earnings.series.push({
-        name: dayReport.date,
-        value: dayReport.earnings
-      });
+    } else {
+      this.reportRequest.startDate = moment(this.startDate).valueOf();
+      this.reportRequest.endDate = moment(this.endDate).valueOf();
+      this.getReport(this.reportRequest);
     }
   }
-
 
 }

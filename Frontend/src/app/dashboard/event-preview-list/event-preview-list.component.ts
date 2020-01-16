@@ -25,8 +25,8 @@ export class EventPreviewListComponent implements OnInit {
               private _snackBar: MatSnackBar) {
     this._eventCategories = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
     this.getLocationsOptions();
-    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
-    this._activeSearchParameters = new SearchEventsDTO("", null, null, "", "");
+    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
+    this._activeSearchParameters = new SearchEventsDTO('', null, null, '', '');
   }
 
   get events(): Event[] {
@@ -117,11 +117,11 @@ export class EventPreviewListComponent implements OnInit {
   }
 
   private searchEvents(page: number, size: number) {
-    let parameters: SearchEventsDTO = new SearchEventsDTO(this._activeSearchParameters.name,
-      this._activeSearchParameters.locationID, this._activeSearchParameters.category, 
+    const parameters: SearchEventsDTO = new SearchEventsDTO(this._activeSearchParameters.name,
+      this._activeSearchParameters.locationID, this._activeSearchParameters.category,
       this._activeSearchParameters.startDate, this._activeSearchParameters.endDate);
-    if (parameters.startDate !== "") {
-      parameters.startDate = moment(parameters.startDate).format("DD.MM.YYYY. HH:mm");
+    if (parameters.startDate !== '') {
+      parameters.startDate = moment(parameters.startDate).format('DD.MM.YYYY. HH:mm');
     }
     if (parameters.endDate !== '') {
       parameters.endDate = moment(parameters.endDate).format('DD.MM.YYYY. HH:mm');
@@ -140,7 +140,7 @@ export class EventPreviewListComponent implements OnInit {
 
   private resetForm(form) {
     form.reset();
-    this._searchParameters = new SearchEventsDTO("", null, null, "", "");
+    this._searchParameters = new SearchEventsDTO('', null, null, '', '');
     Object.assign(this._activeSearchParameters, this._searchParameters);
     this.searchEvents(0, this._page.size);
   }

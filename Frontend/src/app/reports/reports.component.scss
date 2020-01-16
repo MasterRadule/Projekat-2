@@ -1,5 +1,19 @@
 .chart {
   display: block;
-  width: 400px;
-  height: 400px;
+  width: 45%;
+  height: 100%;
+}
+
+#chartDiv {
+  margin-top: 2%;
+}
+
+.reportButton {
+  height: 50%;
+  margin-top: 1%;
+}
+
+#content {
+  margin-top: 2%;
+  flex: 1;
 }

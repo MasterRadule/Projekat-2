@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.DailyReportDTO;
 import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.DTOs.ReportRequestDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
@@ -29,7 +30,7 @@ public class ReportService {
     @Autowired
     EventRepository eventRepository;
 
-    public List<ReportDTO> getReport(ReportRequestDTO reportRequest) throws BadParametersException, EntityNotFoundException {
+    public ReportDTO getReport(ReportRequestDTO reportRequest) throws BadParametersException, EntityNotFoundException {
         LocalDateTime startDate =
                 Instant.ofEpochMilli(reportRequest.getStartDate()).atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDate =
@@ -59,7 +60,7 @@ public class ReportService {
             else if (e.getEventDays().stream().anyMatch(ed -> ed.getDate().compareTo(LocalDateTime.now()) >= 0))
                 throw new BadParametersException("Cannot generate report for event that is not finished");
         }
-        return reservationRepository.getAttendanceAndEarningsForPeriod(startDate,
-                endDate, reportRequest.getLocationId(), reportRequest.getEventId());
+        return new ReportDTO(reservationRepository.getAttendanceAndEarningsForPeriod(startDate,
+                endDate, reportRequest.getLocationId(), reportRequest.getEventId()));
     }
 }

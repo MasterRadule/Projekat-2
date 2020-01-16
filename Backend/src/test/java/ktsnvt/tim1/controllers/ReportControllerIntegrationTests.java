@@ -1,11 +1,8 @@
 package ktsnvt.tim1.controllers;
 
-import ktsnvt.tim1.DTOs.LocationDTO;
-import ktsnvt.tim1.DTOs.ReportDTO;
-import ktsnvt.tim1.DTOs.ReportRequestDTO;
+import ktsnvt.tim1.DTOs.DailyReportDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
-import ktsnvt.tim1.utils.RestResponsePage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -139,19 +136,19 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        ParameterizedTypeReference<List<ReportDTO>> responseType =
-                new ParameterizedTypeReference<List<ReportDTO>>() {
+        ParameterizedTypeReference<List<DailyReportDTO>> responseType =
+                new ParameterizedTypeReference<List<DailyReportDTO>>() {
                 };
 
         int expectedNumberOfResults = 2;
 
-        ResponseEntity<List<ReportDTO>> response = testRestTemplate
+        ResponseEntity<List<DailyReportDTO>> response = testRestTemplate
                 .exchange(String.format("/reports?startDate=%d&endDate=%d", startDateMilliseconds, endDateMilliseconds),
                         HttpMethod.GET,
                         null, responseType
                 );
 
-        List<ReportDTO> body = response.getBody();
+        List<DailyReportDTO> body = response.getBody();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(body);

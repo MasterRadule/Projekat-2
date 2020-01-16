@@ -1,42 +1,44 @@
 package ktsnvt.tim1.DTOs;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReportDTO {
-    private LocalDateTime date;
-    private long ticketCount;
-    private double earnings;
+    private List<Long> tickets = new ArrayList<>();
+    private List<Double> earnings = new ArrayList<>();
+    private List<String> labels = new ArrayList<>();
 
-    public ReportDTO() {
+    public ReportDTO(List<DailyReportDTO> dailyReports) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
+        for (DailyReportDTO dr : dailyReports) {
+            labels.add(dr.getDate().format(formatter));
+            tickets.add(dr.getTicketCount());
+            earnings.add(dr.getEarnings());
+        }
     }
 
-    public ReportDTO(LocalDateTime date, long ticketCount, double earnings) {
-        this.date = date;
-        this.ticketCount = ticketCount;
-        this.earnings = earnings;
+    public List<Long> getTickets() {
+        return tickets;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public void setTickets(List<Long> tickets) {
+        this.tickets = tickets;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public long getTicketCount() {
-        return ticketCount;
-    }
-
-    public void setTicketCount(long ticketCount) {
-        this.ticketCount = ticketCount;
-    }
-
-    public double getEarnings() {
+    public List<Double> getEarnings() {
         return earnings;
     }
 
-    public void setEarnings(double earnings) {
+    public void setEarnings(List<Double> earnings) {
         this.earnings = earnings;
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 }
