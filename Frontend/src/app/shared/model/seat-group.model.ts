@@ -8,12 +8,14 @@ export class SeatGroup extends Serializable {
   private _id: number;
 
   @SerializeProperty({
-    map: 'rowsNum'
+    map: 'rowsNum',
+    optional: true
   })
   private _rowsNum: number;
 
   @SerializeProperty({
-    map: 'colsNum'
+    map: 'colsNum',
+    optional: true
   })
   private _colsNum: number;
 
@@ -33,7 +35,8 @@ export class SeatGroup extends Serializable {
   private _yCoordinate: number;
 
   @SerializeProperty({
-    map: 'totalSeats'
+    map: 'totalSeats',
+    optional: true
   })
   private _totalSeats: number;
 

@@ -1,0 +1,7 @@
+<ko-stage [config]="makeStage(this.width, this.height)">
+  <ko-layer>
+    <ko-group *ngFor="let sg of this.seatGroups" [config]="drawSeatGroup(sg)">
+      <ko-rect *ngFor="let seat of prepareSeats(sg)" [config]="drawSeat(seat)"></ko-rect>
+    </ko-group>
+  </ko-layer>
+</ko-stage>

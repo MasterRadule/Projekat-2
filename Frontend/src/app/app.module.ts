@@ -11,6 +11,7 @@ import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
 import {ReportsModule} from './reports/reports.module';
+import {SeatGroupsModule} from './seat-groups/seat-groups.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {ReportsModule} from './reports/reports.module';
     FlexLayoutModule,
     LocationModule,
     ToolbarModule,
-    ReportsModule
+    ReportsModule,
+    SeatGroupsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,6 +4,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {LocationApiService} from '../core/location-api.service';
 import {MatSnackBar} from '@angular/material';
 import {Location as URLLocation} from '@angular/common';
+import {SeatGroup} from '../shared/model/seat-group.model';
+import {Page} from '../shared/model/page.model';
 
 @Component({
   selector: 'app-location',
@@ -12,6 +14,7 @@ import {Location as URLLocation} from '@angular/common';
 })
 export class LocationComponent implements OnInit {
   private location: Location = new Location(undefined, '', 45.0, 45.0, false);
+  private seatGroups: SeatGroup[] = [];
 
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
               private router: Router) {
@@ -21,6 +24,7 @@ export class LocationComponent implements OnInit {
     this.route.params.subscribe(params => {
       if (params.id) {
         this.getLocation(params.id);
+        this.getSeatGroups(params.id);
       }
     });
   }
@@ -30,6 +34,20 @@ export class LocationComponent implements OnInit {
       {
         next: (result: Location) => {
           this.location = result;
+        },
+        error: (message: string) => {
+          this.snackBar.open(message, 'Dismiss', {
+            duration: 3000
+          });
+        }
+      });
+  }
+
+  getSeatGroups(id: number) {
+    this.locationApiService.getSeatGroups(id, 0, Number.MAX_SAFE_INTEGER).subscribe(
+      {
+        next: (result: Page) => {
+          this.seatGroups = result.content;
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
