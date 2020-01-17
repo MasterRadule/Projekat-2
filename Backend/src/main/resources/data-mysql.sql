@@ -264,7 +264,7 @@ INSERT INTO event(id, category, description, is_active_for_reservations, is_canc
 (22, 'Movie', 'Aut eos unde sed nam eveniet inventore. Vel nesciunt neque atque ut unde sed.', True, False, 2, 'Suptellon', 5, 22),
 (23, 'Fair', 'Nemo ullam error tempora ratione; voluptates laudantium perspiciatis. Ipsa nobis autem perspiciatis impedit libero; fuga hic voluptatibus. Et aut aperiam.', True, False, 5, 'Biwoofewridge', 3, 23),
 (24, 'Competition', 'Rerum voluptatem neque architecto atque quas dolorem. Nam reiciendis iste. Sit aut quia; enim error vel. Ullam ut magnam. Beatae ut sit.', True, False, 3, 'Mictellinphone', 4, 24),
-(25, 'Music', 'Dolor labore beatae aliquid autem vel recusandae.', True, True, 5, 'Cleanculfilet', 3, 25);
+(25, 'Music', 'Dolor labore beatae aliquid autem vel recusandae.', True, False, 5, 'Cleanculfilet', 3, 25);
 
 --
 -- Inserting data into table seat_group
@@ -319,13 +319,13 @@ INSERT INTO seat_group(id, cols_num, is_parterre, name, rows_num, total_seats, x
 (47, NULL, True, 'Side', NULL, 78, 295, 269, 22),
 (48, NULL, True, 'Rear', NULL, 35, 142, 372, 23),
 (49, NULL, True, 'Lobby', NULL, 82, 86, 193, 24),
-(50, NULL, True, 'Front', NULL, 39, 367, 240, 25);
+(50, NULL, True, 'Front', NULL, 1, 367, 240, 25);
 
 --
 -- Inserting data into table event_day
 --
 INSERT INTO event_day(id, date, event_id) VALUES
-(1, '2020-01-01 00:00:00', 1),
+(1, '2020-03-01 00:00:00', 1),
 (2, '2020-01-03 00:00:00', 2),
 (3, '2020-01-05 00:00:00', 3),
 (4, '2020-01-07 00:00:00', 4),
@@ -350,7 +350,7 @@ INSERT INTO event_day(id, date, event_id) VALUES
 (23, '2020-02-14 00:00:00', 23),
 (24, '2020-02-16 00:00:00', 24),
 (25, '2020-02-18 00:00:00', 25),
-(26, '2020-02-20 00:00:00', 1),
+(26, '2020-03-20 00:00:00', 1),
 (27, '2020-02-22 00:00:00', 2),
 (28, '2020-02-24 00:00:00', 3),
 (29, '2020-02-26 00:00:00', 4),
@@ -459,7 +459,7 @@ INSERT INTO reservation(id, is_cancelled, order_id, event_id, user_id) VALUES
 (22, True, NULL, 22, 27),
 (23, True, NULL, 23, 28),
 (24, True, NULL, 24, 29),
-(25, True, NULL, 25, 30);
+(25, False, NULL, 25, 6);
 
 --
 -- Inserting data into table reservable_seat_group
@@ -514,8 +514,9 @@ INSERT INTO reservable_seat_group(id, free_seats, event_day_id, event_seat_group
 (47, 77, 47, 47),
 (48, 34, 48, 48),
 (49, 81, 49, 49),
-(50, 38, 50, 50),
-(51, 1, 26, 1);
+(50, 0, 50, 50),
+(51, 9, 26, 1),
+(52, 80, 1, 26);
 
 --
 -- Inserting data into table ticket

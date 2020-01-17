@@ -14,6 +14,15 @@ public class TicketDTO {
     public TicketDTO() {
     }
 
+    public TicketDTO(Long id, Integer rowNum, Integer colNum, String seatGroupName, Double price, ArrayList<LocalDateTime> eventDays) {
+        this.id = id;
+        this.rowNum = rowNum;
+        this.colNum = colNum;
+        this.seatGroupName = seatGroupName;
+        this.price = price;
+        this.eventDays = eventDays;
+    }
+
     public Integer getRowNum() {
         return rowNum;
     }

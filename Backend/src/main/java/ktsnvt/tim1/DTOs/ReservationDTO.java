@@ -20,6 +20,14 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
+    public ReservationDTO(Long id, String orderId, String eventName, Long eventId, ArrayList<TicketDTO> tickets) {
+        this.id = id;
+        this.orderId = orderId;
+        this.eventName = eventName;
+        this.eventId = eventId;
+        this.tickets = tickets;
+    }
+
     public Long getId() {
         return id;
     }

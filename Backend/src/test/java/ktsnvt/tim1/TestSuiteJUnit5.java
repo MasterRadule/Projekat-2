@@ -6,5 +6,5 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
 @SelectPackages({"ktsnvt.tim1.controllers", "ktsnvt.tim1.repositories", "ktsnvt.tim1.services"})
-public class TestSuite {
+public class TestSuiteJUnit5 {
 }

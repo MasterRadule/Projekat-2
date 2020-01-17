@@ -31,6 +31,15 @@ public class Reservation {
     public Reservation() {
     }
 
+    public Reservation(Long id, String orderId, Boolean isCancelled, RegisteredUser registeredUser, Event event) {
+        this.id = id;
+        this.orderId = orderId;
+        this.isCancelled = isCancelled;
+        this.registeredUser = registeredUser;
+        this.tickets = new HashSet<>();
+        this.event = event;
+    }
+
     public Long getId() {
         return id;
     }

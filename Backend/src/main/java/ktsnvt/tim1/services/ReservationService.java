@@ -20,8 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -44,12 +46,6 @@ public class ReservationService {
     private EventRepository eventRepository;
 
     @Autowired
-    private EventDayRepository eventDayRepository;
-
-    @Autowired
-    private EventSeatGroupRepository eventSeatGroupRepository;
-
-    @Autowired
     private SeatRepository seatRepository;
 
     @Autowired
@@ -60,6 +56,9 @@ public class ReservationService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
@@ -80,8 +79,11 @@ public class ReservationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public ReservationDTO getReservation(Long id) throws EntityNotFoundException {
-        return reservationMapper.toDTO(reservationRepository.findByIdAndIsCancelledFalse(id)
+    public ReservationDTO getReservation(Long reservationId) throws EntityNotFoundException {
+        RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        return reservationMapper.toDTO(reservationRepository
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found")));
     }
 
@@ -97,7 +99,7 @@ public class ReservationService {
             throw new EntityNotValidException("Too many tickets in the reservation");
         LocalDateTime firstEventDay =
                 event.getEventDays().stream().map(EventDay::getDate).min(LocalDateTime::compareTo)
-                        .orElseThrow(() -> new ImpossibleActionException("Event does not have event days!"));
+                        .orElseThrow(() -> new ImpossibleActionException("Event does not have event days"));
         long numOfDaysToEvent = ChronoUnit.DAYS.between(LocalDateTime.now(), firstEventDay);
         if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
         if (checkReservationDeadline && numOfDaysToEvent <= event.getReservationDeadlineDays())
@@ -157,12 +159,12 @@ public class ReservationService {
     }
 
     private void reserveSeatAllDays(Ticket ticket, Event event, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
-        Seat seat = seatRepository.findById(ticketDTO.getSeatId())
+        Seat seat = seatRepository.findByEventAndById(event.getId(), ticketDTO.getSeatId())
                 .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
         EventSeatGroup eventSeatGroup = seat.getReservableSeatGroup().getEventSeatGroup();
         List<Seat> seats = seatRepository
                 .getSeatsByRowNumAndColNum(event.getId(), eventSeatGroup.getId(), seat.getRowNum(), seat.getColNum());
-        if (seats.stream().anyMatch(s -> s.getTicket() == null || !s.getReservableSeatGroup().decrementFreeSeats()))
+        if (seats.stream().anyMatch(s -> s.getTicket() != null || !s.getReservableSeatGroup().decrementFreeSeats()))
             throw new ImpossibleActionException("Seat is not free for all days");
         seats.forEach(s -> {
             ticket.getReservableSeatGroups().add(s.getReservableSeatGroup());
@@ -174,7 +176,7 @@ public class ReservationService {
 
     private void reserveParterreAllDays(Ticket ticket, Event event, NewTicketDTO ticketDTO) throws EntityNotFoundException, ImpossibleActionException {
         ReservableSeatGroup reservableSeatGroup = reservableSeatGroupRepository
-                .findById(ticketDTO.getReservableSeatGroupId())
+                .findByEventAndById(event.getId(), ticketDTO.getReservableSeatGroupId())
                 .orElseThrow(() -> new EntityNotFoundException("Parterre not found"));
         EventSeatGroup eventSeatGroup = reservableSeatGroup.getEventSeatGroup();
         List<ReservableSeatGroup> reservableSeatGroups = reservableSeatGroupRepository
@@ -242,7 +244,7 @@ public class ReservationService {
         try {
             emailService.sendReservationBoughtEmail(reservation);
         } catch (MessagingException e) {
-            System.out.println("Message not send because of exception: " + e.getMessage());
+            System.out.println("Message not sent because of exception: " + e.getMessage());
         }
         return reservationDTO;
     }
@@ -250,6 +252,7 @@ public class ReservationService {
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
+        entityManager.clear(); // clear persistence context in order not to save reservation in database
         return new PaymentDTO(createdPayment.getId());
     }
 
@@ -260,13 +263,14 @@ public class ReservationService {
             throw new ImpossibleActionException("Sent payment ID matches the payment which does not correspond to sent reservation");
         }
 
-        executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
+        Payment executedPayment = executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
+        reservation.setOrderId(executedPayment.getId());
 
         ReservationDTO reservationDTO = reservationMapper.toDTO(reservationRepository.save(reservation));
         try {
             emailService.sendReservationBoughtEmail(reservation);
         } catch (MessagingException e) {
-            System.out.println("Message not send because of exception: " + e.getMessage());
+            System.out.println("Message not sent because of exception: " + e.getMessage());
         }
         return reservationDTO;
     }
