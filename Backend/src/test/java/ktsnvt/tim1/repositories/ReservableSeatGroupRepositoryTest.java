@@ -71,7 +71,7 @@ public class ReservableSeatGroupRepositoryTest {
 
         ReservableSeatGroup reservableSeatGroup1 = reservableSeatGroups.get(1);
         assertEquals(51, reservableSeatGroup1.getId());
-        assertEquals(1, reservableSeatGroup1.getFreeSeats());
+        assertEquals(9, reservableSeatGroup1.getFreeSeats());
         assertEquals(26, reservableSeatGroup1.getEventDay().getId());
         assertEquals(1, reservableSeatGroup1.getEventSeatGroup().getId());
     }
