@@ -32,9 +32,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this._content = params.get('content');
-      if (this.paginator !== undefined) {
-        this.resetPaginator();
-      }
     });
   }
 
@@ -48,9 +45,5 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   private contentPageChanged($event) {
     this.paginator.page = $event;
-  }
-
-  private resetPaginator() {
-    this.paginator.matPaginator.firstPage();
   }
 }
