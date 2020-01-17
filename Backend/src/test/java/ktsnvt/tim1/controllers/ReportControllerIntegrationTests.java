@@ -1,6 +1,6 @@
 package ktsnvt.tim1.controllers;
 
-import ktsnvt.tim1.DTOs.DailyReportDTO;
+import ktsnvt.tim1.DTOs.ReportDTO;
 import ktsnvt.tim1.exceptions.BadParametersException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,16 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -136,23 +138,23 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        ParameterizedTypeReference<List<DailyReportDTO>> responseType =
-                new ParameterizedTypeReference<List<DailyReportDTO>>() {
+        ParameterizedTypeReference<ReportDTO> responseType =
+                new ParameterizedTypeReference<ReportDTO>() {
                 };
 
         int expectedNumberOfResults = 2;
 
-        ResponseEntity<List<DailyReportDTO>> response = testRestTemplate
+        ResponseEntity<ReportDTO> response = testRestTemplate
                 .exchange(String.format("/reports?startDate=%d&endDate=%d", startDateMilliseconds, endDateMilliseconds),
                         HttpMethod.GET,
                         null, responseType
                 );
 
-        List<DailyReportDTO> body = response.getBody();
+        ReportDTO body = response.getBody();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(body);
-        assertEquals(expectedNumberOfResults, body.size());
+        assertEquals(expectedNumberOfResults, body.getLabels().size());
     }
 
     @Test

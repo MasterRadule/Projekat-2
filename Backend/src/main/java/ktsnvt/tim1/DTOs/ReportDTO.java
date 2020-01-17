@@ -9,6 +9,9 @@ public class ReportDTO {
     private List<Double> earnings = new ArrayList<>();
     private List<String> labels = new ArrayList<>();
 
+    public ReportDTO() {
+    }
+
     public ReportDTO(List<DailyReportDTO> dailyReports) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         for (DailyReportDTO dr : dailyReports) {

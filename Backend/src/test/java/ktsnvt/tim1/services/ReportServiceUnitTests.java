@@ -188,6 +188,7 @@ public class ReportServiceUnitTests {
     public void getReport_everythingIsOk_reportDTOReturned() throws BadParametersException, EntityNotFoundException {
         LocalDateTime startDate = LocalDateTime.parse("2019-11-08 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2019-11-11 13:44:33", dateTimeFormatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         Long locationId = 1L;
         Long eventId = 2L;
 
@@ -223,7 +224,7 @@ public class ReportServiceUnitTests {
         assertEquals(resultSize, result.getLabels().size());
 
         for (int i = 0; i < resultSize; i++) {
-            assertEquals(repositoryResult.get(i).getDate(), result.getLabels().get(i));
+            assertEquals(repositoryResult.get(i).getDate().format(formatter), result.getLabels().get(i));
             assertEquals(repositoryResult.get(i).getEarnings(), result.getEarnings().get(i));
             assertEquals(repositoryResult.get(i).getTicketCount(), result.getTickets().get(i));
         }
