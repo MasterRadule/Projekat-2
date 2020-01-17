@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -55,6 +56,9 @@ public class ReservationService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
@@ -240,7 +244,7 @@ public class ReservationService {
         try {
             emailService.sendReservationBoughtEmail(reservation);
         } catch (MessagingException e) {
-            System.out.println("Message not send because of exception: " + e.getMessage());
+            System.out.println("Message not sent because of exception: " + e.getMessage());
         }
         return reservationDTO;
     }
@@ -248,7 +252,7 @@ public class ReservationService {
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        entityManager.clear(); // clear persistence context in order not to save reservation in database
         return new PaymentDTO(createdPayment.getId());
     }
 
@@ -259,14 +263,14 @@ public class ReservationService {
             throw new ImpossibleActionException("Sent payment ID matches the payment which does not correspond to sent reservation");
         }
 
-        executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
-        reservation.setOrderId(paymentDTO.getPaymentID());
+        Payment executedPayment = executePayment(paymentDTO.getPaymentID(), paymentDTO.getPayerID());
+        reservation.setOrderId(executedPayment.getId());
 
         ReservationDTO reservationDTO = reservationMapper.toDTO(reservationRepository.save(reservation));
         try {
             emailService.sendReservationBoughtEmail(reservation);
         } catch (MessagingException e) {
-            System.out.println("Message not send because of exception: " + e.getMessage());
+            System.out.println("Message not sent because of exception: " + e.getMessage());
         }
         return reservationDTO;
     }

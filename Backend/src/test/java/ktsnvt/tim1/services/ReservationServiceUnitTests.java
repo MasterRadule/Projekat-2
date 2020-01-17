@@ -1,11 +1,16 @@
 package ktsnvt.tim1.services;
 
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 import ktsnvt.tim1.DTOs.*;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.exceptions.ImpossibleActionException;
+import ktsnvt.tim1.exceptions.PayPalException;
 import ktsnvt.tim1.mappers.ReservationMapper;
 import ktsnvt.tim1.model.*;
+import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.ReservableSeatGroupRepository;
 import ktsnvt.tim1.repositories.ReservationRepository;
@@ -13,8 +18,11 @@ import ktsnvt.tim1.repositories.SeatRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -33,14 +41,21 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.mail.MessagingException;
+import javax.persistence.EntityManager;
+import javax.swing.text.html.Option;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,7 +64,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore("javax.security.*")
-@PrepareForTest(ReservationService.class)
+@PrepareForTest({ReservationService.class, Payment.class})
 @ActiveProfiles("test")
 public class ReservationServiceUnitTests {
 
@@ -72,6 +87,12 @@ public class ReservationServiceUnitTests {
 
     @MockBean
     private ReservableSeatGroupRepository reservableSeatGroupRepositoryMocked;
+
+    @MockBean
+    private EmailService emailServiceMocked;
+
+    @MockBean
+    private EntityManager entityManagerMocked;
 
     private void setUpPrincipal(RegisteredUser registeredUser) {
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -503,12 +524,12 @@ public class ReservationServiceUnitTests {
         ReservableSeatGroup rsg1 = new ReservableSeatGroup();
         rsg1.setEventSeatGroup(esg);
         rsg1.setFreeSeats(freeSeats);
-        Seat seat1 = new Seat(1,1,rsg1);
+        Seat seat1 = new Seat(1, 1, rsg1);
         seat1.setTicket(null);
         ReservableSeatGroup rsg2 = new ReservableSeatGroup();
         rsg2.setEventSeatGroup(esg);
         rsg2.setFreeSeats(freeSeats);
-        Seat seat2 = new Seat(1,1, rsg2);
+        Seat seat2 = new Seat(1, 1, rsg2);
         seat2.setTicket(new Ticket());
         ArrayList<Seat> seats = new ArrayList<>();
         seats.add(seat1);
@@ -538,12 +559,12 @@ public class ReservationServiceUnitTests {
         ReservableSeatGroup rsg1 = new ReservableSeatGroup();
         rsg1.setEventSeatGroup(esg);
         rsg1.setFreeSeats(freeSeats);
-        Seat seat1 = new Seat(1,1,rsg1);
+        Seat seat1 = new Seat(1, 1, rsg1);
         seat1.setTicket(null);
         ReservableSeatGroup rsg2 = new ReservableSeatGroup();
         rsg2.setEventSeatGroup(esg);
         rsg2.setFreeSeats(freeSeats);
-        Seat seat2 = new Seat(1,1, rsg2);
+        Seat seat2 = new Seat(1, 1, rsg2);
         seat2.setTicket(null);
         ArrayList<Seat> seats = new ArrayList<>();
         seats.add(seat1);
@@ -723,25 +744,587 @@ public class ReservationServiceUnitTests {
         assertEquals(Integer.valueOf(freeSeats - 1), rsg2.getFreeSeats());
     }
 
-
-
     @Test
-    public void cancelReservation() {
+    public void cancelReservation_reservationDoesNotExist_entityNotFoundExceptionThrown() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Optional<Reservation> o = Optional.empty();
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> reservationService.cancelReservation(reservationId));
+        assertEquals("Reservation not found", exception.getMessage());
     }
 
     @Test
-    public void payReservationCreatePayment() {
+    public void cancelReservation_reservationAlreadyPaid_impossibleActionException() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, "orderId", false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+
+        Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationService.cancelReservation(reservationId));
+        assertEquals("Reservation is already paid, therefore cannot be cancelled", exception.getMessage());
     }
 
     @Test
-    public void payReservationExecutePayment() {
+    public void cancelReservation_everythingValid_reservationCanceled() throws ImpossibleActionException, EntityNotFoundException {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationRepositoryMocked.save(entity)).thenReturn(entity);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+
+        ReservationDTO reservationDTO = reservationService.cancelReservation(reservationId);
+        assertEquals(true, entity.getCancelled());
+        assertEquals(reservationId, reservationDTO.getId());
     }
 
     @Test
-    public void createAndPayReservationCreatePayment() {
+    public void payReservationCreatePayment_reservationDoesNotExist_entityNotFoundExceptionThrown() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Optional<Reservation> o = Optional.empty();
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> reservationService.payReservationCreatePayment(reservationId));
+        assertEquals("Reservation not found", exception.getMessage());
     }
 
     @Test
-    public void createAndPayReservationExecutePayment() {
+    public void payReservationCreatePayment_reservationAlreadyPaid_impossibleActionException() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, "orderId", false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+
+        Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationService.payReservationCreatePayment(reservationId));
+        assertEquals("Reservation is already paid, therefore cannot be payed again", exception.getMessage());
+    }
+
+    @Test
+    public void payReservationCreatePayment_everythingValid_makePaymentObjectCalled() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+        Payment payment = new Payment();
+        payment.setId("paymentId");
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "makePaymentObject", entity);
+        reservationServiceSpy.payReservationCreatePayment(reservationId);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makePaymentObject", entity);
+    }
+
+    @Test
+    public void payReservationExecutePayment_reservationDoesNotExist_entityNotFoundExceptionThrown() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Optional<Reservation> o = Optional.empty();
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> reservationService.payReservationExecutePayment(reservationId, paymentDTO));
+        assertEquals("Reservation not found", exception.getMessage());
+    }
+
+    @Test
+    public void payReservationExecutePayment_reservationAlreadyPaid_impossibleActionException() {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, "orderId", false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+
+        Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationService.payReservationExecutePayment(reservationId, paymentDTO));
+        assertEquals("Reservation is already paid, therefore cannot be payed again", exception.getMessage());
+    }
+
+
+    @Test
+    public void payReservationExecutePayment_paymentNotForReservation_impossibleActionException() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+        PowerMockito.doReturn(true).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+
+        Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationServiceSpy.payReservationExecutePayment(reservationId, paymentDTO));
+        assertEquals("Sent payment ID matches the payment which does not correspond to sent reservation", exception.getMessage());
+    }
+
+    @Test
+    public void payReservationExecutePayment_everythingValidButMailCannotBeSent_paymentExecuted() throws Exception {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+        Mockito.doThrow(new MessagingException("mail error")).when(emailServiceMocked).sendReservationBoughtEmail(entity);
+        PowerMockito.doReturn(false).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "executePayment", paymentId, payerId);
+
+        reservationServiceSpy.payReservationExecutePayment(reservationId, paymentDTO);
+
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("executePayment", paymentId, payerId);
+        assertEquals(paymentId, entity.getOrderId());
+        assertEquals("Message not sent because of exception: mail error\r\n", outContent.toString());
+
+        System.setOut(originalOut);
+    }
+
+    @Test
+    public void payReservationExecutePayment_everythingValid_paymentExecuted() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
+        Optional<Reservation> o = Optional.of(entity);
+
+        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
+        PowerMockito.doReturn(false).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "executePayment", paymentId, payerId);
+
+        reservationServiceSpy.payReservationExecutePayment(reservationId, paymentDTO);
+
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("executePayment", paymentId, payerId);
+        assertEquals(paymentId, entity.getOrderId());
+
+    }
+
+    @Test
+    public void createAndPayReservationCreatePayment_everythingValid_paymentCreated() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        Long eventId = 1L;
+        NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
+        ArrayList<NewTicketDTO> tickets = new ArrayList<>();
+        tickets.add(newTicketDTO);
+        NewReservationDTO newReservationDTO = new NewReservationDTO(eventId, tickets);
+        String paymentId = "paymentId";
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+
+        PowerMockito.doReturn(entity).when(reservationServiceSpy, "makeReservationObject", newReservationDTO, false);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "makePaymentObject", entity);
+
+        PaymentDTO paymentDTO = reservationServiceSpy.createAndPayReservationCreatePayment(newReservationDTO);
+
+        assertEquals(paymentId, paymentDTO.getPaymentID());
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makeReservationObject", newReservationDTO, false);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makePaymentObject", entity);
+        Mockito.verify(entityManagerMocked, times(1)).clear();
+    }
+
+    @Test
+    public void createAndPayReservationExecutePayment_paymentNotForReservation_impossibleActionException() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        Long eventId = 1L;
+        NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
+        ArrayList<NewTicketDTO> tickets = new ArrayList<>();
+        tickets.add(newTicketDTO);
+        NewReservationDTO newReservationDTO = new NewReservationDTO(eventId, tickets);
+
+        PowerMockito.doReturn(entity).when(reservationServiceSpy, "makeReservationObject", newReservationDTO, false);
+        PowerMockito.doReturn(true).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+
+        Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationServiceSpy.createAndPayReservationExecutePayment(newReservationDTO, paymentDTO));
+        assertEquals("Sent payment ID matches the payment which does not correspond to sent reservation", exception.getMessage());
+    }
+
+    @Test
+    public void createAndPayReservationExecutePayment_everythingValidMailCannotBeSent_paymentExecuted() throws Exception {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        Long eventId = 1L;
+        NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
+        ArrayList<NewTicketDTO> tickets = new ArrayList<>();
+        tickets.add(newTicketDTO);
+        NewReservationDTO newReservationDTO = new NewReservationDTO(eventId, tickets);
+
+        Mockito.doThrow(new MessagingException("mail error")).when(emailServiceMocked).sendReservationBoughtEmail(entity);
+        PowerMockito.doReturn(entity).when(reservationServiceSpy, "makeReservationObject", newReservationDTO, false);
+        PowerMockito.doReturn(false).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "executePayment", paymentId, payerId);
+
+        reservationServiceSpy.createAndPayReservationExecutePayment(newReservationDTO, paymentDTO);
+
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makeReservationObject", newReservationDTO, false);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("executePayment", paymentId, payerId);
+        assertEquals(paymentId, entity.getOrderId());
+        assertEquals("Message not sent because of exception: mail error\r\n", outContent.toString());
+
+        System.setOut(originalOut);
+    }
+
+    @Test
+    public void createAndPayReservationExecutePayment_everythingValid_paymentExecuted() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+        Long reservationId = 1L;
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        Reservation entity = new Reservation(reservationId, null, false, registeredUser, null);
+        Long eventId = 1L;
+        NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
+        ArrayList<NewTicketDTO> tickets = new ArrayList<>();
+        tickets.add(newTicketDTO);
+        NewReservationDTO newReservationDTO = new NewReservationDTO(eventId, tickets);
+
+        PowerMockito.doReturn(entity).when(reservationServiceSpy, "makeReservationObject", newReservationDTO, false);
+        PowerMockito.doReturn(false).when(reservationServiceSpy, "paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.doReturn(payment).when(reservationServiceSpy, "executePayment", paymentId, payerId);
+
+        reservationServiceSpy.createAndPayReservationExecutePayment(newReservationDTO, paymentDTO);
+
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makeReservationObject", newReservationDTO, false);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("paymentIsNotForReservation", entity, paymentDTO);
+        PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("executePayment", paymentId, payerId);
+        assertEquals(paymentId, entity.getOrderId());
+    }
+
+    @Test
+    public void makePaymentObject_paymentNotCreated_payPalException() {
+        Reservation reservation = new Reservation(1L, null, false, new RegisteredUser(), null);
+        reservation.setTickets(new HashSet<>());
+
+        Ticket ticket = new Ticket();
+        ticket.setId(1L);
+        ticket.setReservation(reservation);
+        ReservableSeatGroup rsg = new ReservableSeatGroup();
+        ticket.getReservableSeatGroups().add(rsg);
+        EventSeatGroup esg = new EventSeatGroup();
+        rsg.setEventSeatGroup(esg);
+        double ticketPrice = 10;
+        esg.setPrice(ticketPrice);
+
+        reservation.getTickets().add(ticket);
+
+        PowerMockito.stub(PowerMockito.method(Payment.class, "create", APIContext.class)).toReturn(null);
+        Exception exception = assertThrows(PayPalException.class, () ->
+                Whitebox.invokeMethod(reservationService, "makePaymentObject", reservation));
+        assertEquals("Payment not created", exception.getMessage());
+    }
+
+    @Test
+    public void makePaymentObject_everythingValid_paymentCreated() throws Exception {
+        Reservation reservation = new Reservation(1L, null, false, new RegisteredUser(), null);
+        reservation.setTickets(new HashSet<>());
+
+        Ticket ticket = new Ticket();
+        ticket.setId(1L);
+        ticket.setReservation(reservation);
+        ReservableSeatGroup rsg = new ReservableSeatGroup();
+        ticket.getReservableSeatGroups().add(rsg);
+        EventSeatGroup esg = new EventSeatGroup();
+        rsg.setEventSeatGroup(esg);
+        double ticketPrice = 10;
+        esg.setPrice(ticketPrice);
+
+        reservation.getTickets().add(ticket);
+
+        Payment payment = Mockito.spy(Payment.class);
+        Mockito.doReturn(payment).when(payment).create((APIContext)any());
+        PowerMockito.whenNew(Payment.class)
+                .withNoArguments()
+                .thenReturn(payment);
+
+        Payment createdPayment = Whitebox.invokeMethod(reservationService, "makePaymentObject", reservation);
+        assertEquals(1, createdPayment.getTransactions().size());
+        Transaction transaction = createdPayment.getTransactions().get(0);
+        assertNotNull(transaction.getItemList());
+        ItemList itemList = transaction.getItemList();
+        assertEquals(1, itemList.getItems().size());
+        Item item = itemList.getItems().get(0);
+        assertEquals("KTSNVT - Ticket",item.getDescription());
+        assertEquals("TicketID: " + ticket.getId(), item.getName());
+        assertEquals("EUR", item.getCurrency());
+        assertEquals(String.valueOf(ticketPrice), item.getPrice());
+        assertEquals("1", item.getQuantity());
+
+        assertEquals("EUR", transaction.getAmount().getCurrency());
+        assertEquals(String.valueOf(ticketPrice), transaction.getAmount().getTotal());
+        assertEquals("1", item.getQuantity());
+
+        assertEquals("paypal", createdPayment.getPayer().getPaymentMethod());
+        assertEquals("/", createdPayment.getRedirectUrls().getCancelUrl());
+        assertEquals("/", createdPayment.getRedirectUrls().getReturnUrl());
+        assertEquals("sale", createdPayment.getIntent());
+    }
+
+    @Test
+    public void paymentIsNotForReservation_paymentGetReturnsNull_PayPalException() throws Exception {
+        Reservation reservation = new Reservation(1L, null, false, new RegisteredUser(), null);
+
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+
+        PowerMockito.mockStatic(Payment.class);
+        PowerMockito.when(Payment.get((APIContext) Mockito.any(), Mockito.any())).thenReturn(null);
+
+        Exception exception = assertThrows(PayPalException.class, () ->
+                Whitebox.invokeMethod(reservationService, "paymentIsNotForReservation", reservation, paymentDTO));
+        assertEquals("Payment with sent payment ID does not exist", exception.getMessage());
+    }
+
+    @Test
+    public void paymentIsNotForReservation_paymentIsForReservation_returnFalse() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Reservation reservation = new Reservation(1L, null, false, new RegisteredUser(), null);
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+
+        Payment payment1 = new Payment();
+        Transaction transaction1 = new Transaction();
+        ItemList itemList1 = new ItemList();
+        ShippingAddress shippingAddress1 = new ShippingAddress();
+        itemList1.setShippingAddress(shippingAddress1);
+        transaction1.setItemList(itemList1);
+        transaction1.setPayee(new Payee());
+        List<Transaction> transactions1 = new ArrayList<>();
+        transactions1.add(transaction1);
+        payment1.setTransactions(transactions1);
+
+        Payment payment2 = new Payment();
+        Transaction transaction2 = new Transaction();
+        ItemList itemList2 = new ItemList();
+        ShippingAddress shippingAddress2 = new ShippingAddress();
+        itemList2.setShippingAddress(shippingAddress2);
+        transaction2.setItemList(itemList2);
+        transaction2.setPayee(new Payee());
+        List<Transaction> transactions2 = new ArrayList<>();
+        transactions2.add(transaction2);
+        payment2.setTransactions(transactions2);
+
+        PowerMockito.mockStatic(Payment.class);
+        PowerMockito.when(Payment.get((APIContext) Mockito.any(), Mockito.any())).thenReturn(payment1);
+        PowerMockito.doReturn(payment2).when(reservationServiceSpy, "makePaymentObject", reservation);
+
+        boolean result = Whitebox.invokeMethod(reservationServiceSpy, "paymentIsNotForReservation", reservation, paymentDTO);
+        assertFalse(result);
+    }
+
+    @Test
+    public void paymentIsNotForReservation_paymentIsForNotReservation_returnTrue() throws Exception {
+        ReservationService reservationServiceSpy = PowerMockito.spy(reservationService);
+
+        Reservation reservation = new Reservation(1L, null, false, new RegisteredUser(), null);
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+        PaymentDTO paymentDTO = new PaymentDTO(paymentId);
+        paymentDTO.setPayerID(payerId);
+
+        Payment payment1 = new Payment();
+        Transaction transaction1 = new Transaction();
+        ItemList itemList1 = new ItemList();
+        ShippingAddress shippingAddress1 = new ShippingAddress();
+        itemList1.setShippingAddress(shippingAddress1);
+        transaction1.setItemList(itemList1);
+        transaction1.setPayee(new Payee());
+        List<Transaction> transactions1 = new ArrayList<>();
+        transactions1.add(transaction1);
+        payment1.setTransactions(transactions1);
+
+        Payment payment2 = new Payment();
+        Transaction transaction2 = new Transaction();
+        transaction2.setDescription("description");
+        ItemList itemList2 = new ItemList();
+        ShippingAddress shippingAddress2 = new ShippingAddress();
+        itemList2.setShippingAddress(shippingAddress2);
+        transaction2.setItemList(itemList2);
+        transaction2.setPayee(new Payee());
+        List<Transaction> transactions2 = new ArrayList<>();
+        transactions2.add(transaction2);
+        payment2.setTransactions(transactions2);
+
+        PowerMockito.mockStatic(Payment.class);
+        PowerMockito.when(Payment.get((APIContext) Mockito.any(), Mockito.any())).thenReturn(payment1);
+        PowerMockito.doReturn(payment2).when(reservationServiceSpy, "makePaymentObject", reservation);
+
+        boolean result = Whitebox.invokeMethod(reservationServiceSpy, "paymentIsNotForReservation", reservation, paymentDTO);
+        assertTrue(result);
+    }
+
+    @Test
+    public void executePayment_paymentExecuteReturnsNull_PayPalException() throws Exception {
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+
+        PowerMockito.stub(PowerMockito.method(Payment.class, "execute", APIContext.class, PaymentExecution.class)).toReturn(null);
+
+        Exception exception = assertThrows(PayPalException.class, () ->
+                Whitebox.invokeMethod(reservationService, "executePayment", paymentId, payerId));
+        assertEquals("Payment not executed", exception.getMessage());
+    }
+
+    @Test
+    public void executePayment_everythingValid_paymentExecuted() throws Exception {
+        String paymentId = "paymentId";
+        String payerId = "payerId";
+
+        Payment payment = Mockito.spy(Payment.class);
+        Mockito.doReturn(payment).when(payment).execute((APIContext)any(), any());
+        PowerMockito.whenNew(Payment.class)
+                .withNoArguments()
+                .thenReturn(payment);
+
+        Payment paymentExecuted = Whitebox.invokeMethod(reservationService, "executePayment", paymentId, payerId);
+        assertEquals(paymentId, paymentExecuted.getId());
     }
 }
