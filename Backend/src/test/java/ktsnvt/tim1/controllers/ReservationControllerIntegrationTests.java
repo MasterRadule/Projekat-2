@@ -65,8 +65,6 @@ public class ReservationControllerIntegrationTests {
     @Autowired
     private DataSource dataSource;
 
-    private ReservationService reservationService; // TODO REMOVE
-
     @AfterEach
     public void rollback(){
         Resource resource = new ClassPathResource("data-h2.sql");
