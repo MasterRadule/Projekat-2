@@ -197,6 +197,11 @@ public class ReservationService {
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be cancelled");
+        cancelReservationRemoveConnections(reservation);
+        return reservationMapper.toDTO(reservationRepository.save(reservation));
+    }
+
+    public void cancelReservationRemoveConnections(Reservation reservation) {
         reservation.setCancelled(true);
         reservation.getTickets().forEach(ticket -> {
             for (ReservableSeatGroup rsg : ticket.getReservableSeatGroups()) {
@@ -209,7 +214,6 @@ public class ReservationService {
             }
             ticket.getSeats().clear();
         });
-        return reservationMapper.toDTO(reservationRepository.save(reservation));
     }
 
     public PaymentDTO payReservationCreatePayment(Long reservationId) throws EntityNotFoundException, ImpossibleActionException, PayPalRESTException, PayPalException {
