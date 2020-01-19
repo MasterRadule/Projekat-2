@@ -71,7 +71,7 @@ public class ReservationController {
     @Secured("ROLE_USER")
     public ResponseEntity<Object> payReservationCreatePayment(@PathVariable("id") Long reservationId) {
         try {
-            return new ResponseEntity<>(reservationService.payReservationCreatePayment(reservationId), HttpStatus.OK);
+            return new ResponseEntity<>(reservationService.payReservationCreatePayment(reservationId), HttpStatus.CREATED);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (ImpossibleActionException e) {
@@ -116,7 +116,7 @@ public class ReservationController {
     public ResponseEntity<Object> createAndPayReservationExecutePayment(@Valid @RequestBody NewReservationAndPaymentDTO newReservationAndPaymentDTO) {
         try {
             return new ResponseEntity<>(reservationService.createAndPayReservationExecutePayment(newReservationAndPaymentDTO.getNewReservationDTO(),
-                    newReservationAndPaymentDTO.getPaymentDTO()), HttpStatus.CREATED);
+                    newReservationAndPaymentDTO.getPaymentDTO()), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (EntityNotValidException e) {
