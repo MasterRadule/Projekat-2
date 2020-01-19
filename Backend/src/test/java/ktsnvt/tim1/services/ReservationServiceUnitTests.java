@@ -780,6 +780,8 @@ public class ReservationServiceUnitTests {
 
     @Test
     public void cancelReservation_everythingValid_reservationCanceled() throws ImpossibleActionException, EntityNotFoundException {
+        ReservationService reservationServiceSpy = Mockito.spy(reservationService);
+
         Long registeredUserId = 6L;
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(registeredUserId);
@@ -794,9 +796,40 @@ public class ReservationServiceUnitTests {
         Mockito.when(reservationRepositoryMocked.save(entity)).thenReturn(entity);
         Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
 
-        ReservationDTO reservationDTO = reservationService.cancelReservation(reservationId);
+        ReservationDTO reservationDTO = reservationServiceSpy.cancelReservation(reservationId);
+        Mockito.verify(reservationServiceSpy, times(1)).cancelReservationRemoveConnections(entity);
         assertEquals(true, entity.getCancelled());
         assertEquals(reservationId, reservationDTO.getId());
+    }
+
+    @Test
+    public void cancelReservationRemoveConnections_everythingValid_reservationCanceledConnectionsRemoved() throws ImpossibleActionException, EntityNotFoundException {
+        Long registeredUserId = 6L;
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setId(registeredUserId);
+        setUpPrincipal(registeredUser);
+
+        Long reservationId = 1L;
+        Reservation reservation = new Reservation(reservationId, null, false, registeredUser, null);
+        Ticket ticket = new Ticket();
+        reservation.getTickets().add(ticket);
+        ReservableSeatGroup rsg = new ReservableSeatGroup();
+        rsg.setFreeSeats(1);
+        Seat seat = new Seat();
+
+        ticket.getSeats().add(seat);
+        seat.setTicket(ticket);
+        ticket.getReservableSeatGroups().add(rsg);
+        rsg.getTickets().add(ticket);
+
+        reservationService.cancelReservationRemoveConnections(reservation);
+        assertEquals(true, reservation.getCancelled());
+        assertTrue(reservation.getTickets().contains(ticket));
+        assertTrue(ticket.getSeats().isEmpty());
+        assertNull(seat.getTicket());
+        assertFalse(rsg.getTickets().contains(ticket));
+        assertEquals(Integer.valueOf(2), rsg.getFreeSeats());
+        assertTrue(ticket.getReservableSeatGroups().isEmpty());
     }
 
     @Test
