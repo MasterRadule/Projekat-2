@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.joining;
 @Service
 public class EmailService {
 
+    @Autowired
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
@@ -38,11 +39,6 @@ public class EmailService {
     @Autowired
     private ReservationMapper reservationMapper;
 
-    @Autowired
-    public EmailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
-
     @Async
     public void sendReservationNotificationEmail(RegisteredUser registeredUser, Reservation reservation,
                                                  LocalDateTime expirationDate) {
@@ -51,7 +47,7 @@ public class EmailService {
         mailMessage.setTo(registeredUser.getEmail());
         mailMessage.setSubject("Reservation expires soon");
         mailMessage.setFrom(emailAddress);
-        mailMessage.setText(String.format("Dear %s %s,\nWe want to inform you that your reservation for event %s is about to expire (expires on %s).\nKTSNVT",
+        mailMessage.setText(String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s is about to expire (expires on %s). %nKTSNVT",
                 registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
                 formatter.format(expirationDate)));
         javaMailSender.send(mailMessage);
@@ -65,7 +61,7 @@ public class EmailService {
         mailMessage.setTo(registeredUser.getEmail());
         mailMessage.setSubject("Reservation expired");
         mailMessage.setFrom(emailAddress);
-        mailMessage.setText(String.format("Dear %s %s,\nWe want to inform you that your reservation for event %s has expired at %s.\nKTSNVT",
+        mailMessage.setText(String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s has expired at %s.%nKTSNVT",
                 registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
                 formatter.format(expirationDate)));
         javaMailSender.send(mailMessage);
@@ -77,7 +73,7 @@ public class EmailService {
         mailMessage.setTo(registeredUser.getEmail());
         mailMessage.setSubject("Complete registration");
         mailMessage.setFrom(emailAddress);
-        mailMessage.setText(String.format("Dear %s %s,\nTo confirm your account please click here: \n"
+        mailMessage.setText(String.format("Dear %s %s,%nTo confirm your account please click here: %n"
                 + "http://" + url + "/api/verify-account?token=" + verificationToken.getToken(), registeredUser.getFirstName(), registeredUser.getLastName()));
         javaMailSender.send(mailMessage);
 
@@ -123,7 +119,7 @@ public class EmailService {
         text.append("</body></html>");
         helper.setText(text.toString(), true);
         for (TicketDTO t : reservationDTO.getTickets()) {
-            helper.addInline(t.getId().toString(), QRCode.from(reservation.getId().toString()).file());
+            helper.addInline(t.getId().toString(), QRCode.from(t.getId().toString()).file());
         }
         javaMailSender.send(mimeMessage);
     }
