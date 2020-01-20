@@ -1,13 +1,17 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.UserDTO;
-import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
+import ktsnvt.tim1.model.User;
+import ktsnvt.tim1.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,12 +28,22 @@ public class UserServiceIntegrationTests {
     private UserService userService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
+
+    private void setUpPrincipal(User registeredUser) {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.getPrincipal()).thenReturn(registeredUser);
+        SecurityContextHolder.setContext(securityContext);
+    }
 
     @Transactional
     @Rollback
     @Test
     void editUser_userIdIsNull_entityNotValidExceptionThrown(){
+        User registeredUser = new User();
+        setUpPrincipal(registeredUser);
         UserDTO editedDTO = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedDTO));
@@ -38,16 +52,24 @@ public class UserServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_userDoesNotExist_entityNotFoundExceptionThrown(){
+    void editUser_notAllowedUser_entityNotValidExceptionThrown(){
+        User registeredUser = new User();
+        registeredUser.setId(1L);
+        setUpPrincipal(registeredUser);
         UserDTO editedDTO = new UserDTO(60L, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
-        assertThrows(EntityNotFoundException.class, () -> userService.editUser(editedDTO));
+        assertThrows(EntityNotValidException.class, () -> userService.editUser(editedDTO));
     }
 
     @Transactional
     @Rollback
     @Test
     void editUser_userEmailChanged_entityNotValidExceptionThrown(){
+        User registeredUser = new User();
+        registeredUser.setId(6L);
+        registeredUser.setEmail("JennifferHooker@example.com");
+        setUpPrincipal(registeredUser);
+
         UserDTO editedDTO = new UserDTO(6L, "Jack", "Bowlin", "123", "JennifferHooker1@example.com", true);
 
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedDTO));
@@ -56,7 +78,9 @@ public class UserServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_userExists_editedUserReturned() throws EntityNotValidException, EntityNotFoundException{
+    void editUser_userExists_editedUserReturned() throws EntityNotValidException{
+        setUpPrincipal(userRepository.findByEmail("JennifferHooker@example.com"));
+
         UserDTO editedDTO = new UserDTO(6L, "Jackie", "Bowlin", "1234", "JennifferHooker@example.com", true);
 
         UserDTO returnedDTO = userService.editUser(editedDTO);

@@ -2,12 +2,11 @@ package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.NewReservationDTO;
 import ktsnvt.tim1.DTOs.NewTicketDTO;
-import ktsnvt.tim1.model.Event;
-import ktsnvt.tim1.model.EventDay;
-import ktsnvt.tim1.model.RegisteredUser;
-import ktsnvt.tim1.model.Reservation;
+import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.ReservationRepository;
 
+import ktsnvt.tim1.repositories.UserRepository;
+import ktsnvt.tim1.repositories.VerificationTokenRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -56,6 +55,12 @@ public class PeriodicCheckServiceUnitTests {
 
     @MockBean
     private EmailService emailServiceMocked;
+
+    @MockBean
+    private UserRepository userRepositoryMocked;
+
+    @MockBean
+    private VerificationTokenRepository verificationTokenRepositoryMocked;
 
     @Test
     public void checkReservations_reservationDeadlinePassed_cancelReservationRemoveConnectionsCalledAndMailSent() {
@@ -114,5 +119,21 @@ public class PeriodicCheckServiceUnitTests {
     public void expiresSoon_doesNotExpireSoon_returnFalse () throws Exception {
         assertFalse(Whitebox.invokeMethod(periodicCheckService, "expiresSoon",
                 LocalDateTime.now().plusHours((long) (notifyHoursBeforeExpiration*1.5))));
+    }
+
+    @Test
+    public void checkToken_tokenExpired_deleteToken(){
+        String token = "123546";
+        String email = "ppetrovic@gmail.com";
+        User user = new User(1L, "Petar", "Petrovic","$2y$12$FDOJQfuSrC7UAvBaUaX7UuP9NwZcZGI2joxQcHlzjEMXJBr57XAX6",email,false);
+        VerificationToken verificationToken = new VerificationToken(1L, token, LocalDateTime.now().minusDays(2), user);
+        ArrayList<User> users = new ArrayList<>();
+        users.add(user);
+
+        Mockito.when(userRepositoryMocked.findByIsVerifiedFalse()).thenReturn(users);
+        Mockito.when(verificationTokenRepositoryMocked.findByUser(user)).thenReturn(verificationToken);
+        periodicCheckService.checkToken();
+        Mockito.verify(verificationTokenRepositoryMocked, Mockito.times(1)).delete(verificationToken);
+        Mockito.verify(userRepositoryMocked, Mockito.times(1)).delete(user);
     }
 }
