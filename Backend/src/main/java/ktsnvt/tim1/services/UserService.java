@@ -21,24 +21,24 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDTO editUser(UserDTO user) throws EntityNotValidException {
-        User registeredUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO editUser(UserDTO userDTO) throws EntityNotValidException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (user.getId() == null)
+        if (userDTO.getId() == null)
             throw new EntityNotValidException("User must have an ID");
 
-        if (user.getId() != registeredUser.getId()){
+        if (userDTO.getId() != user.getId()){
             throw new EntityNotValidException("Invalid action");
         }
 
-        if (!user.getEmail().equals(registeredUser.getEmail())){
+        if (!userDTO.getEmail().equals(user.getEmail())){
             throw new EntityNotValidException("Email cannot be changed");
         }
-        registeredUser.setFirstName(user.getFirstName());
-        registeredUser.setLastName(user.getLastName());
-        registeredUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        return userMapper.toDTO(userRepository.save(registeredUser));
+        return userMapper.toDTO(userRepository.save(user));
 
     }
 

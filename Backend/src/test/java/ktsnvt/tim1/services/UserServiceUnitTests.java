@@ -43,27 +43,27 @@ public class UserServiceUnitTests {
     @MockBean
     private UserMapper userMapperMocked;
 
-    private void setUpPrincipal(User registeredUser) {
+    private void setUpPrincipal(User user) {
         Authentication authentication = Mockito.mock(Authentication.class);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.getPrincipal()).thenReturn(registeredUser);
+        Mockito.when(authentication.getPrincipal()).thenReturn(user);
         SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
     void editUser_userIdIsNull_entityNotValidExceptionThrown(){
-        User registeredUser = new User();
-        setUpPrincipal(registeredUser);
+        User user = new User();
+        setUpPrincipal(user);
         UserDTO editedUser = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedUser));
     }
 
     @Test
     void editUser_notAllowedUser_entityNotValidExceptionThrown(){
-        User registeredUser = new User();
-        registeredUser.setId(2L);
-        setUpPrincipal(registeredUser);
+        User user = new User();
+        user.setId(2L);
+        setUpPrincipal(user);
         Long id = 1L;
         UserDTO editedUser = new UserDTO(id,"Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true );
 
@@ -73,11 +73,11 @@ public class UserServiceUnitTests {
     @Test
     void editUser_userEmailChanged_entityNotValidExceptionThrown(){
         Long id = 1L;
-        User registeredUser = new User(id,"Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true );
-        setUpPrincipal(registeredUser);
+        User user = new User(id,"Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true );
+        setUpPrincipal(user);
         UserDTO editedUser = new UserDTO(id,"Petar", "Petrovic", "KtsNvt1+", "ppetrovic1@gmail.com", true );
 
-        Mockito.when(userRepositoryMocked.findById(id)).thenReturn(Optional.of(registeredUser));
+        Mockito.when(userRepositoryMocked.findById(id)).thenReturn(Optional.of(user));
 
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedUser));
     }
@@ -85,14 +85,14 @@ public class UserServiceUnitTests {
     @Test
     void editUser_userExists_userReturned() throws EntityNotValidException{
         Long id = 1L;
-        User registeredUser = new User(id,"Petar", "Petrovic", "$2y$12$FDOJQfuSrC7UAvBaUaX7UuP9NwZcZGI2joxQcHlzjEMXJBr57XAX6", "ppetrovic@gmail.com", true );;
-        setUpPrincipal(registeredUser);
+        User user = new User(id,"Petar", "Petrovic", "$2y$12$FDOJQfuSrC7UAvBaUaX7UuP9NwZcZGI2joxQcHlzjEMXJBr57XAX6", "ppetrovic@gmail.com", true );;
+        setUpPrincipal(user);
         UserDTO editedDTO = new UserDTO(id,"Petar", "Petrovic", "KtsNvt1++", "ppetrovic@gmail.com", true );
         User newUser = new User(id,"Petar", "Petrovic", "$2y$12$y87u8NVCv7wFEcN9kmhvQeJuqfUP3RXbZz2xKhc94aMs6OrXKZYtW", "ppetrovic@gmail.com", true );
         UserDTO returnedDTO = new UserDTO(id,"Petar", "Petrovic", null, "ppetrovic@gmail.com", true );
 
         Mockito.when(passwordEncoderMocked.encode(editedDTO.getPassword())).thenReturn("$2y$12$y87u8NVCv7wFEcN9kmhvQeJuqfUP3RXbZz2xKhc94aMs6OrXKZYtW\n");
-        Mockito.when(userRepositoryMocked.save(registeredUser)).thenReturn(newUser);
+        Mockito.when(userRepositoryMocked.save(user)).thenReturn(newUser);
         Mockito.when(userMapperMocked.toDTO(newUser)).thenReturn(returnedDTO);
 
         UserDTO editedUser = userService.editUser(editedDTO);
@@ -105,7 +105,7 @@ public class UserServiceUnitTests {
         assertEquals(editedDTO.getVerified(), editedUser.getVerified());
 
         verify(passwordEncoderMocked, times(1)).encode(editedDTO.getPassword());
-        verify(userRepositoryMocked, times(1)).save(registeredUser);
+        verify(userRepositoryMocked, times(1)).save(user);
         verify(userMapperMocked, times(1)).toDTO(newUser);
     }
 }

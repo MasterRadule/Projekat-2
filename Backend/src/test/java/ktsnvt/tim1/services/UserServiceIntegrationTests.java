@@ -30,11 +30,11 @@ public class UserServiceIntegrationTests {
     @Autowired
     private UserRepository userRepository;
 
-    private void setUpPrincipal(User registeredUser) {
+    private void setUpPrincipal(User user) {
         Authentication authentication = Mockito.mock(Authentication.class);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.getPrincipal()).thenReturn(registeredUser);
+        Mockito.when(authentication.getPrincipal()).thenReturn(user);
         SecurityContextHolder.setContext(securityContext);
     }
 
@@ -42,8 +42,8 @@ public class UserServiceIntegrationTests {
     @Rollback
     @Test
     void editUser_userIdIsNull_entityNotValidExceptionThrown(){
-        User registeredUser = new User();
-        setUpPrincipal(registeredUser);
+        User user = new User();
+        setUpPrincipal(user);
         UserDTO editedDTO = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedDTO));
@@ -53,9 +53,9 @@ public class UserServiceIntegrationTests {
     @Rollback
     @Test
     void editUser_notAllowedUser_entityNotValidExceptionThrown(){
-        User registeredUser = new User();
-        registeredUser.setId(1L);
-        setUpPrincipal(registeredUser);
+        User user = new User();
+        user.setId(1L);
+        setUpPrincipal(user);
         UserDTO editedDTO = new UserDTO(60L, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
         assertThrows(EntityNotValidException.class, () -> userService.editUser(editedDTO));
@@ -65,10 +65,10 @@ public class UserServiceIntegrationTests {
     @Rollback
     @Test
     void editUser_userEmailChanged_entityNotValidExceptionThrown(){
-        User registeredUser = new User();
-        registeredUser.setId(6L);
-        registeredUser.setEmail("JennifferHooker@example.com");
-        setUpPrincipal(registeredUser);
+        User user = new User();
+        user.setId(6L);
+        user.setEmail("JennifferHooker@example.com");
+        setUpPrincipal(user);
 
         UserDTO editedDTO = new UserDTO(6L, "Jack", "Bowlin", "123", "JennifferHooker1@example.com", true);
 
