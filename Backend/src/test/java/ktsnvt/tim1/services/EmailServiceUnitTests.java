@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.validator.ValidateWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -95,14 +96,29 @@ public class EmailServiceUnitTests {
         assertEquals(registeredUser.getEmail(), captor.getValue().getTo()[0]);
         assertEquals("Reservation expired", captor.getValue().getSubject());
         assertEquals(emailAddress, captor.getValue().getFrom());
-        assertEquals(captor.getValue().getText(), String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s has expired at %s.%nKTSNVT",
+        assertEquals(String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s has expired at %s.%nKTSNVT",
                 registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
-                formatter.format(expirationDate)));
+                formatter.format(expirationDate)), captor.getValue().getText());
     }
 
     @Test
     public void sendVerificationEmail() {
-        //TODO
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setEmail("mail@example.com");
+        String url = "www.ktsnvt.com";
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken("token123");
+
+        emailService.sendVerificationEmail(registeredUser, url, verificationToken);
+
+        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        Mockito.verify(javaMailSenderSpy, Mockito.timeout(1000)).send(captor.capture());
+        assertEquals(registeredUser.getEmail(), captor.getValue().getTo()[0]);
+        assertEquals("Complete registration", captor.getValue().getSubject());
+        assertEquals(emailAddress, captor.getValue().getFrom());
+        assertEquals(String.format("Dear %s %s,%nTo confirm your account please click here: %n"
+                + "http://" + url + "/api/verify-account?token=" + verificationToken.getToken(),
+                registeredUser.getFirstName(), registeredUser.getLastName()), captor.getValue().getText());
     }
 
     @Test
