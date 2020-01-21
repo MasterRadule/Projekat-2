@@ -60,7 +60,7 @@ public class AuthenticationServiceIntegrationTests {
     @Rollback
     @Test
     void register_userRegistered() throws EntityAlreadyExistsException, MessagingException, IOException {
-        UserDTO userToRegister = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", false);
+        UserDTO userToRegister = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic1@gmail.com", false);
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         UserDTO registeredUser = authenticationService.register(userToRegister, request);

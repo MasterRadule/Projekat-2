@@ -237,6 +237,21 @@ INSERT INTO user(id, dtype, email, first_name, is_verified, last_name, password)
 (50, 'RegisteredUser', 'Colby126@example.com', 'Valeria', True, 'Lloyd', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
 --
+-- Inserting data into table verification_token
+--
+INSERT INTO verification_token(token_id, date_created, expired, token, user_id) VALUES
+(41, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7ff', 41),
+(42, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fd', 42),
+(43, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fs', 43),
+(44, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fa', 44),
+(45, '2019-01-01 00:00:00', True, '$2a$04$Vbug2lwwJGrvUXTj6z7fw', 45),
+(46, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fq', 46),
+(47, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fr', 47),
+(48, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7ft', 48),
+(49, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fy', 49),
+(50, '2020-01-01 00:00:00', False, '$2a$04$Vbug2lwwJGrvUXTj6z7fu', 50);
+
+--
 -- Inserting data into table event
 --
 INSERT INTO event(id, category, description, is_active_for_reservations, is_cancelled, max_tickets_per_reservation, name, reservation_deadline_days, location_id) VALUES

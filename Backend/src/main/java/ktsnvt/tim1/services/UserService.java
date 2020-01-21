@@ -1,12 +1,12 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.UserDTO;
-import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.UserMapper;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +21,24 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDTO editUser(UserDTO user) throws EntityNotValidException, EntityNotFoundException{
+    public UserDTO editUser(UserDTO userDTO) throws EntityNotValidException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (user.getId() == null)
+        if (userDTO.getId() == null)
             throw new EntityNotValidException("User must have an ID");
 
-        User toEdit = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (userDTO.getId() != user.getId()){
+            throw new EntityNotValidException("Invalid action");
+        }
 
-        if (!user.getEmail().equals(toEdit.getEmail())){
+        if (!userDTO.getEmail().equals(user.getEmail())){
             throw new EntityNotValidException("Email cannot be changed");
         }
-        toEdit.setFirstName(user.getFirstName());
-        toEdit.setLastName(user.getLastName());
-        toEdit.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        return userMapper.toDTO(userRepository.save(toEdit));
+        return userMapper.toDTO(userRepository.save(user));
 
     }
 
