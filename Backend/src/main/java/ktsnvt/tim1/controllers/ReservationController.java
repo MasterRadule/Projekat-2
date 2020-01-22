@@ -20,6 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/reservations")
+@CrossOrigin
 public class ReservationController {
 
     @Autowired
