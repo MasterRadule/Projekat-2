@@ -4,9 +4,9 @@ export class Ticket {
   private _colNum: number;
   private _seatGroupName: string;
   private _price: number;
-  private _eventDays: Date;
+  private _eventDays: Date[];
 
-  constructor(id: number, rowNum: number, colNum: number, seatGroupName: string, price: number, eventDays: Date) {
+  constructor(id: number, rowNum: number, colNum: number, seatGroupName: string, price: number, eventDays: Date[]) {
     this._id = id;
     this._rowNum = rowNum;
     this._colNum = colNum;
@@ -55,11 +55,11 @@ export class Ticket {
     this._price = value;
   }
 
-  get eventDays(): Date {
+  get eventDays(): Date[] {
     return this._eventDays;
   }
 
-  set eventDays(value: Date) {
+  set eventDays(value: Date[]) {
     this._eventDays = value;
   }
 }

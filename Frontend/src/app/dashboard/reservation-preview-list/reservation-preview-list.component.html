@@ -1,13 +1,15 @@
 <div fxLayout="row wrap" fxLayoutGap="2%" fxLayout.xs="column"
-     fxLayoutAlign="left" fxFlex>
-  <mat-select [(ngModel)]="_reservationType">
+     fxLayoutAlign="center">
+  <mat-form-field>
     <mat-label>
-      Reservation for:
+      Reservation type:
     </mat-label>
-    <mat-option *ngFor="let type of _reservationTypes" [value]="type">
-      {{type}}
-    </mat-option>
-  </mat-select>
+    <mat-select [(ngModel)]="_reservationType" (selectionChange)="getReservations()">
+      <mat-option *ngFor="let type of _reservationTypes" [value]="type">
+        {{type}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-reservation-preview *ngFor="let reservation of _reservations"

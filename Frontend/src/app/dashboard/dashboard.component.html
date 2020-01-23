@@ -15,7 +15,7 @@
   </div>
 
   <div class="footer">
-    <div fxLayoutAlign="end" id="add">
+    <div *ngIf="_content==='locations' || _content==='events'" fxLayoutAlign="end" id="add" >
       <button mat-fab color="primary" [routerLink]='["/dashboard", _content]'>
         <mat-icon>add</mat-icon>
       </button>

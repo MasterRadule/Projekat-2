@@ -11,8 +11,11 @@ import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
 import {ReportsModule} from './reports/reports.module';
-import {AuthModule} from "./auth/auth.module";
-import {TokenInterceptor} from "./auth/token-interceptor";
+import {AuthModule} from './auth/auth.module';
+import {TokenInterceptor} from './interceptors/token.interceptor';
+import {SharedModule} from './shared/shared.module';
+import {ReservationModule} from './reservation/reservation.module';
+import {UrlInterceptor} from './interceptors/url.interceptor';
 
 @NgModule({
   declarations: [
@@ -27,11 +30,14 @@ import {TokenInterceptor} from "./auth/token-interceptor";
     CoreModule,
     FlexLayoutModule,
     LocationModule,
+    ReservationModule,
     ToolbarModule,
     ReportsModule,
-    AuthModule
+    AuthModule,
+    SharedModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+              {provide: HTTP_INTERCEPTORS, useClass: UrlInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

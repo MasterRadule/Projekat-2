@@ -3,7 +3,6 @@ import {Location} from '../shared/model/location.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocationApiService} from '../core/location-api.service';
 import {MatSnackBar} from '@angular/material';
-import {Location as URLLocation} from '@angular/common';
 
 @Component({
   selector: 'app-location',

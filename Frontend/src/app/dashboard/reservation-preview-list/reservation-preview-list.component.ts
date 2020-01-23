@@ -22,11 +22,14 @@ export class ReservationPreviewListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getReservations(0, 6);
+    this._page = new Page();
+    this._page.number = 0;
+    this._page.size = 6;
+    this.getReservations();
   }
 
-  public getReservations(page: number, size: number) {
-    this._reservationApiService.getReservations(this._reservationType, page, size).subscribe({
+  public getReservations() {
+    this._reservationApiService.getReservations(this._reservationType, this._page.number, this._page.size).subscribe({
       next: (result: Page) => {
         this._page = result;
         this.reservationsPageChanged.emit(result);
@@ -43,6 +46,6 @@ export class ReservationPreviewListComponent implements OnInit {
   public pageChanged(event: PageEvent) {
     this._page.size = event.pageSize;
     this._page.number = event.pageIndex;
-    this.getReservations(this._page.number, this._page.size);
+    this.getReservations();
   }
 }

@@ -1,1 +1,35 @@
-<p>reservation-preview works!</p>
+<mat-card>
+  <mat-card-header>
+    <mat-icon mat-card-avatar>event</mat-icon>
+    <mat-card-title>{{_reservation.eventName}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <table id="reservation_content_table">
+      <tr>
+        <td>No. of tickets:</td>
+        <td>{{_ticketNumber}}</td>
+      </tr>
+      <tr>
+        <td>Total price:</td>
+        <td>{{_price}}$</td>
+      </tr>
+      <tr>
+        <td>Is paid:</td>
+        <td>{{_paid}}</td>
+      </tr>
+    </table>
+  </mat-card-content>
+  <mat-card-actions>
+    <span fxLayoutGap="20px">
+    <span>
+      <button mat-raised-button color="primary" [routerLink]="['/dashboard/reservations/', this._reservation.id]">Details</button>
+    </span>
+    <span [style.visibility]="_paid==='no' ? 'visible' : 'hidden'">
+      <button mat-raised-button color="primary">Pay</button>
+    </span>
+    <span [style.visibility]="_paid==='no' ? 'visible' : 'hidden'">
+      <button mat-raised-button color="primary">Cancel</button>
+    </span>
+    </span>
+  </mat-card-actions>
+</mat-card>

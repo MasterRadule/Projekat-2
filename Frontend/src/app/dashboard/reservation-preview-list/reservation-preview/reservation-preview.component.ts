@@ -7,9 +7,25 @@ import {Reservation} from '../../../shared/model/reservation.model';
   styleUrls: ['./reservation-preview.component.scss']
 })
 export class ReservationPreviewComponent implements OnInit {
-  @Input() private reservation: Reservation;
+  private _reservation: Reservation;
+  private _ticketNumber: number;
+  private _price: number;
+  private _paid: string;
 
-  constructor() { }
+  get reservation(): Reservation {
+    return this._reservation;
+  }
+
+  @Input()
+  set reservation(value: Reservation) {
+    this._reservation = value;
+    this._ticketNumber = value.tickets.length;
+    this._price = value.tickets.reduce<number>((sum, ticket) => sum + ticket.price, 0);
+    this._paid = value.orderId === null ? 'yes' : 'no';
+  }
+
+  constructor() {
+  }
 
   ngOnInit() {
   }
