@@ -45,6 +45,18 @@ export class SeatGroup extends Serializable {
   })
   private _name: string;
 
+  @SerializeProperty({
+    map: 'angle'
+  })
+  private _angle: number;
+
+  get angle(): number {
+    return this._angle;
+  }
+
+  set angle(value: number) {
+    this._angle = value;
+  }
 
   get id(): number {
     return this._id;

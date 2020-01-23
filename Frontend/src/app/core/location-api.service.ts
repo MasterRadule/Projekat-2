@@ -49,4 +49,8 @@ export class LocationApiService {
   createSeatGroup(locationId: number, seatGroup: SeatGroup) {
     return this._http.post(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup);
   }
+
+  editSeatGroupAngle(locationId: number, seatGroup: SeatGroup) {
+    return this._http.put(`${this._baseUrl}/locations/${locationId}/seat-groups`, seatGroup);
+  }
 }

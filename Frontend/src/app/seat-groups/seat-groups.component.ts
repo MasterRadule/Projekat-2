@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, Renderer, Renderer2} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
 
@@ -14,6 +14,7 @@ export class SeatGroupsComponent implements OnInit {
 
   private stage: Konva.Stage;
   private seatGroupRepresentations: Konva.Group[] = [];
+  private transformersMap = new Map<Konva.Group, Konva.Transformer>();
 
   constructor() {
   }
@@ -33,39 +34,69 @@ export class SeatGroupsComponent implements OnInit {
       draggable: true
     });
 
-    this.stage.on('mousedown', () => {
+    this.stage.on('dragstart', () => {
       this.stage.container().style.cursor = 'move';
     });
 
-    this.stage.on('mouseup', () => {
+    this.stage.on('dragend', () => {
       this.stage.container().style.cursor = 'default';
+    });
+
+    this.stage.on('dblclick', (e) => {
+      if (e.target.getType() === 'Stage') {
+        this.transformersMap.forEach((value) => {
+          value.detach();
+        });
+        e.target.draw();
+      }
     });
   }
 
+
   setUpSeatGroups(layer: Konva.Layer) {
     for (const seatGroup of this.seatGroups) {
-      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
+      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup, layer);
       this.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
       this.seatGroupRepresentations.push(seatGroupRepresentation);
       layer.add(seatGroupRepresentation);
     }
   }
 
-  setUpSeatGroup(seatGroup: SeatGroup): Konva.Group {
+  setUpRotationSnaps(seatGroup) {
+    return new Konva.Transformer({
+      node: seatGroup,
+      centeredScaling: true,
+      rotationSnaps: [0, 90, 180, 270],
+      resizeEnabled: false
+    });
+  }
+
+  setUpSeatGroup(seatGroup: SeatGroup, layer: Konva.Layer): Konva.Group {
     const seatGroupRepresentation = new Konva.Group({
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
-      rotation: 0,
+      rotation: seatGroup.angle,
       draggable: true,
       id: seatGroup.id.toString()
     });
 
-    seatGroupRepresentation.on('mousedown', () => {
+    seatGroupRepresentation.on('dragstart', () => {
       this.stage.container().style.cursor = 'pointer';
     });
 
-    seatGroupRepresentation.on('mouseup', () => {
+    seatGroupRepresentation.on('dragend', () => {
       this.stage.container().style.cursor = 'default';
+    });
+
+    seatGroupRepresentation.on('dblclick', (e) => {
+      if (!this.transformersMap.has(seatGroupRepresentation)) {
+        const rotationSnap = this.setUpRotationSnaps(seatGroupRepresentation);
+        this.transformersMap.set(seatGroupRepresentation, rotationSnap);
+        layer.add(rotationSnap);
+      } else {
+        this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
+      }
+      layer.draw();
     });
 
     return seatGroupRepresentation;
