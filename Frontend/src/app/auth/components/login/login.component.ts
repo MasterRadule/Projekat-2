@@ -1,8 +1,7 @@
-import { Input, Component, Output, EventEmitter, OnInit } from '@angular/core';
-import {FormControl, FormGroup, NgForm} from "@angular/forms";
+import { Input, Component, OnInit } from '@angular/core';
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationApiService} from "../../../core/authentication-api.service";
 import {LoginDto} from "../../../shared/model/login-dto.model";
-import {Observable} from "rxjs";
 import {MatSnackBar} from "@angular/material";
 import {Router} from "@angular/router";
 
@@ -19,10 +18,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
   }
-  token:string = null;
+
   ngForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl(''),
+    email: new FormControl('', [Validators.required,
+      Validators.pattern("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")]),
+    password: new FormControl('', [Validators.required])
   });
 
   onSubmit() {

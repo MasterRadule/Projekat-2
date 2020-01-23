@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {LoginDto} from "../shared/model/login-dto.model";
 import {Observable} from "rxjs";
+import {UserDTO} from "../shared/model/user-dto.model";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,16 @@ export class AuthenticationApiService {
 
   logout(): Observable<any> {
     return this._http.get(`${this._baseUrl}/auth/logout`, {headers: this._headers, responseType: 'text'});
+  }
+
+  register(userDTO: UserDTO): Observable<any>{
+    return this._http.post(`${this._baseUrl}/register`, {
+      firstName: userDTO.firstName,
+      lastName: userDTO.lastName,
+      email: userDTO.email,
+      password: userDTO.password,
+      verified: false
+    }, {headers: this._headers, responseType: 'text'});
   }
 
 

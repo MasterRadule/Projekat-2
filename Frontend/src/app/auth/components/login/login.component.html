@@ -21,7 +21,7 @@
         </p>
 
         <div class="button">
-          <button type="submit" mat-button>Login</button>
+          <button type="submit" [disabled]="!ngForm.valid" mat-button>Login</button>
         </div>
 
       </form>
