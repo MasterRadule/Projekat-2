@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
 
+
 @Component({
   selector: 'app-seat-groups',
   templateUrl: './seat-groups.component.html',
@@ -13,6 +14,7 @@ export class SeatGroupsComponent implements OnInit {
   @Input() private height: number;
 
   private stage: Konva.Stage;
+  private layer: Konva.Layer;
   private seatGroupRepresentations: Konva.Group[] = [];
   private transformersMap = new Map<Konva.Group, Konva.Transformer>();
 
@@ -21,9 +23,9 @@ export class SeatGroupsComponent implements OnInit {
 
   ngOnInit(): void {
     this.setUpStage();
-    const layer = new Konva.Layer();
-    this.setUpSeatGroups(layer);
-    this.stage.add(layer);
+    this.layer = new Konva.Layer();
+    this.setUpSeatGroups();
+    this.stage.add(this.layer);
   }
 
   setUpStage() {
@@ -52,13 +54,12 @@ export class SeatGroupsComponent implements OnInit {
     });
   }
 
-
-  setUpSeatGroups(layer: Konva.Layer) {
+  setUpSeatGroups() {
     for (const seatGroup of this.seatGroups) {
-      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup, layer);
+      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
       this.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
       this.seatGroupRepresentations.push(seatGroupRepresentation);
-      layer.add(seatGroupRepresentation);
+      this.layer.add(seatGroupRepresentation);
     }
   }
 
@@ -71,7 +72,7 @@ export class SeatGroupsComponent implements OnInit {
     });
   }
 
-  setUpSeatGroup(seatGroup: SeatGroup, layer: Konva.Layer): Konva.Group {
+  setUpSeatGroup(seatGroup: SeatGroup): Konva.Group {
     const seatGroupRepresentation = new Konva.Group({
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
@@ -88,15 +89,31 @@ export class SeatGroupsComponent implements OnInit {
       this.stage.container().style.cursor = 'default';
     });
 
-    seatGroupRepresentation.on('dblclick', (e) => {
+    seatGroupRepresentation.on('dblclick', () => {
       if (!this.transformersMap.has(seatGroupRepresentation)) {
         const rotationSnap = this.setUpRotationSnaps(seatGroupRepresentation);
         this.transformersMap.set(seatGroupRepresentation, rotationSnap);
-        layer.add(rotationSnap);
+        this.layer.add(rotationSnap);
       } else {
         this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
       }
-      layer.draw();
+      this.layer.draw();
+    });
+
+    seatGroupRepresentation.on('dragmove', (e) => {
+      const oldPos = e.target.getPosition();
+      const movementX = e.evt.movementX;
+      const movementY = e.evt.movementY;
+      const potentialNewPosition = {x: oldPos.x + movementX, y: oldPos.y + movementY};
+
+      const sg = e.target;
+      sg.setPosition(potentialNewPosition);
+
+      if (this.detectCollision(seatGroup)) {
+        sg.setPosition(oldPos);
+      }
+
+      sg.draw();
     });
 
     return seatGroupRepresentation;
@@ -127,5 +144,27 @@ export class SeatGroupsComponent implements OnInit {
         }
       }
     }
+  }
+
+  detectCollision(seatGroup): boolean {
+    const baseRect = this.createRectForCollision(seatGroup);
+
+    this.seatGroupRepresentations.forEach((sg) => {
+      if (sg.id() !== seatGroup.id()) {
+        if (SAT.testPolygonPolygon(baseRect, this.createRectForCollision(sg))) {
+          return true;
+        }
+      }
+    });
+    return false;
+  }
+
+  createRectForCollision(seatGroup: Konva.Group): SAT.POLYGON {
+    return new SAT.POLYGON(new SAT.VECTOR(seatGroup.x, seatGroup.y), [
+      new SAT.VECTOR(seatGroup.getAttr('x'), seatGroup.getAttr('y')),
+      new SAT.VECTOR(seatGroup.getAttr('x') + seatGroup.getAttr('width'), seatGroup.getAttr('y')),
+      new SAT.VECTOR(seatGroup.getAttr('x'), seatGroup.getAttr('y') + seatGroup.getAttr('height')),
+      new SAT.VECTOR(seatGroup.getAttr('x') + seatGroup.getAttr('width'), seatGroup.getAttr('y') + seatGroup.getAttr('height'))
+    ]);
   }
 }
