@@ -1,0 +1,17 @@
+#eventForm {
+  margin-top: 3%;
+  margin-left: 5%;
+  width: 25%;
+}
+
+#eventForm > mat-checkbox, input, textarea {
+  color: #c1c1c1;
+}
+
+ax-scheduler {
+	flex: 50%;
+}
+
+#buttons {
+	margin-top:5%;
+}

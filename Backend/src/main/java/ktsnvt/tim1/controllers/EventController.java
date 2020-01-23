@@ -90,7 +90,7 @@ public class EventController {
     }
 
     @PutMapping
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editEvent(@Valid @RequestBody EventDTO event) {
         try {
             return new ResponseEntity<>(eventService.editEvent(event), HttpStatus.OK);

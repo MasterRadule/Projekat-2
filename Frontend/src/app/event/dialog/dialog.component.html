@@ -1,0 +1,20 @@
+<h2 *ngIf="createMode" mat-dialog-title>Add event day</h2>
+<h2 *ngIf="!createMode" mat-dialog-title>Edit event day</h2>
+<mat-dialog-content class="mat-typography" fxLayout="column">
+  <mat-form-field fxLayout="row">
+      <input matInput [matDatepicker]="dp1" placeholder="Date" disabled
+             [(ngModel)]="dateTime.date" name="date">
+      <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+      <mat-datepicker #dp1 disabled="false"></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field fxLayout="row">
+    	<input matInput type="time" placeholder="Time" [(ngModel)]="dateTime.time">
+    </mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button *ngIf="createMode" mat-raised-button [mat-dialog-close]="dateTime" color="primary">Add</button>
+  <button *ngIf="!createMode" mat-raised-button [mat-dialog-close]="dateTime" color="primary">Edit</button>
+</mat-dialog-actions>

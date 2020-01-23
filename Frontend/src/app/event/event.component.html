@@ -1,0 +1,52 @@
+<app-toolbar></app-toolbar>
+<div class="page" fxLayout="row wrap" fxLayoutGap="50px">
+  <form id="eventForm" fxLayout="column" fxLayoutGap="5px">
+    <mat-form-field>
+      <input [(ngModel)]="event.name" matInput matTooltip="Enter event's name" name="name" placeholder="Name" spellcheck="false">
+    </mat-form-field>
+    <mat-form-field>
+      <textarea [(ngModel)]="event.description" matInput cdkTextareaAutosize matTooltip="Enter event's description" name="description" placeholder="Description" spellcheck="false"></textarea>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Event category</mat-label>
+        <mat-select [(ngModel)]="event.category" name="category">
+          <mat-option *ngFor="let category of eventCategories" [value]="category">
+            {{category}}
+          </mat-option>
+        </mat-select>
+     </mat-form-field>
+     <mat-form-field>
+        <input [(ngModel)]="event.reservationDeadlineDays" matInput matTooltip="Enter event's reservation deadline days" name="reservationDeadlineDays" placeholder="Reservation deadline days" type="number"min=1>
+     </mat-form-field>
+     <mat-form-field>
+        <input [(ngModel)]="event.maxTicketsPerReservation" matInput matTooltip="Enter event's max tickets per reservation" name="maxTicketsPerReservation" placeholder="Maximum tickets per reservation" type="number" min=1>
+     </mat-form-field>
+     <mat-checkbox [(ngModel)]="event.activeForReservations" name="activeForReservations">
+         Active for reservations
+     </mat-checkbox>
+     <mat-checkbox [(ngModel)]="event.cancelled" name="cancelled">
+         Cancelled
+     </mat-checkbox>
+
+     <span fxLayout="row" fxLayoutGap="10px">
+      <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)">Add event day</button>
+    </span>
+
+    <span fxLayout="row" fxLayoutGap="10px" id="buttons">
+      <button mat-raised-button color="primary" type="submit" (click)="createOrEditEvent()">Save</button>
+      <button mat-raised-button type="button" routerLink="/dashboard/events/preview">Cancel</button>
+    </span>
+  </form>
+
+  <ax-scheduler fxLayout="column" [axEventTemplate]="t" [axSchedulerView]="'month'"
+      [axEventToolbar]="true" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
+      [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)" [axStartDate]="startDate"></ax-scheduler>
+</div>
+
+
+
+<ng-template #t let-item="item">
+  <div class="event-template">
+    Starts at <b> {{ item.from | date:'HH:mm' }} </b>
+  </div>
+</ng-template>

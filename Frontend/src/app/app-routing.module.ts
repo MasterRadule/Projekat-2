@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LocationComponent} from './location/location.component';
+import {EventComponent} from './event/event.component';
 import {ReportsComponent} from './reports/reports.component';
 
 
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: 'dashboard/locations',
     component: LocationComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'dashboard/events/:id',
+    component: EventComponent,
     pathMatch: 'full'
   },
   {

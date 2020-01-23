@@ -189,9 +189,14 @@ public class EventService {
             e.getEventDays().removeIf(eDay -> {
                 if (eventDays.contains(eDay)) {
                     Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
-                    for (ReservableSeatGroup rsg : resSeatGroups) {
-                        if (rsg.getTickets().isEmpty())
-                            return true;
+                    if (resSeatGroups.isEmpty()) {
+                        return true;
+                    }
+                    else {
+                        for (ReservableSeatGroup rsg : resSeatGroups) {
+                            if (rsg.getTickets().isEmpty())
+                                return true;
+                        }
                     }
                 }
                 return false;
@@ -252,11 +257,16 @@ public class EventService {
             }
             if (toDisable) {
                 Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
-                for (ReservableSeatGroup rsg : resSeatGroups) {
-                    if (rsg.getTickets().isEmpty()) {
-                        iter.remove();
-                    } else {
-                        throw new EntityNotValidException("Seat group which has at least one reservation cannot be disabled");
+                if (resSeatGroups.isEmpty()) {
+                    iter.remove();
+                }
+                else {
+                    for (ReservableSeatGroup rsg : resSeatGroups) {
+                        if (rsg.getTickets().isEmpty()) {
+                            iter.remove();
+                        } else {
+                            throw new EntityNotValidException("Seat group which has at least one reservation cannot be disabled");
+                        }
                     }
                 }
             }
