@@ -29,14 +29,13 @@
     "leaflet": "^1.6.0",
     "moment": "^2.24.0",
     "ng2-charts": "^2.3.0",
-    "ng2-konva": "^6.0.0",
     "rxjs": "~6.4.0",
     "ts-serializer": "^2.2.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.803.22",
+    "@angular-devkit/build-angular": "^0.803.23",
     "@angular/cli": "^8.3.22",
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
