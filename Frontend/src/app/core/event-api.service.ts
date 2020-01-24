@@ -33,8 +33,7 @@ export class EventApiService {
   }
 
   createEvent(event: Event) {
-    return new Event(null, "", "", null, false, false, 0, 0, null);
-    //return this._http.post(`${this._baseUrl}/event`, location.serialize());
+    return this._http.post(`${this._baseUrl}/events`, event.serialize());
   }
 
   editEvent(event: Event) {

@@ -7,6 +7,7 @@ import ktsnvt.tim1.DTOs.SearchEventsDTO;
 import ktsnvt.tim1.exceptions.EntityAlreadyExistsException;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
+import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -58,7 +60,7 @@ public class EventController {
 
     @PostMapping(value = "/{id}/pictures-and-videos")
     //@Secured("ROLE_ADMIN")
-    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
+    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("file") MultipartFile[] files) {
         try {
             eventService.uploadPicturesAndVideos(id, files);
             return new ResponseEntity<>("Files uploaded successfully", HttpStatus.OK);
@@ -82,8 +84,7 @@ public class EventController {
     //@Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
-            eventService.deleteMediaFile(eventID, fileID);
-            return new ResponseEntity<>("File deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(eventService.deleteMediaFile(eventID, fileID), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

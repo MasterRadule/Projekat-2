@@ -1,21 +1,21 @@
 <app-toolbar></app-toolbar>
 <div class="content" fxLayout="column" fxLayoutGap="20px">
 
-  <div fxLayout="row wrap" fxLayoutAlign="center">
+  <div *ngIf="imageObject.length != 0" fxLayout="row wrap" fxLayoutAlign="center">
     <div id="slider">
       <ng-image-slider [images]="imageObject" #slider></ng-image-slider>
     </div>
   </div>
 
     <div fxLayoutAlign="center">
-      <div [fileUploadInputFor]="fileUploadQueue" class="upload-drop-zone">
-        Just drag and drop files here
+      <div [fileUploadInputFor]="fileUploadQueue" class="upload-drop-zone" accept=".xls,.xlsx">
+        Just drag and drop images/videos here
       </div>
     </div>
     <div style="width: 500px">
         <mat-file-upload-queue #fileUploadQueue
             [fileAlias]="'file'"
-            [httpUrl]="getUploadURL()" [httpRequestParams]="httpRequestParams" multiple>
+            [httpUrl]="getUploadURL()" multiple>
 
             <mat-file-upload [file]="file" [id]="i" *ngFor="let file of fileUploadQueue.files; let i = index" (onUpload)="fileUploaded($event)"></mat-file-upload>
         </mat-file-upload-queue>
@@ -23,7 +23,7 @@
   
   <div *ngIf="!!slider && slider.ligthboxShow" id="delete">
     <span>
-      <button mat-fab color="primary" (click)="deleteMediaFile()">
+      <button mat-fab color="primary" (click)="deleteMediaFile()" matTooltip="Delete">
         <mat-icon>delete</mat-icon>
       </button>
     </span>
@@ -59,18 +59,20 @@
        </mat-checkbox>
 
        <span fxLayout="row" fxLayoutGap="10px">
-        <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)">Add event day</button>
+        <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)"
+        matTooltip="Add an event day to calendar">Add event day</button>
       </span>
 
       <span fxLayout="row" fxLayoutGap="10px" id="buttons">
-        <button mat-raised-button color="primary" type="submit" (click)="createOrEditEvent()">Save</button>
-        <button mat-raised-button type="button" routerLink="/dashboard/events/preview">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" (click)="createOrEditEvent()" matTooltip="Save event's data and event's days">Save</button>
+        <button mat-raised-button type="button" routerLink="/dashboard/events/preview" 
+        matTooltip="Back to events preview">Cancel</button>
       </span>
     </form>
 
     <ax-scheduler fxLayout="column" [axEventTemplate]="t" [axSchedulerView]="'month'"
         [axEventToolbar]="true" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
-        [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)" [axStartDate]="startDate"></ax-scheduler>
+        [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
   </div>
 </div>
 

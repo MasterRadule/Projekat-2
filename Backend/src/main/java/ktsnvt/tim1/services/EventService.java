@@ -107,13 +107,15 @@ public class EventService {
                 .map(mf -> mediaFileMapper.toDTO(mf)).collect(Collectors.toSet());
     }
 
-    public void deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
+    public Long deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(eventID)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         MediaFile mf = mediaFileRepository.findById(fileID)
                 .orElseThrow(() -> new EntityNotFoundException("File not found"));
         e.getPicturesAndVideos().remove(mf);
         eventRepository.save(e);
+
+        return fileID;
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {

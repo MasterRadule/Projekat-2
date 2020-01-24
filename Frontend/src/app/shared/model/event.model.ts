@@ -1,18 +1,48 @@
 import {EventDay} from './event-day.model';
+import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 
-export class Event {
+@Serialize({})
+export class Event extends Serializable {
+  @SerializeProperty({
+    map: 'id'
+  })
   private _id: number;
+  @SerializeProperty({
+    map: 'name'
+  })
   private _name: string;
+  @SerializeProperty({
+    map: 'description'
+  })
   private _description: string;
+  @SerializeProperty({
+    map: 'category'
+  })
   private _category: string;
+  @SerializeProperty({
+    map: 'activeForReservations'
+  })
   private _activeForReservations: boolean;
+  @SerializeProperty({
+    map: 'cancelled'
+  })
   private _cancelled: boolean;
+  @SerializeProperty({
+    map: 'reservationDeadlineDays'
+  })
   private _reservationDeadlineDays: number;
+  @SerializeProperty({
+    map: 'maxTicketsPerReservation'
+  })
   private _maxTicketsPerReservation: number;
+  @SerializeProperty({
+    map: 'eventDays'
+  })
   private _eventDays: EventDay[];
 
   constructor(id: number, name: string, description: string, category: string, activeForReservations: boolean,
               cancelled: boolean, reservationDeadlineDays: number, maxTicketsPerReservation: number, eventDays: EventDay[]) {
+    super();
     this._id = id;
     this._name = name;
     this._description = description;

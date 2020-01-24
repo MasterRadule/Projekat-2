@@ -21,7 +21,6 @@ export class EventComponent implements OnInit {
   private event: Event = new Event(null, "", "", null, false, false, 0, 0, null);
   private eventCategories: string[] = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
   private events: AxiomSchedulerEvent[] = [];
-  private startDate: Date = new Date();
   private imageObject: Array<object> = [];
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
@@ -39,7 +38,6 @@ export class EventComponent implements OnInit {
   }
 
   getEvent(id: number) {
-    console.log(this.imageObject);
     this.eventApiService.getEvent(id).subscribe(
       {
         next: (result: Event) => {
@@ -56,12 +54,12 @@ export class EventComponent implements OnInit {
   }
 
   createOrEditEvent() {
+    this.event.eventDays = [];
+    for (let eventDay of this.events) {
+      let date: string = moment(eventDay.from).format('DD.MM.YYYY. HH:mm');
+      this.event.eventDays.push(new EventDay(eventDay.data.id, date, null).serialize());
+    }
     if (this.event.id) {
-      this.event.eventDays = [];
-      for (let eventDay of this.events) {
-        let date: string = moment(eventDay.from).format('DD.MM.YYYY. HH:mm');
-        this.event.eventDays.push(new EventDay(eventDay.data.id, date, null).serialize());
-      }
       this.eventApiService.editEvent(this.event).subscribe(
         {
           next: (result: Event) => {
@@ -79,7 +77,7 @@ export class EventComponent implements OnInit {
         }
       );
     } 
-    /*else {
+    else {
       this.eventApiService.createEvent(this.event).subscribe(
         {
           next: (result: Event) => {
@@ -96,7 +94,7 @@ export class EventComponent implements OnInit {
           }
         }
       );
-    }*/
+    }
   }
 
   getEventDays() {
@@ -105,7 +103,6 @@ export class EventComponent implements OnInit {
        let to: Date = moment(ev.date, "DD.MM.YYYY. HH:mm").set({hour:23, minute:59, second:59}).toDate();
        this.events.push(new AxiomSchedulerEvent("Event day", from, to, {"id":ev.id}, colors[Math.floor(Math.random()*15)]));
     }
-    this.startDate = this.events[0].from;
     this.refreshView();
   }
 
@@ -117,6 +114,14 @@ export class EventComponent implements OnInit {
         if (result !== "" && result !== undefined) {
           let time = result.time.split(":");
           let from: Date = result.date.set({hour:time[0], minute:time[1]}).toDate();
+          for (let evDay of this.events) {
+            if (moment(evDay.from).isSame(moment(from), 'day')) {
+              this.snackBar.open("Event day with the given date already exists", 'Dismiss', {
+                duration: 3000
+              });
+              return;
+            }
+          }
           let to: Date = result.date.set({hour:23, minute:59, second:59}).toDate();
           this.events.push(new AxiomSchedulerEvent("Event day", from, to, {"id":null}, colors[Math.floor(Math.random()*15)]));
           this.refreshView();
@@ -129,7 +134,6 @@ export class EventComponent implements OnInit {
       dialogRef.componentInstance.createMode = false;
       dialogRef.afterClosed().subscribe(result => {
         if (result !== "" && result !== undefined) {
-          console.log(result);
           let time = result.time.split(":");
           let from: Date = moment(result.date).set({hour:time[0], minute:time[1]}).toDate();
           let to: Date = moment(result.date).set({hour:23, minute:59, second:59}).toDate();
@@ -143,12 +147,13 @@ export class EventComponent implements OnInit {
 
   removeEventDay($event) {
     let index = this.events.indexOf($event);
-    this.events.splice(index, 1);
-    this.refreshView();
+    if (index != -1) {
+      this.events.splice(index, 1);
+      this.refreshView();
+    }
   }
 
   refreshView() : void {
-    this.startDate = this.events[0].from;
     this.scheduler.refreshScheduler();
   }
 
@@ -156,7 +161,7 @@ export class EventComponent implements OnInit {
     this.eventApiService.getEventsPicturesAndVideos(this.event.id).subscribe(
         {
           next: (result: MediaFile[]) => {
-            console.log(result);
+            this.imageObject = [];
             var base64 = "data:image/jpeg;base64,";
             for (let mediaFile of result) {
             	let obj;
@@ -169,7 +174,6 @@ export class EventComponent implements OnInit {
             	}
             	this.imageObject.push(obj);
             }
-            console.log(this.imageObject);
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -185,14 +189,9 @@ export class EventComponent implements OnInit {
   	let id = this.imageObject[activeImage]["data"]["id"];
   	this.eventApiService.deleteMediaFile(this.event.id, id).subscribe(
         {
-          next: (message: object) => {
-            console.log("asd");
-          	/*this.imageObject.splice(activeImage, 1);
+          next: (result) => {
+            this.imageObject.splice(activeImage, 1);
           	this.slider.ligthboxShow = false;
-          	console.log(this.slider);
-            this.snackBar.open(result, 'Dismiss', {
-              duration: 3000
-            });*/
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -208,7 +207,9 @@ export class EventComponent implements OnInit {
   }
 
   fileUploaded($event) {
-    console.log($event);
+    if ($event.event.type === "load") {
+       this.getPicturesAndVideos();
+    }
   }
 
 }

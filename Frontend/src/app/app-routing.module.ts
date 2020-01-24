@@ -27,6 +27,11 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'dashboard/events',
+    component: EventComponent,
+    pathMatch: 'full'
+  },
+  {
     path: 'dashboard/reports',
     component: ReportsComponent,
     pathMatch: 'full'
