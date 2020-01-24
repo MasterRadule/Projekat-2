@@ -206,7 +206,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Test
     void getPicturesAndVideos_eventExists_picturesAndVideosReturned() throws EntityNotFoundException {
-        Set<MediaFile> files = eventService.getPicturesAndVideos(4L);
+        Set<MediaFileDTO> files = eventService.getPicturesAndVideos(4L);
 
         assertEquals(2, files.size());
     }

@@ -57,7 +57,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/{id}/pictures-and-videos")
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
         try {
             eventService.uploadPicturesAndVideos(id, files);
@@ -79,7 +79,7 @@ public class EventController {
     }
 
     @DeleteMapping(value = "{eventID}/pictures-and-videos/{fileID}")
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
             eventService.deleteMediaFile(eventID, fileID);

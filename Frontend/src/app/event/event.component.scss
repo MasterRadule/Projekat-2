@@ -1,11 +1,11 @@
 #eventForm {
-  margin-top: 3%;
-  margin-left: 5%;
-  width: 25%;
+  	margin-top: 3%;
+  	margin-left: 5%;
+  	width: 25%;
 }
 
 #eventForm > mat-checkbox, input, textarea {
-  color: #c1c1c1;
+  	color: #c1c1c1;
 }
 
 ax-scheduler {
@@ -14,4 +14,34 @@ ax-scheduler {
 
 #buttons {
 	margin-top:5%;
+}
+
+.content {
+	margin-top: 2%;
+}
+
+#slider {
+	width: 1200px;
+}
+
+#delete {
+	position: fixed;
+    bottom: 0;
+    right: 15px;
+	z-index: 9999;
+}
+
+.upload-drop-zone {
+    border-width: 2px;
+    color: white;
+    border-style: dashed;
+    border-color: #ccc;
+    line-height: 150px;
+    text-align: center;
+    width: 750px;
+}
+
+.upload-drop-zone.drop {
+    color: #222;
+    border-color: #222;
 }

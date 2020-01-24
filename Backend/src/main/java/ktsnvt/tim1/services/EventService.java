@@ -6,6 +6,7 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.EventDayMapper;
 import ktsnvt.tim1.mappers.EventMapper;
+import ktsnvt.tim1.mappers.MediaFileMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -42,6 +43,9 @@ public class EventService {
 
     @Autowired
     private EventDayMapper eventDayMapper;
+
+    @Autowired
+    private MediaFileMapper mediaFileMapper;
 
     public Page<EventDTO> getEvents(Pageable pageable) {
         return eventRepository.findAll(pageable).map(e -> eventMapper.toDTO(e));
@@ -95,11 +99,12 @@ public class EventService {
         eventRepository.save(e);
     }
 
-    public Set<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
+    public Set<MediaFileDTO> getPicturesAndVideos(Long id) throws EntityNotFoundException {
         Event e = eventRepository.findByIdAndIsCancelledFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
-        return e.getPicturesAndVideos();
+        return e.getPicturesAndVideos().stream()
+                .map(mf -> mediaFileMapper.toDTO(mf)).collect(Collectors.toSet());
     }
 
     public void deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {

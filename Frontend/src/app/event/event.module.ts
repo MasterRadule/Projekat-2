@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {EventComponent} from './event.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButtonModule, MatInputModule, MatTooltipModule, MatSelectModule, MatDialogModule,
-MatDatepickerModule} from '@angular/material';
+    MatDatepickerModule, MatIconModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {CoreModule} from '../core/core.module';
 import {FlexModule} from '@angular/flex-layout';
@@ -14,6 +14,8 @@ import {ToolbarModule} from '../toolbar/toolbar.module';
 import { AxiomSchedulerModule } from 'axiom-scheduler';
 import { DialogComponent } from './dialog/dialog.component';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgImageSliderModule } from 'ng-image-slider';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 @NgModule({
   declarations: [EventComponent, DialogComponent],
@@ -34,7 +36,10 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
         AxiomSchedulerModule,
         MatDialogModule,
         MatDatepickerModule,
-        NgxMaterialTimepickerModule
+        NgxMaterialTimepickerModule,
+        NgImageSliderModule,
+        MatIconModule,
+        MatFileUploadModule
     ],
   exports: [
     EventComponent

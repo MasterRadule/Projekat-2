@@ -40,4 +40,12 @@ export class EventApiService {
   editEvent(event: Event) {
     return this._http.put(`${this._baseUrl}/events`, event);
   }
+
+  getEventsPicturesAndVideos(id: number) {
+    return this._http.get(`${this._baseUrl}/events/${id}/pictures-and-videos`);
+  }
+
+  deleteMediaFile(eventID: number, id: number) {
+    return this._http.delete(`${this._baseUrl}/events/${eventID}/pictures-and-videos/${id}`);
+  }
 }

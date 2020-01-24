@@ -312,7 +312,7 @@ public class EventServiceUnitTests {
 
         Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
 
-        Set<MediaFile> files = eventService.getPicturesAndVideos(id);
+        Set<MediaFileDTO> files = eventService.getPicturesAndVideos(id);
 
         assertEquals(1, files.size());
     }
