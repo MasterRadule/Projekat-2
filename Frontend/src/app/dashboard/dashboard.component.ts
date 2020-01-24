@@ -3,6 +3,7 @@ import {ActivatedRoute, ParamMap} from '@angular/router';
 import {EventPreviewListComponent} from './event-preview-list/event-preview-list.component';
 import {LocationPreviewListComponent} from './location-preview-list/location-preview-list.component';
 import {PaginatorComponent} from './paginator/paginator.component';
+import {ReservationPreviewListComponent} from './reservation-preview-list/reservation-preview-list.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,6 +14,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(PaginatorComponent, {static: false}) paginator: PaginatorComponent;
   @ViewChild(EventPreviewListComponent, {static: false}) eventListComponent: EventPreviewListComponent;
   @ViewChild(LocationPreviewListComponent, {static: false}) locationListComponent: LocationPreviewListComponent;
+  @ViewChild(ReservationPreviewListComponent, {static: false}) reservationListComponent: ReservationPreviewListComponent;
   private _content: string;
 
   constructor(private route: ActivatedRoute) {
@@ -36,10 +38,16 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   }
 
   private pageChanged($event) {
-    if (this._content === 'locations') {
-      this.locationListComponent.pageChanged($event);
-    } else {
-      this.eventListComponent.pageChanged($event);
+    switch (this._content) {
+      case 'locations':
+        this.locationListComponent.pageChanged($event);
+        break;
+      case 'events':
+        this.eventListComponent.pageChanged($event);
+        break;
+      case 'reservations':
+        this.reservationListComponent.pageChanged($event);
+        break;
     }
   }
 

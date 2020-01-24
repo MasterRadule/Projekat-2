@@ -28,7 +28,9 @@ public class ReservationController {
 
     @GetMapping()
     @Secured("ROLE_USER")
-    public ResponseEntity<Page<ReservationDTO>> getReservations(@RequestParam("type") ReservationTypeDTO type, Pageable pageable) {
+    public ResponseEntity<Object> getReservations(@RequestParam("type") ReservationTypeDTO type, Pageable pageable) {
+        if(type==null)
+            return new ResponseEntity<>("Type is empty", HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(reservationService.getReservations(type, pageable), HttpStatus.OK);
     }
 

@@ -25,11 +25,14 @@ import {PaginatorComponent} from './paginator/paginator.component';
 import {LocationPreviewListComponent} from './location-preview-list/location-preview-list.component';
 import {RouterModule} from '@angular/router';
 import {ToolbarModule} from '../toolbar/toolbar.module';
+import {ReservationPreviewListComponent} from './reservation-preview-list/reservation-preview-list.component';
+import { ReservationPreviewComponent } from './reservation-preview-list/reservation-preview/reservation-preview.component';
 
 
 @NgModule({
   declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent,
-    EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent],
+    EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent,
+    ReservationPreviewListComponent, ReservationPreviewListComponent, ReservationPreviewComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -118,6 +118,17 @@ public class ReservationControllerIntegrationTests {
     }
 
     @Test
+    public void getReservations_parameterEmpty_typeIsEmpty() {
+        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
+                "/reservations?type=&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Type is empty", result.getBody());
+    }
+
+    @Test
     public void getReservations_userHasNoUncancelledReservations_emptyReturned() {
         HttpHeaders headers = generateHeaderWithToken("ogqojyxj5136@example.com");
 
