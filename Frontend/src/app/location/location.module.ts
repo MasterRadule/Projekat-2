@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {LocationComponent} from './location.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule, MatInputModule, MatTooltipModule} from '@angular/material';
-import {FormsModule} from '@angular/forms';
+import {MatButtonModule, MatInputModule, MatSelectModule, MatTooltipModule} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CoreModule} from '../core/core.module';
 import {FlexModule} from '@angular/flex-layout';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -27,6 +27,8 @@ import {SeatGroupsModule} from '../seat-groups/seat-groups.module';
     MatTooltipModule,
     ToolbarModule,
     SeatGroupsModule,
+    MatSelectModule,
+    ReactiveFormsModule,
   ],
   exports: [
     LocationComponent

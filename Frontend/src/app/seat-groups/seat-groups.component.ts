@@ -8,7 +8,7 @@ import Konva from 'konva';
   styleUrls: ['./seat-groups.component.scss']
 })
 export class SeatGroupsComponent implements OnInit {
-  @Input() private seatGroups: SeatGroup[];
+  @Input() private _seatGroups: SeatGroup[];
   @Input() private width: number;
   @Input() private height: number;
 
@@ -20,89 +20,7 @@ export class SeatGroupsComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit(): void {
-    this.setUpStage();
-    this.layer = new Konva.Layer();
-    this.setUpSeatGroups();
-    this.stage.add(this.layer);
-  }
-
-  setUpStage() {
-    this.stage = new Konva.Stage({
-      container: 'konva',
-      width: this.width,
-      height: this.height,
-      draggable: true
-    });
-
-    this.stage.on('dragstart', () => {
-      this.stage.container().style.cursor = 'move';
-    });
-
-    this.stage.on('dragend', () => {
-      this.stage.container().style.cursor = 'default';
-    });
-
-    this.stage.on('dblclick', (e) => {
-      if (e.target.getType() === 'Stage') {
-        this.transformersMap.forEach((value) => {
-          value.detach();
-        });
-        e.target.draw();
-      }
-    });
-  }
-
-  setUpSeatGroups() {
-    for (const seatGroup of this.seatGroups) {
-      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
-      this.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
-      this.seatGroupRepresentations.push(seatGroupRepresentation);
-      this.layer.add(seatGroupRepresentation);
-    }
-  }
-
-  setUpRotationSnaps(seatGroup) {
-    return new Konva.Transformer({
-      node: seatGroup,
-      centeredScaling: true,
-      rotationSnaps: [0, 90, 180, 270],
-      resizeEnabled: false
-    });
-  }
-
-  setUpSeatGroup(seatGroup: SeatGroup): Konva.Group {
-    const seatGroupRepresentation = new Konva.Group({
-      x: this.stage.getPosition().x + seatGroup.xCoordinate,
-      y: this.stage.getPosition().y + seatGroup.yCoordinate,
-      rotation: seatGroup.angle,
-      draggable: true,
-      id: seatGroup.id.toString()
-    });
-
-    seatGroupRepresentation.on('dragstart', () => {
-      this.stage.container().style.cursor = 'pointer';
-    });
-
-    seatGroupRepresentation.on('dragend', () => {
-      this.stage.container().style.cursor = 'default';
-    });
-
-    seatGroupRepresentation.on('dblclick', () => {
-      if (!this.transformersMap.has(seatGroupRepresentation)) {
-        const rotationSnap = this.setUpRotationSnaps(seatGroupRepresentation);
-        this.transformersMap.set(seatGroupRepresentation, rotationSnap);
-        this.layer.add(rotationSnap);
-      } else {
-        this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
-      }
-      this.layer.draw();
-    });
-
-    return seatGroupRepresentation;
-  }
-
-  setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
+  private static setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
       const text = new Konva.Text({
         x: seatGroupRepresentation.getPosition().x,
@@ -157,5 +75,100 @@ export class SeatGroupsComponent implements OnInit {
         }
       }
     }
+  }
+
+  private static setUpRotationSnaps(seatGroup) {
+    return new Konva.Transformer({
+      node: seatGroup,
+      centeredScaling: true,
+      rotationSnaps: [0, 90, 180, 270],
+      resizeEnabled: false
+    });
+  }
+
+  ngOnInit(): void {
+    this.setUpStage();
+    this.layer = new Konva.Layer();
+    this.setUpSeatGroups();
+    this.stage.add(this.layer);
+  }
+
+  get seatGroups(): SeatGroup[] {
+    return this._seatGroups;
+  }
+
+  set seatGroups(value: SeatGroup[]) {
+    this._seatGroups = value;
+  }
+
+  private setUpStage() {
+    this.stage = new Konva.Stage({
+      container: 'konva',
+      width: this.width,
+      height: this.height,
+      draggable: true
+    });
+
+    this.stage.on('dragstart', () => {
+      this.stage.container().style.cursor = 'move';
+    });
+
+    this.stage.on('dragend', () => {
+      this.stage.container().style.cursor = 'default';
+    });
+
+    this.stage.on('dblclick', (e) => {
+      if (e.target.getType() === 'Stage') {
+        this.transformersMap.forEach((value) => {
+          value.detach();
+        });
+        e.target.draw();
+      }
+    });
+  }
+
+  private setUpSeatGroups() {
+    for (const seatGroup of this._seatGroups) {
+      const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
+      SeatGroupsComponent.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
+      this.seatGroupRepresentations.push(seatGroupRepresentation);
+      this.layer.add(seatGroupRepresentation);
+    }
+  }
+
+  private setUpSeatGroup(seatGroup: SeatGroup): Konva.Group {
+    const seatGroupRepresentation = new Konva.Group({
+      x: this.stage.getPosition().x + seatGroup.xCoordinate,
+      y: this.stage.getPosition().y + seatGroup.yCoordinate,
+      rotation: seatGroup.angle,
+      draggable: true,
+      id: seatGroup.id.toString()
+    });
+
+    seatGroupRepresentation.on('dragstart', () => {
+      this.stage.container().style.cursor = 'pointer';
+    });
+
+    seatGroupRepresentation.on('dragend', () => {
+        this.stage.container().style.cursor = 'default';
+        seatGroup.angle = seatGroupRepresentation.getAttr('rotation');
+        seatGroup.xCoordinate = seatGroupRepresentation.getPosition().x - this.stage.getPosition().x;
+        seatGroup.yCoordinate = seatGroupRepresentation.getPosition().y - this.stage.getPosition().y;
+        seatGroup.changed = true;
+      }
+    );
+
+    seatGroupRepresentation.on('dblclick', () => {
+      if (!this.transformersMap.has(seatGroupRepresentation)) {
+        const rotationSnap = SeatGroupsComponent.setUpRotationSnaps(seatGroupRepresentation);
+        this.transformersMap.set(seatGroupRepresentation, rotationSnap);
+        this.layer.add(rotationSnap);
+      } else {
+        this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
+      }
+      this.layer.draw();
+    });
+
+    return seatGroupRepresentation;
   }
 }

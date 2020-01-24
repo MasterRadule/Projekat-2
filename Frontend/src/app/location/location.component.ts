@@ -7,6 +7,7 @@ import {Location as URLLocation} from '@angular/common';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import {Page} from '../shared/model/page.model';
 import {MapComponent} from '../core/map/map.component';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-location',
@@ -17,6 +18,12 @@ export class LocationComponent implements OnInit {
   private location: Location = new Location(undefined, '', 45.0, 45.0, false);
   private seatGroups: SeatGroup[] = [];
   private initialized = false;
+
+  private parterre = new FormControl(false);
+  private seatGroupName = new FormControl('');
+  private colsNum = new FormControl(null);
+  private rowsNum = new FormControl(null);
+  private totalSeats = new FormControl(null);
 
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
               private router: Router) {
@@ -102,6 +109,33 @@ export class LocationComponent implements OnInit {
   private updatePosition(position) {
     this.location.latitude = position.lat;
     this.location.longitude = position.lng;
+  }
+
+  private makeArray(n: number) {
+    return Array(n);
+  }
+
+  private toggleParterre() {
+    if (this.parterre.value) {
+      this.colsNum.reset();
+      this.rowsNum.reset();
+      this.totalSeats.reset();
+      this.colsNum.disable();
+      this.rowsNum.disable();
+    } else {
+      this.colsNum.enable();
+      this.rowsNum.enable();
+    }
+  }
+
+  private calculateTotalSeats() {
+    if (this.colsNum.value && this.rowsNum.value) {
+      this.totalSeats.setValue(this.colsNum.value * this.rowsNum.value);
+    }
+  }
+
+  private addSeatGroup() {
+    // TODO
   }
 
 }

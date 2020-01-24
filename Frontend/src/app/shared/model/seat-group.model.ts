@@ -50,6 +50,16 @@ export class SeatGroup extends Serializable {
   })
   private _angle: number;
 
+  private _changed = false;
+
+  get changed(): boolean {
+    return this._changed;
+  }
+
+  set changed(value: boolean) {
+    this._changed = value;
+  }
+
   get angle(): number {
     return this._angle;
   }
