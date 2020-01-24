@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
 
-
 @Component({
   selector: 'app-seat-groups',
   templateUrl: './seat-groups.component.html',
@@ -100,38 +99,51 @@ export class SeatGroupsComponent implements OnInit {
       this.layer.draw();
     });
 
-    seatGroupRepresentation.on('dragmove', (e) => {
-      const oldPos = e.target.getPosition();
-      const movementX = e.evt.movementX;
-      const movementY = e.evt.movementY;
-      const potentialNewPosition = {x: oldPos.x + movementX, y: oldPos.y + movementY};
-
-      const sg = e.target;
-      sg.setPosition(potentialNewPosition);
-
-      if (this.detectCollision(seatGroup)) {
-        sg.setPosition(oldPos);
-      }
-
-      sg.draw();
-    });
-
     return seatGroupRepresentation;
   }
 
   setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
+      const text = new Konva.Text({
+        x: seatGroupRepresentation.getPosition().x,
+        y: seatGroupRepresentation.getPosition().y,
+        text: seatGroup.name,
+        fontSize: 18,
+        fontFamily: 'Calibri',
+        fill: '#555',
+        width: 200,
+        padding: 20,
+        align: 'center'
+      });
+      seatGroupRepresentation.add(text);
       seatGroupRepresentation.add(new Konva.Rect({
         x: seatGroupRepresentation.getPosition().x,
         y: seatGroupRepresentation.getPosition().y,
-        width: 100,
-        height: 50,
-        stroke: 'black',
-        strokeWidth: 1
+        stroke: '#555',
+        strokeWidth: 5,
+        width: text.width(),
+        height: text.height(),
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOffsetX: 10,
+        shadowOffsetY: 10,
+        shadowOpacity: 0.2,
+        cornerRadius: 5
       }));
     } else {
-      for (let i = 0; i < seatGroup.rowsNum; i++) {
-        for (let j = 0; j < seatGroup.colsNum; j++) {
+      seatGroupRepresentation.add(new Konva.Text({
+        x: 0,
+        y: seatGroup.rowsNum * 35,
+        text: seatGroup.name,
+        fontSize: 18,
+        fontFamily: 'Calibri',
+        fill: '#555',
+        width: seatGroup.colsNum * 30,
+        align: 'center',
+        padding: 5,
+      }));
+      for (let i = 0; i < seatGroup.colsNum; i++) {
+        for (let j = 0; j < seatGroup.rowsNum; j++) {
           seatGroupRepresentation.add(new Konva.Rect({
             x: i * 35,
             y: j * 35,
@@ -139,32 +151,11 @@ export class SeatGroupsComponent implements OnInit {
             height: 30,
             fill: 'red',
             stroke: 'black',
-            strokeWidth: 1
+            strokeWidth: 1,
+            cornerRadius: 5
           }));
         }
       }
     }
-  }
-
-  detectCollision(seatGroup): boolean {
-    const baseRect = this.createRectForCollision(seatGroup);
-
-    this.seatGroupRepresentations.forEach((sg) => {
-      if (sg.id() !== seatGroup.id()) {
-        if (SAT.testPolygonPolygon(baseRect, this.createRectForCollision(sg))) {
-          return true;
-        }
-      }
-    });
-    return false;
-  }
-
-  createRectForCollision(seatGroup: Konva.Group): SAT.POLYGON {
-    return new SAT.POLYGON(new SAT.VECTOR(seatGroup.x, seatGroup.y), [
-      new SAT.VECTOR(seatGroup.getAttr('x'), seatGroup.getAttr('y')),
-      new SAT.VECTOR(seatGroup.getAttr('x') + seatGroup.getAttr('width'), seatGroup.getAttr('y')),
-      new SAT.VECTOR(seatGroup.getAttr('x'), seatGroup.getAttr('y') + seatGroup.getAttr('height')),
-      new SAT.VECTOR(seatGroup.getAttr('x') + seatGroup.getAttr('width'), seatGroup.getAttr('y') + seatGroup.getAttr('height'))
-    ]);
   }
 }
