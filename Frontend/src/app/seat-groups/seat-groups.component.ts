@@ -1,14 +1,13 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
-import {LocationApiService} from '../core/location-api.service';
 
 @Component({
   selector: 'app-seat-groups',
   templateUrl: './seat-groups.component.html',
   styleUrls: ['./seat-groups.component.scss']
 })
-export class SeatGroupsComponent implements OnInit {
+export class SeatGroupsComponent implements OnInit, OnDestroy {
   private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
@@ -28,8 +27,8 @@ export class SeatGroupsComponent implements OnInit {
         y: 0,
         text: seatGroup.name,
         fontSize: 18,
-        fontFamily: 'Calibri',
-        fill: '#555',
+        fontFamily: 'Roboto',
+        fill: '#c1c1c1',
         width: 200,
         padding: 20,
         align: 'center'
@@ -38,8 +37,8 @@ export class SeatGroupsComponent implements OnInit {
       seatGroupRepresentation.add(new Konva.Rect({
         x: 0,
         y: 0,
-        stroke: '#555',
-        strokeWidth: 5,
+        stroke: '#c1c1c1',
+        strokeWidth: 1,
         width: text.width(),
         height: text.height(),
         shadowColor: 'black',
@@ -55,8 +54,8 @@ export class SeatGroupsComponent implements OnInit {
         y: seatGroup.rowsNum * 35,
         text: seatGroup.name,
         fontSize: 18,
-        fontFamily: 'Calibri',
-        fill: '#555',
+        fontFamily: 'Roboto',
+        fill: '#c1c1c1',
         width: seatGroup.colsNum * 30,
         align: 'center',
         padding: 5,
@@ -68,7 +67,7 @@ export class SeatGroupsComponent implements OnInit {
             y: j * 35,
             width: 30,
             height: 30,
-            fill: 'red',
+            fill: '#086275',
             stroke: 'black',
             strokeWidth: 1,
             cornerRadius: 5
@@ -91,6 +90,10 @@ export class SeatGroupsComponent implements OnInit {
     this.setUpStage();
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
+  }
+
+  ngOnDestroy(): void {
+    this.stage.destroy();
   }
 
   get seatGroups(): SeatGroup[] {
@@ -121,8 +124,15 @@ export class SeatGroupsComponent implements OnInit {
 
     this.stage.on('dblclick', (e) => {
       if (e.target.getType() === 'Stage') {
-        this.transformersMap.forEach((value) => {
+        this.transformersMap.forEach((value, key) => {
           value.detach();
+          const seatGroup = this.seatGroups.find((sg) => {
+            return sg.id.toString() === key.id();
+          });
+          seatGroup.angle = key.rotation();
+          seatGroup.xCoordinate = key.position().x - this.stage.position().x;
+          seatGroup.yCoordinate = key.position().y - this.stage.position().y;
+          seatGroup.changed = true;
         });
         e.target.draw();
       }
@@ -153,7 +163,7 @@ export class SeatGroupsComponent implements OnInit {
 
     seatGroupRepresentation.on('dragend', () => {
         this.stage.container().style.cursor = 'default';
-        seatGroup.angle = seatGroupRepresentation.getAttr('rotation');
+        seatGroup.angle = seatGroupRepresentation.rotation();
         seatGroup.xCoordinate = seatGroupRepresentation.getPosition().x - this.stage.getPosition().x;
         seatGroup.yCoordinate = seatGroupRepresentation.getPosition().y - this.stage.getPosition().y;
         seatGroup.changed = true;
@@ -175,6 +185,7 @@ export class SeatGroupsComponent implements OnInit {
   }
 
   addSeatGroup(seatGroup: SeatGroup) {
+    this.seatGroups.push(seatGroup);
     const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
     SeatGroupsComponent.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
     this.seatGroupRepresentations.push(seatGroupRepresentation);
