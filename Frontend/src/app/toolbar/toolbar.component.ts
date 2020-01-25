@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {AuthenticationApiService} from "../core/authentication-api.service";
-import {MatSnackBar} from "@angular/material";
-import {Router} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {AuthenticationApiService} from '../core/authentication-api.service';
+import {MatSnackBar} from '@angular/material';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-toolbar',
@@ -10,25 +10,26 @@ import {Router} from "@angular/router";
 })
 export class ToolbarComponent implements OnInit {
 
-  constructor(private authService:AuthenticationApiService, private snackBar: MatSnackBar,
-              private router: Router) { }
+  constructor(private authService: AuthenticationApiService, private snackBar: MatSnackBar,
+              private router: Router) {
+  }
+
+  isLogged: boolean = this.authService.isLogged();
 
   ngOnInit() {
   }
 
-  isLogged:boolean = this.authService.isLogged();
-
-  logOut(){
+  logOut() {
     const logoutObserver = {
-      next: x=>{
+      next: x => {
         localStorage.removeItem('token');
-        this.snackBar.open("You logged out successfully!", 'Dismiss', {
+        this.snackBar.open('You logged out successfully!', 'Dismiss', {
           duration: 3000
         });
         this.router.navigate(['/login']);
       },
       error: (err: Response) => {
-        this.snackBar.open(JSON.parse(JSON.stringify(err))["error"], 'Dismiss', {
+        this.snackBar.open(JSON.parse(JSON.stringify(err)).error, 'Dismiss', {
           duration: 3000
         });
       }

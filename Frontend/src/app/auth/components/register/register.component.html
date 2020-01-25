@@ -17,14 +17,14 @@
         </p>
         <p>
           <mat-form-field>
-            <input type="text" matInput placeholder="Email" formControlName="email">
+            <input type="text" matInput placeholder="Email" formControlName="email" (click)="ngForm.controls.email.markAsTouched()">
             <mat-error *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
           </mat-form-field>
         </p>
 
         <p>
           <mat-form-field>
-            <input type="password" matInput placeholder="Password" formControlName="password">
+            <input type="password" matInput placeholder="Password" formControlName="password" (click)="ngForm.controls.password.markAsTouched()">
             <mat-error *ngIf="ngForm.controls.password.invalid">Your password must contain at least one uppercase, one lowercase,
             one number and one special character.</mat-error>
             <mat-error *ngIf="ngForm.controls.password.hasError('minlength')">Password must be at least 8 characters long.</mat-error>

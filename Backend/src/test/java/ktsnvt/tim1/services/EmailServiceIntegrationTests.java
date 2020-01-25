@@ -82,9 +82,9 @@ class EmailServiceIntegrationTests {
         assertEquals(registeredUser.getEmail(), mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals(emailAddress, mimeMessage.getFrom()[0].toString());
         assertEquals("Reservation expires soon", mimeMessage.getSubject());
-        assertEquals(mimeMessage.getContent().toString(), String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s is about to expire (expires on %s). %nKTSNVT%n",
+        assertEquals(String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s is about to expire (expires on %s). %nKTSNVT%n",
                 registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
-                formatter.format(expirationDate)));
+                formatter.format(expirationDate)), mimeMessage.getContent().toString());
     }
 
     @Test
@@ -106,14 +106,30 @@ class EmailServiceIntegrationTests {
         assertEquals(registeredUser.getEmail(), mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals(emailAddress, mimeMessage.getFrom()[0].toString());
         assertEquals("Reservation expired", mimeMessage.getSubject());
-        assertEquals(mimeMessage.getContent().toString(), String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s has expired at %s.%nKTSNVT%n",
+        assertEquals(String.format("Dear %s %s,%nWe want to inform you that your reservation for event %s has expired at %s.%nKTSNVT%n",
                 registeredUser.getFirstName(), registeredUser.getLastName(), reservation.getEvent().getName(),
-                formatter.format(expirationDate)));
+                formatter.format(expirationDate)), mimeMessage.getContent().toString());
     }
 
     @Test
-    public void sendVerificationEmail() {
-        //TODO
+    public void sendVerificationEmail() throws MessagingException, IOException{
+        RegisteredUser registeredUser = new RegisteredUser();
+        registeredUser.setEmail("mail@example.com");
+        String url = "www.ktsnvt.com";
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken("token123");
+
+        emailService.sendVerificationEmail(registeredUser, url, verificationToken);
+
+        assertTrue(greenMail.waitForIncomingEmail(5000, greenMail.getReceivedMessages().length + 1));
+        MimeMessage mimeMessage = greenMail.getReceivedMessages()[greenMail.getReceivedMessages().length - 1];
+
+        assertEquals(registeredUser.getEmail(), mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(emailAddress, mimeMessage.getFrom()[0].toString());
+        assertEquals("Complete registration", mimeMessage.getSubject());
+        assertEquals(String.format("Dear %s %s,%nTo confirm your account please click here: %n"
+                + "http://" + url + "/api/verify-account?token=" + verificationToken.getToken() + "%n",
+                registeredUser.getFirstName(), registeredUser.getLastName()), mimeMessage.getContent().toString());
     }
 
     @Test

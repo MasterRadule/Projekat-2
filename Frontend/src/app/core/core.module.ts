@@ -17,11 +17,6 @@ import {ChartsModule} from 'ng2-charts';
   exports: [
     MapComponent,
     ChartComponent
-  ],
-  providers: [
-    LocationApiService,
-    EventApiService,
-    ReportsApiService
   ]
 })
 export class CoreModule {

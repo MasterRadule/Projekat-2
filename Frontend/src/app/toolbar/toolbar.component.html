@@ -4,6 +4,7 @@
     <button routerLink="/dashboard/events/preview" mat-button>Events</button>
     <button routerLink="/dashboard/locations/preview" mat-button>Locations</button>
     <button routerLink="/dashboard/reports" mat-button>Reports</button>
+    <button *ngIf="isLogged" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
   </span>
   <span fxLayoutAlign="right">
     <button *ngIf="isLogged" mat-button>My profile</button>

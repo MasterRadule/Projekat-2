@@ -10,24 +10,23 @@ import {UserDTO} from "../shared/model/user-dto.model";
 })
 export class AuthenticationApiService {
 
-  private readonly _baseUrl: string;
-  private _headers = new HttpHeaders({ 'Content-Type': 'application/json',
+  private _headers = new HttpHeaders({
+    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': 'true'});
-
+    'Access-Control-Allow-Credentials': 'true'
+  });
 
   constructor(private _http: HttpClient) {
-    this._baseUrl = environment.baseUrl;
   }
 
   login(loginDTO: LoginDto): Observable<any> {
-    return this._http.post(`${this._baseUrl}/login`, {
+    return this._http.post(`login`, {
       email: loginDTO.email,
       password: loginDTO.password
     }, {headers: this._headers, responseType: 'text'});
   }
 
-  getToken():string{
+  getToken(): string {
     return localStorage.getItem('token');
   }
 
@@ -39,18 +38,11 @@ export class AuthenticationApiService {
   }
 
   logout(): Observable<any> {
-    return this._http.get(`${this._baseUrl}/auth/logout`, {headers: this._headers, responseType: 'text'});
+    return this._http.get(`auth/logout`, {headers: this._headers, responseType: 'text'});
   }
 
   register(userDTO: UserDTO): Observable<any>{
-    return this._http.post(`${this._baseUrl}/register`, {
-      firstName: userDTO.firstName,
-      lastName: userDTO.lastName,
-      email: userDTO.email,
-      password: userDTO.password,
-      verified: false
-    }, {headers: this._headers, responseType: 'text'});
+    return this._http.post(`${this._baseUrl}/register`, userDTO.serialize(), {headers: this._headers, responseType: 'text'});
   }
-
 
 }
