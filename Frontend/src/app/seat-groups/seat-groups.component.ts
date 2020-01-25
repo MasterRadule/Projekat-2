@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
+import {LocationApiService} from '../core/location-api.service';
 
 @Component({
   selector: 'app-seat-groups',
@@ -8,7 +9,7 @@ import Konva from 'konva';
   styleUrls: ['./seat-groups.component.scss']
 })
 export class SeatGroupsComponent implements OnInit {
-  @Input() private _seatGroups: SeatGroup[];
+  private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
 
@@ -23,8 +24,8 @@ export class SeatGroupsComponent implements OnInit {
   private static setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
       const text = new Konva.Text({
-        x: seatGroupRepresentation.getPosition().x,
-        y: seatGroupRepresentation.getPosition().y,
+        x: 0,
+        y: 0,
         text: seatGroup.name,
         fontSize: 18,
         fontFamily: 'Calibri',
@@ -35,8 +36,8 @@ export class SeatGroupsComponent implements OnInit {
       });
       seatGroupRepresentation.add(text);
       seatGroupRepresentation.add(new Konva.Rect({
-        x: seatGroupRepresentation.getPosition().x,
-        y: seatGroupRepresentation.getPosition().y,
+        x: 0,
+        y: 0,
         stroke: '#555',
         strokeWidth: 5,
         width: text.width(),
@@ -89,7 +90,6 @@ export class SeatGroupsComponent implements OnInit {
   ngOnInit(): void {
     this.setUpStage();
     this.layer = new Konva.Layer();
-    this.setUpSeatGroups();
     this.stage.add(this.layer);
   }
 
@@ -99,6 +99,8 @@ export class SeatGroupsComponent implements OnInit {
 
   set seatGroups(value: SeatGroup[]) {
     this._seatGroups = value;
+    this.setUpSeatGroups();
+    this.layer.draw();
   }
 
   private setUpStage() {
@@ -170,5 +172,13 @@ export class SeatGroupsComponent implements OnInit {
     });
 
     return seatGroupRepresentation;
+  }
+
+  addSeatGroup(seatGroup: SeatGroup) {
+    const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
+    SeatGroupsComponent.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
+    this.seatGroupRepresentations.push(seatGroupRepresentation);
+    this.layer.add(seatGroupRepresentation);
+    seatGroupRepresentation.draw();
   }
 }

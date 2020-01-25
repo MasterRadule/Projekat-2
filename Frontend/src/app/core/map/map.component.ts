@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet/dist/images/marker-shadow.png';
 
 @Component({
   selector: 'app-map',

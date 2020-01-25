@@ -18,9 +18,8 @@
     <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save</button>
     </span>
   </form>
-  <app-seat-groups id="sg" *ngIf="seatGroups.length > 0" [width]="600" [height]="500"
-                   [_seatGroups]="seatGroups"></app-seat-groups>
-  <form id="seatGroupForm" fxLayout="column" (submit)="addSeatGroup()">
+  <app-seat-groups id="sg" [width]="600" [height]="500"></app-seat-groups>
+  <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()">
     <mat-checkbox [formControl]="this.parterre" (change)="toggleParterre()">Parterre</mat-checkbox>
     <mat-form-field>
       <input matInput [formControl]="this.seatGroupName" type="text" placeholder="Seat group name" [required]="true">
@@ -47,6 +46,6 @@
       <input matInput [formControl]="this.totalSeats" type="number" placeholder="Total seats"
              [required]="this.parterre.value" [readonly]="!this.parterre.value">
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit">Add</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="this.location.id === undefined">Add</button>
   </form>
 </div>

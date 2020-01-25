@@ -806,7 +806,7 @@ TRUNCATE table hibernate_sequence;
 INSERT INTO hibernate_sequence (next_val) VALUES
 (51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51),(51);
 
-SET SQL_SAFE_UPDATES = 1;
+-- SET SQL_SAFE_UPDATES = 1;
 
 -- for H2
 -- ALTER SEQUENCE hibernate_sequence RESTART WITH 51;
