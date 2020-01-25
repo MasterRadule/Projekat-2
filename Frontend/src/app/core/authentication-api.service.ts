@@ -1,7 +1,9 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {LoginDto} from '../shared/model/login-dto.model';
-import {Observable} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {LoginDto} from "../shared/model/login-dto.model";
+import {Observable} from "rxjs";
+import {UserDTO} from "../shared/model/user-dto.model";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,6 @@ export class AuthenticationApiService {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': 'true'
   });
-
 
   constructor(private _http: HttpClient) {
   }
@@ -29,7 +30,7 @@ export class AuthenticationApiService {
     return localStorage.getItem('token');
   }
 
-  isLogged(): boolean {
+  isLogged(): boolean{
     if (localStorage.getItem('token')) {
       return true;
     }
@@ -40,5 +41,8 @@ export class AuthenticationApiService {
     return this._http.get(`auth/logout`, {headers: this._headers, responseType: 'text'});
   }
 
+  register(userDTO: UserDTO): Observable<any>{
+    return this._http.post(`${this._baseUrl}/register`, userDTO.serialize(), {headers: this._headers, responseType: 'text'});
+  }
 
 }

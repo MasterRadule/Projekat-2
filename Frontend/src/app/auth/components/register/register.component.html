@@ -1,1 +1,41 @@
-<p>register works!</p>
+<div class="page">
+  <app-toolbar class="header"></app-toolbar>
+  <mat-card>
+    <mat-card-title>Registration</mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="ngForm" (ngSubmit)="onSubmit()">
+        <p>
+          <mat-form-field>
+            <input type="text" matInput placeholder="First Name" formControlName="firstName">
+          </mat-form-field>
+        </p>
+
+        <p>
+          <mat-form-field>
+            <input type="text" matInput placeholder="Last Name" formControlName="lastName">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input type="text" matInput placeholder="Email" formControlName="email" (click)="ngForm.controls.email.markAsTouched()">
+            <mat-error *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
+          </mat-form-field>
+        </p>
+
+        <p>
+          <mat-form-field>
+            <input type="password" matInput placeholder="Password" formControlName="password" (click)="ngForm.controls.password.markAsTouched()">
+            <mat-error *ngIf="ngForm.controls.password.invalid">Your password must contain at least one uppercase, one lowercase,
+            one number and one special character.</mat-error>
+            <mat-error *ngIf="ngForm.controls.password.hasError('minlength')">Password must be at least 8 characters long.</mat-error>
+          </mat-form-field>
+        </p>
+
+        <div class="button">
+          <button type="submit" [disabled]="!ngForm.valid" mat-button>Register</button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
