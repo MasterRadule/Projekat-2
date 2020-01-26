@@ -1,13 +1,11 @@
-import {Component, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Location} from '../shared/model/location.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocationApiService} from '../core/location-api.service';
 import {MatSnackBar} from '@angular/material';
-import {Location as URLLocation} from '@angular/common';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import {Page} from '../shared/model/page.model';
-import {MapComponent} from '../core/map/map.component';
-import {FormControl} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 
 
@@ -20,11 +18,13 @@ export class LocationComponent implements OnInit {
   private location: Location = new Location(undefined, '', 45.0, 45.0, false);
   private initialized = false;
 
-  private parterre = new FormControl(false);
-  private seatGroupName = new FormControl('');
-  private colsNum = new FormControl(null);
-  private rowsNum = new FormControl(null);
-  private totalSeats = new FormControl(null);
+  private addSeatGroupForm = new FormGroup({
+    parterre: new FormControl(false),
+    seatGroupName: new FormControl(''),
+    colsNum: new FormControl(null),
+    rowsNum: new FormControl(null),
+    totalSeats: new FormControl(null)
+  });
 
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
@@ -157,21 +157,22 @@ export class LocationComponent implements OnInit {
   }
 
   private toggleParterre() {
-    if (this.parterre.value) {
-      this.colsNum.reset();
-      this.rowsNum.reset();
-      this.totalSeats.reset();
-      this.colsNum.disable();
-      this.rowsNum.disable();
+    if (this.addSeatGroupForm.controls.parterre.value) {
+      this.addSeatGroupForm.controls.colsNum.reset();
+      this.addSeatGroupForm.controls.rowsNum.reset();
+      this.addSeatGroupForm.controls.totalSeats.reset();
+      this.addSeatGroupForm.controls.colsNum.disable();
+      this.addSeatGroupForm.controls.rowsNum.disable();
     } else {
-      this.colsNum.enable();
-      this.rowsNum.enable();
+      this.addSeatGroupForm.controls.colsNum.enable();
+      this.addSeatGroupForm.controls.rowsNum.enable();
     }
   }
 
   private calculateTotalSeats() {
-    if (this.colsNum.value && this.rowsNum.value) {
-      this.totalSeats.setValue(this.colsNum.value * this.rowsNum.value);
+    if (this.addSeatGroupForm.controls.colsNum.value && this.addSeatGroupForm.controls.rowsNum.value) {
+      this.addSeatGroupForm.controls.totalSeats.setValue(this.addSeatGroupForm.controls.colsNum.value *
+        this.addSeatGroupForm.controls.rowsNum.value);
     }
   }
 
@@ -181,11 +182,11 @@ export class LocationComponent implements OnInit {
     newSeatGroup.yCoordinate = 0;
     newSeatGroup.id = null;
     newSeatGroup.angle = 0;
-    newSeatGroup.rowsNum = this.rowsNum.value;
-    newSeatGroup.colsNum = this.colsNum.value;
-    newSeatGroup.name = this.seatGroupName.value;
-    newSeatGroup.parterre = this.parterre.value;
-    newSeatGroup.totalSeats = this.totalSeats.value;
+    newSeatGroup.rowsNum = this.addSeatGroupForm.controls.rowsNum.value;
+    newSeatGroup.colsNum = this.addSeatGroupForm.controls.colsNum.value;
+    newSeatGroup.name = this.addSeatGroupForm.controls.seatGroupName.value;
+    newSeatGroup.parterre = this.addSeatGroupForm.controls.parterre.value;
+    newSeatGroup.totalSeats = this.addSeatGroupForm.controls.totalSeats.value;
     newSeatGroup.changed = false;
     this.createSeatGroup(newSeatGroup);
   }

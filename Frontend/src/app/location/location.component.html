@@ -19,17 +19,18 @@
     </span>
   </form>
   <app-seat-groups id="sg" [width]="600" [height]="500"></app-seat-groups>
-  <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()">
-    <mat-checkbox [formControl]="this.parterre" (change)="toggleParterre()" [disabled]="this.location.id === undefined">
+  <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()" [formGroup]="this.addSeatGroupForm">
+    <mat-checkbox formControlName="parterre" (change)="toggleParterre()" [disabled]="this.location.id ===
+    undefined">
       Parterre
     </mat-checkbox>
     <mat-form-field>
-      <input matInput [formControl]="this.seatGroupName" type="text" placeholder="Seat group name" [required]="true"
+      <input matInput formControlName="seatGroupName" type="text" placeholder="Seat group name" [required]="true"
              [disabled]="this.location.id === undefined">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Number of rows</mat-label>
-      <mat-select [formControl]="this.rowsNum" [required]="!this.parterre.value"
+      <mat-select formControlName="rowsNum" [required]="!this.addSeatGroupForm.controls['parterre'].value"
                   (selectionChange)="this.calculateTotalSeats()" [disabled]="this.location.id === undefined">
         <mat-option *ngFor="let item of makeArray(10); let i = index;" [value]="i+1">
           {{i + 1}}
@@ -38,7 +39,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Number of columns</mat-label>
-      <mat-select [formControl]="this.colsNum" [required]="!this.parterre.value"
+      <mat-select formControlName="colsNum" [required]="!this.addSeatGroupForm.controls['parterre'].value"
                   (selectionChange)="this.calculateTotalSeats()" [disabled]="this.location.id === undefined">
         <mat-option *ngFor="let item of makeArray(10); let i = index;" [value]="i+1">
           {{i + 1}}
@@ -46,10 +47,13 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [formControl]="this.totalSeats" type="number" placeholder="Total seats"
-             [required]="this.parterre.value" [readonly]="!this.parterre.value"
+      <input matInput formControlName="totalSeats" type="number" placeholder="Total seats"
+             [required]="this.addSeatGroupForm.controls['parterre'].value"
+             [readonly]="!this.addSeatGroupForm.controls['parterre'].value"
              [disabled]="this.location.id === undefined">
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" [disabled]="this.location.id === undefined">Add</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="this.location.id === undefined ||
+    !addSeatGroupForm.valid">Add
+    </button>
   </form>
 </div>

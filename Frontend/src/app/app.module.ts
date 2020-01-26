@@ -34,7 +34,7 @@ import {UrlInterceptor} from './interceptors/url.interceptor';
     ReservationModule,
     ToolbarModule,
     ReportsModule,
-    SeatGroupsModule
+    SeatGroupsModule,
     AuthModule,
     SharedModule
   ],
