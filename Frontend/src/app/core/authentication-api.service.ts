@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {environment} from '../../environments/environment';
 import {LoginDto} from "../shared/model/login-dto.model";
 import {Observable} from "rxjs";
 import {UserDTO} from "../shared/model/user-dto.model";
@@ -30,19 +29,24 @@ export class AuthenticationApiService {
     return localStorage.getItem('token');
   }
 
-  isLogged(): boolean{
-    if (localStorage.getItem('token')) {
-      return true;
+  getRole(): string{
+    let token = localStorage.getItem('token');
+    let role = "NO_ROLE";
+    if(token!=null){
+      let jwtData = token.split('.')[1];
+      let decodedJwtJsonData = window.atob(jwtData);
+      let decodedJwtData = JSON.parse(decodedJwtJsonData);
+      role = decodedJwtData.role[0].authority;
     }
-    return false;
+    return role;
   }
 
   logout(): Observable<any> {
-    return this._http.get(`auth/logout`, {headers: this._headers, responseType: 'text'});
+    return this._http.get(`logout`, {headers: this._headers, responseType: 'text'});
   }
 
   register(userDTO: UserDTO): Observable<any>{
-    return this._http.post(`${this._baseUrl}/register`, userDTO.serialize(), {headers: this._headers, responseType: 'text'});
+    return this._http.post(`register`, userDTO.serialize(), {headers: this._headers, responseType: 'text'});
   }
 
 }

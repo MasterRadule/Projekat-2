@@ -14,7 +14,7 @@ export class ToolbarComponent implements OnInit {
               private router: Router) {
   }
 
-  isLogged: boolean = this.authService.isLogged();
+  getRole: string = this.authService.getRole();
 
   ngOnInit() {
   }

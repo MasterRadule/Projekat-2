@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     const loginObserver = {
       next: x =>{
-        console.log(x);
         localStorage.setItem('token', x);
         this.snackBar.open("Welcome!", 'Dismiss', {
           duration: 3000
@@ -47,9 +46,6 @@ export class LoginComponent implements OnInit {
     );
 
     this.authService.login(loginDTO).subscribe(loginObserver);
-
   }
-
-  @Input() error: string | null;
 
 }

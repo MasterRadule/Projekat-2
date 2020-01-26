@@ -4,12 +4,12 @@
     <button routerLink="/dashboard/events/preview" mat-button>Events</button>
     <button routerLink="/dashboard/locations/preview" mat-button>Locations</button>
     <button routerLink="/dashboard/reports" mat-button>Reports</button>
-    <button *ngIf="isLogged" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
+    <button *ngIf="getRole != 'NO_ROLE'" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
   </span>
   <span fxLayoutAlign="right">
-    <button *ngIf="isLogged" mat-button>My profile</button>
-    <button *ngIf="isLogged" (click)="logOut()" mat-button>Logout</button>
-    <button *ngIf="!isLogged" routerLink="/login" mat-button>Login</button>
-    <button *ngIf="!isLogged" routerLink="/register" mat-button>Register</button>
+    <button *ngIf="getRole != 'NO_ROLE'" mat-button>My profile</button>
+    <button *ngIf="getRole != 'NO_ROLE'" (click)="logOut()" mat-button>Logout</button>
+    <button *ngIf="getRole == 'NO_ROLE'" routerLink="/login" mat-button>Login</button>
+    <button *ngIf="getRole == 'NO_ROLE'" routerLink="/register" mat-button>Register</button>
   </span>
 </mat-toolbar>
