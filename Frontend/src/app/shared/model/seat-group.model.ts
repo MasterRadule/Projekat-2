@@ -8,12 +8,14 @@ export class SeatGroup extends Serializable {
   private _id: number;
 
   @SerializeProperty({
-    map: 'rowsNum'
+    map: 'rowsNum',
+    optional: true
   })
   private _rowsNum: number;
 
   @SerializeProperty({
-    map: 'colsNum'
+    map: 'colsNum',
+    optional: true
   })
   private _colsNum: number;
 
@@ -33,7 +35,8 @@ export class SeatGroup extends Serializable {
   private _yCoordinate: number;
 
   @SerializeProperty({
-    map: 'totalSeats'
+    map: 'totalSeats',
+    optional: true
   })
   private _totalSeats: number;
 
@@ -42,6 +45,28 @@ export class SeatGroup extends Serializable {
   })
   private _name: string;
 
+  @SerializeProperty({
+    map: 'angle'
+  })
+  private _angle: number;
+
+  private _changed = false;
+
+  get changed(): boolean {
+    return this._changed;
+  }
+
+  set changed(value: boolean) {
+    this._changed = value;
+  }
+
+  get angle(): number {
+    return this._angle;
+  }
+
+  set angle(value: number) {
+    this._angle = value;
+  }
 
   get id(): number {
     return this._id;
