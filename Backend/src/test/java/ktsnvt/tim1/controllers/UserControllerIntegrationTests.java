@@ -34,13 +34,22 @@ public class UserControllerIntegrationTests {
     @Autowired
     TokenUtils tokenUtils;
 
+    private HttpHeaders generateHeaderWithToken(String userEmail) {
+        UserDetails userDetails = new User(null, null, null, null, userEmail, null);
+        String token = tokenUtils.generateToken(userDetails);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", token);
+        return headers;
+    }
+
     @Transactional
     @Rollback
     @Test
     void editUser_usedIdIsNull_errorMessageReturned(){
+        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
         UserDTO editedDTO  = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
-        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO);
+        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user"),
                 HttpMethod.PUT, entity, String.class);
@@ -53,26 +62,29 @@ public class UserControllerIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_userDoesNotExist_errorMessageReturned(){
+    void editUser_notAllowedUser_errorMessageReturned(){
+        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+
         UserDTO editedDTO  = new UserDTO(60L, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
-        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO);
+        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user"),
                 HttpMethod.PUT, entity, String.class);
 
         assertNotNull(result.getBody());
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals("User not found", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Invalid action", result.getBody());
     }
 
     @Transactional
     @Rollback
     @Test
     void editUser_userEmailChanged_errorMessageReturned(){
+        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
         UserDTO editedDTO  = new UserDTO(6L, "Jack", "Bowlin", "KtsNvt1+", "JennifferHooker1@example.com", true);
 
-        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO);
+        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user"),
                 HttpMethod.PUT, entity, String.class);
@@ -86,9 +98,11 @@ public class UserControllerIntegrationTests {
     @Rollback
     @Test
     void editUser_userExists_editedUserReturned(){
+        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+
         UserDTO editedDTO  = new UserDTO(6L, "Jackson", "Bowlin", "KtsNvt11+", "JennifferHooker@example.com", true);
 
-        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO);
+        HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<UserDTO> result = testRestTemplate.exchange(createURLWithPort("/user"),
                 HttpMethod.PUT, entity, UserDTO.class);

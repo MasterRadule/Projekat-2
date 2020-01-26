@@ -1,6 +1,8 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.model.EventDay;
+import ktsnvt.tim1.model.ReservableSeatGroup;
+import ktsnvt.tim1.model.Seat;
 import ktsnvt.tim1.model.VerificationToken;
 import ktsnvt.tim1.repositories.ReservationRepository;
 import ktsnvt.tim1.repositories.UserRepository;
@@ -31,6 +33,9 @@ public class PeriodicCheckService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ReservationService reservationService;
+
     @Scheduled(cron = "${checkReservations.cron}")
     public void checkReservations() {
         reservationRepository.findByOrderIdIsNullAndIsCancelledFalse().forEach((reservation) ->
@@ -41,7 +46,7 @@ public class PeriodicCheckService {
                     LocalDateTime expirationDate =
                             firstEventDay.minusDays(reservation.getEvent().getReservationDeadlineDays());
                     if (expirationDate.isBefore(LocalDateTime.now())) {
-                        reservation.setCancelled(true);
+                        reservationService.cancelReservationRemoveConnections(reservation);
                         reservationRepository.save(reservation);
                         emailService.sendReservationExpiredEmail(reservation.getRegisteredUser(), reservation, expirationDate);
                     } else if (expiresSoon(expirationDate)) {

@@ -24,11 +24,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByOrderIdIsNullAndIsCancelledFalse();
 
-    @Lock(LockModeType.PESSIMISTIC_READ)
-    Optional<Reservation> findByIdAndIsCancelledFalse(Long id);
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Reservation> findByIdAndRegisteredUserIdAndIsCancelledFalse(Long id, Long registeredUserId);
+
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    Optional<Reservation> findByIdAndIsCancelledFalseAndRegisteredUserId(Long id, Long registeredUserId);
 
     @Query(value = "select new ktsnvt.tim1.DTOs.DailyReportDTO(ed.date, count(t), sum(esg.price)) from Reservation r join " +
             "r.tickets t join t" +

@@ -11,6 +11,12 @@ public class NewTicketDTO {
     public NewTicketDTO() {
     }
 
+    public NewTicketDTO(Long reservableSeatGroupId, Long seatId, @NotNull Boolean allDayTicket) {
+        this.reservableSeatGroupId = reservableSeatGroupId;
+        this.seatId = seatId;
+        this.allDayTicket = allDayTicket;
+    }
+
     public Long getReservableSeatGroupId() {
         return reservableSeatGroupId;
     }

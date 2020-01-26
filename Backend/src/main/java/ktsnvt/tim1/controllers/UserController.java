@@ -8,25 +8,26 @@ import ktsnvt.tim1.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
 	@PutMapping()
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
     public ResponseEntity<Object> editUser(@Valid @RequestBody UserDTO user){
 		try{
 			return new ResponseEntity<>(userService.editUser(user), HttpStatus.OK);
 		}catch (EntityNotValidException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
     }
 

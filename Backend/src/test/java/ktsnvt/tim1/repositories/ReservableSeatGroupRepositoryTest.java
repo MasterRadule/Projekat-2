@@ -23,7 +23,7 @@ public class ReservableSeatGroupRepositoryTest {
     private ReservableSeatGroupRepository reservableSeatGroupRepository;
 
     @Test
-    void findByEventAndById_noSuchReservableSeatGroup_returnedNullOptional() {
+    public void findByEventAndById_noSuchReservableSeatGroup_returnedNullOptional() {
         Long eventId = 1L;
         Long reservableSeatGroupId = 10L;
 
@@ -32,7 +32,7 @@ public class ReservableSeatGroupRepositoryTest {
     }
 
     @Test
-    void findByEventAndById_suchReservableSeatGroupExists_returnedSuchReservableSeatGroup() {
+    public void findByEventAndById_suchReservableSeatGroupExists_returnedSuchReservableSeatGroup() {
         Long eventId = 1L;
         Long reservableSeatGroupId = 1L;
 
@@ -46,7 +46,7 @@ public class ReservableSeatGroupRepositoryTest {
     }
 
     @Test
-    void findByEventAndByEventSeatGroup_noSuchReservableSeatGroups_returnedEmptyList() {
+    public void findByEventAndByEventSeatGroup_noSuchReservableSeatGroups_returnedEmptyList() {
         Long eventId = 2L;
         Long eventSeatGroupId = 1L;
 
@@ -55,7 +55,7 @@ public class ReservableSeatGroupRepositoryTest {
     }
 
     @Test
-    void findByEventAndByEventSeatGroup_suchReservableSeatGroupsExist_returnedSuchReservableSeatGroups() {
+    public void findByEventAndByEventSeatGroup_suchReservableSeatGroupsExist_returnedSuchReservableSeatGroups() {
         Long eventId = 1L;
         Long eventSeatGroupId = 1L;
 
@@ -71,7 +71,7 @@ public class ReservableSeatGroupRepositoryTest {
 
         ReservableSeatGroup reservableSeatGroup1 = reservableSeatGroups.get(1);
         assertEquals(51, reservableSeatGroup1.getId());
-        assertEquals(1, reservableSeatGroup1.getFreeSeats());
+        assertEquals(9, reservableSeatGroup1.getFreeSeats());
         assertEquals(26, reservableSeatGroup1.getEventDay().getId());
         assertEquals(1, reservableSeatGroup1.getEventSeatGroup().getId());
     }

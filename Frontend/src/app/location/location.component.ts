@@ -10,6 +10,7 @@ import {MapComponent} from '../core/map/map.component';
 import {FormControl} from '@angular/forms';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 
+
 @Component({
   selector: 'app-location',
   templateUrl: './location.component.html',
