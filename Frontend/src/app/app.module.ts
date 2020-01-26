@@ -11,6 +11,7 @@ import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
 import {ReportsModule} from './reports/reports.module';
+import {SeatGroupsModule} from './seat-groups/seat-groups.module';
 import {AuthModule} from './auth/auth.module';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {SharedModule} from './shared/shared.module';
@@ -33,6 +34,7 @@ import {UrlInterceptor} from './interceptors/url.interceptor';
     ReservationModule,
     ToolbarModule,
     ReportsModule,
+    SeatGroupsModule,
     AuthModule,
     SharedModule
   ],

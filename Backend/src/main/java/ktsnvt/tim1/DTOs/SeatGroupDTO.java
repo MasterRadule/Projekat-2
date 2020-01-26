@@ -23,6 +23,9 @@ public class SeatGroupDTO {
     @NotNull(message = "Seat group name must be provided")
     private String name;
 
+    @NotNull(message = "Seat group alignment must be specified")
+    private Double angle;
+
     public SeatGroupDTO() {
     }
 
@@ -92,5 +95,13 @@ public class SeatGroupDTO {
 
     public void setTotalSeats(Integer totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public Double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(Double angle) {
+        this.angle = angle;
     }
 }
