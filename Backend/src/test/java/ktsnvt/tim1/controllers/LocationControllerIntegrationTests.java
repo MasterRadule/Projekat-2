@@ -1,6 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.DTOs.LocationOptionDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.model.Location;
 import ktsnvt.tim1.model.SeatGroup;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class LocationControllerIntegrationTests {
-    @LocalServerPort
-    private int port;
-
     @Autowired
     TestRestTemplate testRestTemplate;
 
@@ -60,8 +57,8 @@ public class LocationControllerIntegrationTests {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
         };
 
-        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/locations?page=0&size=5"), HttpMethod.GET, null, responseType);
+        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate
+                .exchange("/locations?page=0&size=5", HttpMethod.GET, null, responseType);
 
         List<LocationDTO> locations = result.getBody().getContent();
 
@@ -72,7 +69,7 @@ public class LocationControllerIntegrationTests {
     @Test
     public void getLocation_locationExists_locationReturned() {
         ResponseEntity<LocationDTO> result = testRestTemplate
-                .exchange(createURLWithPort("/locations/1"), HttpMethod.GET,
+                .exchange("/locations/1", HttpMethod.GET,
                         null, LocationDTO.class);
 
         LocationDTO location = result.getBody();
@@ -84,7 +81,7 @@ public class LocationControllerIntegrationTests {
 
     @Test
     public void getLocation_locationDoesNotExist_errorMessageReturned() {
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations/31"), HttpMethod.GET,
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/31", HttpMethod.GET,
                 null, String.class);
 
         String errorMessage = result.getBody();
@@ -101,8 +98,8 @@ public class LocationControllerIntegrationTests {
 
         String name = "black";
 
-        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/locations/search?page=0&size=5&name=black"), HttpMethod.GET, null, responseType);
+        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
+                "/locations/search?page=0&size=5&name=black", HttpMethod.GET, null, responseType);
 
         List<LocationDTO> locations = result.getBody().getContent();
 
@@ -120,8 +117,8 @@ public class LocationControllerIntegrationTests {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
         };
 
-        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/locations/search?page=0&size=5&name="), HttpMethod.GET, null, responseType);
+        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
+                "/locations/search?page=0&size=5&name=", HttpMethod.GET, null, responseType);
 
         List<LocationDTO> locations = result.getBody().getContent();
 
@@ -136,8 +133,8 @@ public class LocationControllerIntegrationTests {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
         };
 
-        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/locations/search?page=0&size=5&name=dsadahfghbfghvcs"), HttpMethod.GET, null, responseType);
+        ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
+                "/locations/search?page=0&size=5&name=dsadahfghbfghvcs", HttpMethod.GET, null, responseType);
 
         List<LocationDTO> locations = result.getBody().getContent();
 
@@ -155,7 +152,7 @@ public class LocationControllerIntegrationTests {
 
         HttpEntity<LocationDTO> entity = new HttpEntity<>(newDTO);
 
-        ResponseEntity<LocationDTO> result = testRestTemplate.exchange(createURLWithPort("/locations"),
+        ResponseEntity<LocationDTO> result = testRestTemplate.exchange("/locations",
                 HttpMethod.POST, entity, LocationDTO.class);
 
         LocationDTO location = result.getBody();
@@ -180,7 +177,7 @@ public class LocationControllerIntegrationTests {
 
         HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -195,7 +192,7 @@ public class LocationControllerIntegrationTests {
 
         HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -210,7 +207,7 @@ public class LocationControllerIntegrationTests {
 
         HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
 
-        ResponseEntity<LocationDTO> result = testRestTemplate.exchange(createURLWithPort("/locations"),
+        ResponseEntity<LocationDTO> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, LocationDTO.class);
 
         LocationDTO returnedDTO = result.getBody();
@@ -238,8 +235,8 @@ public class LocationControllerIntegrationTests {
                 new ParameterizedTypeReference<RestResponsePage<SeatGroupDTO>>() {
                 };
 
-        ResponseEntity<RestResponsePage<SeatGroupDTO>> result = testRestTemplate.exchange(createURLWithPort(
-                "/locations/1/seat-groups"), HttpMethod.GET, null, responseType);
+        ResponseEntity<RestResponsePage<SeatGroupDTO>> result = testRestTemplate.exchange(
+                "/locations/1/seat-groups", HttpMethod.GET, null, responseType);
 
         Page<SeatGroupDTO> page = result.getBody();
 
@@ -250,7 +247,7 @@ public class LocationControllerIntegrationTests {
 
     @Test
     void getSeatGroups_locationDoesNotExist_errorMessageReturned() {
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations/31/seat-groups"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/31/seat-groups",
                 HttpMethod.GET, null, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -269,7 +266,7 @@ public class LocationControllerIntegrationTests {
             location = l.get();
 
         ResponseEntity<SeatGroupDTO> result = testRestTemplate
-                .exchange(createURLWithPort("/locations/1/seat-groups/1"), HttpMethod.GET, null, SeatGroupDTO.class);
+                .exchange("/locations/1/seat-groups/1", HttpMethod.GET, null, SeatGroupDTO.class);
 
         SeatGroupDTO seatGroup = result.getBody();
 
@@ -292,7 +289,7 @@ public class LocationControllerIntegrationTests {
         if (l.isPresent())
             location = l.get();
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations/1/seat-groups/51"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/1/seat-groups/51",
                 HttpMethod.GET, null, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -308,7 +305,7 @@ public class LocationControllerIntegrationTests {
 
         Optional<Location> l = locationRepository.findById(locationId);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations/31/seat-groups/1"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/31/seat-groups/1",
                 HttpMethod.GET, null, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -338,11 +335,12 @@ public class LocationControllerIntegrationTests {
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
         newDTO.setName("Group1");
+        newDTO.setAngle(0.0);
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
         ResponseEntity<SeatGroupDTO> result = testRestTemplate
-                .exchange(createURLWithPort("/locations/1/seat-groups"), HttpMethod.POST, entity, SeatGroupDTO.class);
+                .exchange("/locations/1/seat-groups", HttpMethod.POST, entity, SeatGroupDTO.class);
 
         SeatGroupDTO returnedValue = result.getBody();
 
@@ -364,6 +362,7 @@ public class LocationControllerIntegrationTests {
         assertEquals(newDTO.getRowsNum() * newDTO.getColsNum(), returnedValue.getTotalSeats().intValue());
         assertEquals(newDTO.isParterre(), returnedValue.isParterre());
         assertEquals(newDTO.getName(), returnedValue.getName());
+        assertEquals(newDTO.getAngle(), returnedValue.getAngle());
         assertEquals(startingNumberOfSeatGroups + 1, l.getSeatGroups().size());
     }
 
@@ -378,10 +377,11 @@ public class LocationControllerIntegrationTests {
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
         newDTO.setName("Group1");
+        newDTO.setAngle(30.0);
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/locations/1/seat-groups"),
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/1/seat-groups",
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -401,21 +401,103 @@ public class LocationControllerIntegrationTests {
         newDTO.setxCoordinate(3.0);
         newDTO.setyCoordinate(4.0);
         newDTO.setName("Group1");
+        newDTO.setAngle(30.0);
 
         HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
 
         ResponseEntity<String> result = testRestTemplate
-                .exchange(createURLWithPort("/locations/31/seat-groups"), HttpMethod.POST, entity, String.class);
+                .exchange("/locations/31/seat-groups", HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         assertEquals("Location not found", result.getBody());
         assertFalse(l.isPresent());
     }
 
+    @Test
+    void getLocationsOptions_locationsOptionsReturned() {
+        int locationOptionsCount = 31;
 
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + "/api" + uri;
+        ParameterizedTypeReference<List<LocationOptionDTO>> responseType =
+                new ParameterizedTypeReference<List<LocationOptionDTO>>() {
+                };
+
+        ResponseEntity<List<LocationOptionDTO>> result = testRestTemplate
+                .exchange("/locations/options", HttpMethod.GET, null, responseType);
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(locationOptionsCount, result.getBody().size());
     }
 
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationAndSeatGroupExist_seatGroupPositionChanged() {
+        Long seatGroupId = 1L;
 
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        ResponseEntity<SeatGroupDTO> result = testRestTemplate.exchange("/locations/1/seat-groups", HttpMethod.PUT,
+                entity, SeatGroupDTO.class);
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(newAngle, result.getBody().getAngle());
+        assertEquals(newXCoordinate, result.getBody().getxCoordinate());
+        assertEquals(newYCoordinate, result.getBody().getyCoordinate());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationDoesNotExist_notFoundStatusReturned() {
+        Long seatGroupId = 1L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/120/seat-groups", HttpMethod.PUT,
+                entity, String.class);
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals("Location not found", result.getBody());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationExistsAndSeatGroupDoesNotExist_notFoundStatusReturned() {
+        Long seatGroupId = 120L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        ResponseEntity<String> result = testRestTemplate.exchange("/locations/1/seat-groups", HttpMethod.PUT,
+                entity, String.class);
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals("Seat group not found", result.getBody());
+    }
 }

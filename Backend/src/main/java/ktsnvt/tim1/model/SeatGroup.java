@@ -40,6 +40,18 @@ public class SeatGroup {
     public SeatGroup() {
     }
 
+    public SeatGroup(Integer rowsNum, Integer colsNum, Boolean isParterre, Double xCoordinate, Double yCoordinate, Double angle, String name, Integer totalSeats, Location location) {
+        this.rowsNum = rowsNum;
+        this.colsNum = colsNum;
+        this.isParterre = isParterre;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
+        this.angle = angle;
+        this.name = name;
+        this.totalSeats = totalSeats;
+        this.location = location;
+    }
+
     public SeatGroup(Long id) {
         this.id = id;
     }

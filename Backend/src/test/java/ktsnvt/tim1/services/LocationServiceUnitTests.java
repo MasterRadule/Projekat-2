@@ -22,10 +22,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -286,5 +288,70 @@ public class LocationServiceUnitTests {
         assertThrows(EntityNotFoundException.class, () -> locationService.createSeatGroup(locationId, newDTO));
     }
 
+    @Test
+    void getLocationsOptions_repositoryMethodCalledOnce() {
+        Mockito.when(locationRepositoryMocked.findAll()).thenReturn(new ArrayList<>());
+        locationService.getLocationsOptions();
+        verify(locationRepositoryMocked, times(1)).findAll();
+    }
 
+    @Test
+    void editSeatGroupPosition_locationAndSeatGroupExist_seatGroupPositionChanged() throws EntityNotFoundException {
+        Long locationId = 1L;
+        Long seatGroupId = 1L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        Location l = new Location(locationId, "Spens", 50.0, 50.0, false);
+        SeatGroup seatGroupBeforeChange = new SeatGroup(3, 3, false, 13.0, 10.0, 30.0, "SG", 9, l);
+        seatGroupBeforeChange.setId(seatGroupId);
+        l.getSeatGroups().add(seatGroupBeforeChange);
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "SG", newAngle);
+
+        Mockito.when(locationRepositoryMocked.findById(locationId)).thenReturn(Optional.of(l));
+        Mockito.when(seatGroupMapperMocked.toDTO(seatGroupBeforeChange)).thenReturn(changedSeatGroup);
+
+        SeatGroupDTO result = locationService.editSeatGroupPosition(seatGroupId, changedSeatGroup);
+
+        verify(locationRepositoryMocked, times(1)).findById(locationId);
+        verify(locationRepositoryMocked, times(1)).save(l);
+        verify(seatGroupMapperMocked, times(1)).toDTO(seatGroupBeforeChange);
+
+        assertNotNull(result);
+        assertEquals(newAngle, result.getAngle());
+        assertEquals(newXCoordinate, result.getxCoordinate());
+        assertEquals(newYCoordinate, result.getyCoordinate());
+    }
+
+    @Test
+    void editSeatGroupPosition_locationDoesNotExist_entityNotFoundExceptionThrown() {
+        Long locationId = 1L;
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO();
+
+        Mockito.when(locationRepositoryMocked.findById(locationId)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> locationService.editSeatGroupPosition(locationId,
+                changedSeatGroup));
+    }
+
+    @Test
+    void editSeatGroupPosition_locationExistsAndSeatGroupDoesNotExist_entityNotFoundExceptionThrown() {
+        Long locationId = 1L;
+        Long seatGroupId = 1L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        Location l = new Location(locationId, "Spens", 50.0, 50.0, false);
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "SG", newAngle);
+
+        Mockito.when(locationRepositoryMocked.findById(locationId)).thenReturn(Optional.of(l));
+
+        assertThrows(EntityNotFoundException.class, () -> locationService.editSeatGroupPosition(locationId,
+                changedSeatGroup));
+    }
 }

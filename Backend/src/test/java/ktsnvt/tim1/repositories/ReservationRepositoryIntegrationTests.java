@@ -32,15 +32,12 @@ public class ReservationRepositoryIntegrationTests {
 
     @Test
     public void getAttendanceAndEarningsForPeriod_locationIdAndEventIdAreNull_valuesReturned() {
-        LocalDateTime startDate = LocalDateTime.parse("2020-01-01 00:00:00", dateTimeFormatter);
+        LocalDateTime startDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2020-01-05 00:00:00", dateTimeFormatter);
 
-        LocalDateTime midDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
-
-        int expectedNumberOfDays = 3;
+        int expectedNumberOfDays = 2;
         List<DailyReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
-        expectedResult.add(new DailyReportDTO(midDate, 1, 5));
+        expectedResult.add(new DailyReportDTO(startDate, 1, 5));
         expectedResult.add(new DailyReportDTO(endDate, 1, 30));
 
         List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
@@ -59,11 +56,14 @@ public class ReservationRepositoryIntegrationTests {
     public void getAttendanceAndEarningsForPeriod_locationIdIsNotNull_valuesReturned() {
         LocalDateTime startDate = LocalDateTime.parse("2020-01-01 00:00:00", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2020-01-05 00:00:00", dateTimeFormatter);
-        Long locationId = 1L;
+
+        LocalDateTime midDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
+
+        Long locationId = 2L;
 
         int expectedNumberOfDays = 1;
         List<DailyReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
+        expectedResult.add(new DailyReportDTO(midDate, 1, 5));
 
         List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 locationId, null);
@@ -81,12 +81,15 @@ public class ReservationRepositoryIntegrationTests {
     public void getAttendanceAndEarningsForPeriod_bothIdsAreProvided_valuesReturned() {
         LocalDateTime startDate = LocalDateTime.parse("2020-01-01 00:00:00", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2020-01-05 00:00:00", dateTimeFormatter);
-        Long locationId = 1L;
-        Long eventId = 1L;
+
+        LocalDateTime midDate = LocalDateTime.parse("2020-01-03 00:00:00", dateTimeFormatter);
+
+        Long locationId = 2L;
+        Long eventId = 2L;
 
         int expectedNumberOfDays = 1;
         List<DailyReportDTO> expectedResult = new ArrayList<>();
-        expectedResult.add(new DailyReportDTO(startDate, 1, 31));
+        expectedResult.add(new DailyReportDTO(midDate, 1, 5));
 
         List<DailyReportDTO> returnedResults = reservationRepository.getAttendanceAndEarningsForPeriod(startDate, endDate,
                 locationId, eventId);
