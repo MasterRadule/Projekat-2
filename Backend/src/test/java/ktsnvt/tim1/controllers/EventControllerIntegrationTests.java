@@ -190,7 +190,7 @@ public class EventControllerIntegrationTests {
 
         File file2 = new File("video.mp4");
         FileUtils.writeByteArrayToFile(file2, video);
-        parameters.add("files", new FileSystemResource(file2));
+        parameters.add("file", new FileSystemResource(file2));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -258,7 +258,7 @@ public class EventControllerIntegrationTests {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         File file1 = new File("img.txt");
         FileUtils.writeByteArrayToFile(file1, txt);
-        parameters.add("files", new FileSystemResource(file1));
+        parameters.add("file", new FileSystemResource(file1));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -309,7 +309,6 @@ public class EventControllerIntegrationTests {
         Event event = eventRepository.getOne(1L);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("File deleted successfully", message);
         assertEquals(1, event.getPicturesAndVideos().size());
 
         // rollback

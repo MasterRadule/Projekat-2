@@ -96,18 +96,18 @@ public class EventServiceUnitTests {
                 EventCategory.Movie.name(), false);
         Optional<Event> o = Optional.of(entity);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(entity.getId())).thenReturn(o);
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(entity.getId())).thenReturn(o);
         Mockito.when(eventMapperMocked.toDTO(entity)).thenReturn(returnDTO);
         EventDTO event = eventService.getEvent(id);
 
         assertEquals(id, event.getId());
-        verify(eventRepositoryMocked, times(1)).findByIdAndIsCancelledFalse(id);
+        verify(eventRepositoryMocked, times(1)).findByIdAndIsCancelledFalseAndLocationNotNull(id);
     }
 
     @Test
     public void getEvent_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> eventService.getEvent(id));
     }
 
@@ -163,7 +163,7 @@ public class EventServiceUnitTests {
         Event newEntity = new Event(id, editedDTO.getName(), editedDTO.getDescription(),
                 EventCategory.valueOf(editedDTO.getCategory()), editedDTO.isCancelled());
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(oldEntity));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(oldEntity));
         Mockito.when(eventRepositoryMocked.findOneByName(oldEntity.getName())).thenReturn(oldEntity);
         Mockito.when(eventRepositoryMocked.save(oldEntity)).thenReturn(newEntity);
         Mockito.when(eventMapperMocked.toDTO(newEntity)).thenReturn(editedDTO);
@@ -177,7 +177,7 @@ public class EventServiceUnitTests {
         assertEquals(editedDTO.getDescription(), editedEvent.getDescription());
         assertEquals(editedDTO.getCategory(), editedEvent.getCategory());
 
-        verify(eventRepositoryMocked, times(1)).findByIdAndIsCancelledFalse(id);
+        verify(eventRepositoryMocked, times(1)).findByIdAndIsCancelledFalseAndLocationNotNull(id);
         verify(eventRepositoryMocked, times(1)).findOneByName(oldEntity.getName());
         verify(eventRepositoryMocked, times(1)).save(oldEntity);
         verify(eventMapperMocked, times(1)).toDTO(newEntity);
@@ -199,7 +199,7 @@ public class EventServiceUnitTests {
         EventDTO editedDTO = new EventDTO(id, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.editEvent(editedDTO));
     }
@@ -215,7 +215,7 @@ public class EventServiceUnitTests {
         Event event = new Event(eventID, "Event 2", "Description of Event 2",
                 EventCategory.Movie, false);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(eventToEdit));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(eventToEdit));
         Mockito.when(eventRepositoryMocked.findOneByName(editedDTO.getName())).thenReturn(event);
 
         assertThrows(EntityAlreadyExistsException.class, () -> eventService.editEvent(editedDTO));
@@ -240,7 +240,7 @@ public class EventServiceUnitTests {
         files[0] = mf1;
         files[1] = mf2;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(event));
         Mockito.when(eventRepositoryMocked.save(event)).thenReturn(event);
 
         eventService.uploadPicturesAndVideos(id, files);
@@ -252,7 +252,7 @@ public class EventServiceUnitTests {
     public void uploadPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService
                 .uploadPicturesAndVideos(id, new MultipartFile[2]));
@@ -272,7 +272,7 @@ public class EventServiceUnitTests {
         MultipartFile[] files = new MultipartFile[1];
         files[0] = mf1;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(event));
         Mockito.when(eventRepositoryMocked.save(event)).thenReturn(event);
 
         assertThrows(EntityNotValidException.class, () -> eventService.uploadPicturesAndVideos(id, files));
@@ -293,7 +293,7 @@ public class EventServiceUnitTests {
         MultipartFile[] files = new MultipartFile[1];
         files[0] = mf1Spy;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(event));
         Mockito.when(mf1Spy.getBytes()).thenThrow(IOException.class);
 
         assertThrows(EntityNotValidException.class, () -> eventService.uploadPicturesAndVideos(id, files));
@@ -310,7 +310,7 @@ public class EventServiceUnitTests {
         r.nextBytes(image);
         event.getPicturesAndVideos().add(new MediaFile("img.jpg", "image/jpeg", image));
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(event));
 
         Set<MediaFileDTO> files = eventService.getPicturesAndVideos(id);
 
@@ -321,7 +321,7 @@ public class EventServiceUnitTests {
     public void getPicturesAndVideos_eventDoesNotExist_entityNotFoundExceptionThrown() {
         Long id = 1L;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(id)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.getPicturesAndVideos(id));
     }
@@ -340,7 +340,7 @@ public class EventServiceUnitTests {
         mf.setId(fileID);
         event.getPicturesAndVideos().add(mf);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.of(event));
         Mockito.when(mediaFileRepositoryMocked.findById(fileID)).thenReturn(Optional.of(mf));
 
         eventService.deleteMediaFile(eventID, fileID);
@@ -355,7 +355,7 @@ public class EventServiceUnitTests {
         Event event = new Event(eventID, "Event 1", "Description of Event 1",
                 EventCategory.Movie, false);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.of(event));
         Mockito.when(mediaFileRepositoryMocked.findById(fileID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.deleteMediaFile(eventID, fileID));
@@ -366,7 +366,7 @@ public class EventServiceUnitTests {
         Long eventID = 1L;
         Long fileID = 2L;
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.deleteMediaFile(eventID, fileID));
     }
@@ -388,7 +388,7 @@ public class EventServiceUnitTests {
 
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO(eventID, locationID);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.of(event));
         Mockito.when(locationRepositoryMocked.findByIdAndDisabledFalse(locationID)).thenReturn(Optional.of(location));
         Mockito.when(eventRepositoryMocked.save(event)).thenReturn(event);
         Mockito.when(eventMapperMocked.toDTO(event)).thenReturn(eventDTO);
@@ -414,7 +414,7 @@ public class EventServiceUnitTests {
                 EventCategory.Movie, false);
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO();
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.of(event));
         Mockito.when(locationRepositoryMocked.findByIdAndDisabledFalse(fileID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.setEventLocationAndSeatGroups(seatGroupDTO));
@@ -425,7 +425,7 @@ public class EventServiceUnitTests {
         Long eventID = 1L;
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO();
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalse(eventID)).thenReturn(Optional.empty());
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.setEventLocationAndSeatGroups(seatGroupDTO));
     }
