@@ -17,11 +17,11 @@ public class UserDTO {
     private String lastName;
 
     @NotBlank(message = "Password cannot be empty")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@!_*#$%^&+=])(?=\\S+$).{8,}")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}")
     private String password;
 
     @NotBlank(message = "Email cannot be empty")
-    @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    @Pattern(regexp = "^(.+)@(.+)$")
     private String email;
 
     @NotNull

@@ -11,7 +11,6 @@ import ktsnvt.tim1.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +24,6 @@ import javax.validation.Valid;
 import java.net.MalformedURLException;
 
 @RestController
-@CrossOrigin
 public class AuthenticationController {
 
     @Autowired
@@ -42,7 +40,6 @@ public class AuthenticationController {
 
 
     @PostMapping(value = "/login")
-    @PreAuthorize("!(hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER'))")
     public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO){
         try {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -63,7 +60,6 @@ public class AuthenticationController {
         }
     }
 
-    @PreAuthorize("!(hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER'))")
     @PostMapping(value = "/register")
     public ResponseEntity<Object> register(@Valid @RequestBody UserDTO user, HttpServletRequest request) {
         try{
@@ -81,4 +77,5 @@ public class AuthenticationController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 }

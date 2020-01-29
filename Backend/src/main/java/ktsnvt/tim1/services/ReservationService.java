@@ -83,7 +83,7 @@ public class ReservationService {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         return reservationMapper.toDTO(reservationRepository
-                .findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUser.getId())
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found")));
     }
 
@@ -216,12 +216,11 @@ public class ReservationService {
         });
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public PaymentDTO payReservationCreatePayment(Long reservationId) throws EntityNotFoundException, ImpossibleActionException, PayPalRESTException, PayPalException {
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         Reservation reservation = reservationRepository
-                .findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUser.getId())
+                .findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
         if (reservation.getOrderId() != null)
             throw new ImpossibleActionException("Reservation is already paid, therefore cannot be payed again");

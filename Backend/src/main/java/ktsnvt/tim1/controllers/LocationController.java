@@ -95,14 +95,4 @@ public class LocationController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @PutMapping(value = "/{id}/seat-groups")
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<Object> editSeatGroupPosition(@PathVariable("id") Long id, @Valid @RequestBody SeatGroupDTO seatGroupDTO) {
-        try {
-            return new ResponseEntity<>(locationService.editSeatGroupPosition(id, seatGroupDTO), HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
 }

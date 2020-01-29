@@ -1,6 +1,5 @@
-import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet/dist/images/marker-shadow.png';
 
 @Component({
   selector: 'app-map',
@@ -13,7 +12,6 @@ export class MapComponent implements AfterViewInit {
   @Input() private _zoom: number;
   @Input() private _maxZoom: number;
   @Input() private _draggable: boolean;
-  @Output() private markerDrag: EventEmitter<any> = new EventEmitter<any>();
 
   private _map;
   @Input() private _mapName: string;
@@ -42,18 +40,10 @@ export class MapComponent implements AfterViewInit {
       accessToken: 'pk.eyJ1IjoiZHJhZ2FuOTciLCJhIjoiY2s0OHdkbnN6MDQ1azNubW1qYXN3MWhnOSJ9.IorNULTY9svXvs1aVmNesg'
     }).addTo(this._map);
 
-    const marker = L.marker([this._latitude, this._longitude],
+    L.marker([this._latitude, this._longitude],
       {
         draggable: this._draggable
-      });
-
-    if (this._draggable) {
-      marker._on('dragend', (event) => {
-        this.markerDrag.emit(event.target.getLatLng());
-      });
-    }
-
-    marker.addTo(this._map);
+      }).addTo(this._map);
   }
 
 }

@@ -9,13 +9,10 @@
     <div *ngIf="_content==='events'">
       <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)"></app-event-preview-list>
     </div>
-    <div *ngIf="_content==='reservations'">
-      <app-reservation-preview-list (reservationsPageChanged)="contentPageChanged($event)"></app-reservation-preview-list>
-    </div>
   </div>
 
   <div class="footer">
-    <div *ngIf="_content==='locations' || _content==='events'" fxLayoutAlign="end" id="add" >
+    <div fxLayoutAlign="end" id="add">
       <button mat-fab color="primary" [routerLink]='["/dashboard", _content]'>
         <mat-icon>add</mat-icon>
       </button>

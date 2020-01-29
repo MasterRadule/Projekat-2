@@ -25,9 +25,6 @@ public class SeatGroup {
     private Double yCoordinate;
 
     @Column(nullable = false)
-    private Double angle;
-
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -114,13 +111,5 @@ public class SeatGroup {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public Double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(Double angle) {
-        this.angle = angle;
     }
 }

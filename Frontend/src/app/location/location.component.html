@@ -1,59 +1,17 @@
 <app-toolbar></app-toolbar>
-<div fxLayout="row" fxLayoutAlign="space-around" fxLayout.xs="column" id="content">
-  <form id="locationForm" fxLayout="column" fxLayoutGap="10px">
-    <mat-form-field>
-      <input [(ngModel)]="location.name" matInput matTooltip="Enter location's name" name="name" placeholder="Name">
-    </mat-form-field>
-    <mat-checkbox matTooltip="Enable or disable location" [(ngModel)]="location.disabled" name="disabled">
-      Disabled
-    </mat-checkbox>
-    <div id="mapDiv" *ngIf="this.initialized">
-      <app-map [_latitude]="location.latitude" [_longitude]="location.longitude"
-               [_zoom]="9"
-               [_maxZoom]="13"
-               [_mapName]="'location'" [_draggable]="true" (markerDrag)="updatePosition($event)"></app-map>
-    </div>
-    <span fxLayout="row" fxLayoutGap="10px">
+<form id="locationForm" fxLayout="column" fxLayoutGap="10px">
+  <mat-form-field>
+    <input [(ngModel)]="location.name" matInput matTooltip="Enter location's name" name="name" placeholder="Name">
+  </mat-form-field>
+  <mat-checkbox matTooltip="Enable or disable location" [(ngModel)]="location.disabled" name="disabled">
+    Disabled
+  </mat-checkbox>
+  <div id="mapDiv">
+    <app-map [_latitude]="location.latitude" [_longitude]="location.longitude" [_zoom]="9" [_maxZoom]="13"
+             [_mapName]="'location'" [_draggable]="true"></app-map>
+  </div>
+  <span fxLayout="row" fxLayoutGap="10px">
     <button mat-raised-button type="button" routerLink="/dashboard/locations/preview">Cancel</button>
     <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save</button>
-    </span>
-  </form>
-  <app-seat-groups id="sg" [width]="600" [height]="500"></app-seat-groups>
-  <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()" [formGroup]="this.addSeatGroupForm">
-    <mat-checkbox formControlName="parterre" (change)="toggleParterre()" [disabled]="this.location.id ===
-    undefined">
-      Parterre
-    </mat-checkbox>
-    <mat-form-field>
-      <input matInput formControlName="seatGroupName" type="text" placeholder="Seat group name" [required]="true"
-             [disabled]="this.location.id === undefined">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Number of rows</mat-label>
-      <mat-select formControlName="rowsNum" [required]="!this.addSeatGroupForm.controls['parterre'].value"
-                  (selectionChange)="this.calculateTotalSeats()" [disabled]="this.location.id === undefined">
-        <mat-option *ngFor="let item of makeArray(10); let i = index;" [value]="i+1">
-          {{i + 1}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Number of columns</mat-label>
-      <mat-select formControlName="colsNum" [required]="!this.addSeatGroupForm.controls['parterre'].value"
-                  (selectionChange)="this.calculateTotalSeats()" [disabled]="this.location.id === undefined">
-        <mat-option *ngFor="let item of makeArray(10); let i = index;" [value]="i+1">
-          {{i + 1}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput formControlName="totalSeats" type="number" placeholder="Total seats"
-             [required]="this.addSeatGroupForm.controls['parterre'].value"
-             [readonly]="!this.addSeatGroupForm.controls['parterre'].value"
-             [disabled]="this.location.id === undefined">
-    </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" [disabled]="this.location.id === undefined ||
-    !addSeatGroupForm.valid">Add
-    </button>
-  </form>
-</div>
+  </span>
+</form>

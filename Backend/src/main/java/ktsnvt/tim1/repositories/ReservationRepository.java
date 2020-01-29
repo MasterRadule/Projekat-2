@@ -27,9 +27,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Reservation> findByIdAndRegisteredUserIdAndIsCancelledFalse(Long id, Long registeredUserId);
 
-    @Lock(LockModeType.PESSIMISTIC_READ)
-    Optional<Reservation> findByIdAndIsCancelledFalseAndRegisteredUserId(Long id, Long registeredUserId);
-
     @Query(value = "select new ktsnvt.tim1.DTOs.DailyReportDTO(ed.date, count(t), sum(esg.price)) from Reservation r join " +
             "r.tickets t join t" +
             ".reservableSeatGroups rsg join rsg.eventSeatGroup esg join rsg.eventDay ed join r.event e join e" +

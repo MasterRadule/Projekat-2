@@ -105,22 +105,4 @@ public class LocationService {
     public List<LocationOptionDTO> getLocationsOptions() {
         return locationRepository.findAll().stream().map(LocationOptionDTO::new).collect(Collectors.toList());
     }
-
-    public SeatGroupDTO editSeatGroupPosition(Long id, SeatGroupDTO seatGroupDTO) throws EntityNotFoundException {
-        Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Location not found"));
-
-        SeatGroup seatGroup = location.getSeatGroups().stream()
-                .filter(sg -> sg.getId().equals(seatGroupDTO.getId()))
-                .findAny()
-                .orElseThrow(() -> new EntityNotFoundException("Seat group not found"));
-
-        seatGroup.setAngle(seatGroupDTO.getAngle());
-        seatGroup.setxCoordinate(seatGroupDTO.getxCoordinate());
-        seatGroup.setyCoordinate(seatGroupDTO.getyCoordinate());
-
-        locationRepository.save(location);
-
-        return seatGroupMapper.toDTO(seatGroup);
-    }
 }
