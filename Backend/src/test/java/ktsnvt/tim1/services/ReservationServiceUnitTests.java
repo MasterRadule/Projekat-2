@@ -171,12 +171,12 @@ public class ReservationServiceUnitTests {
         ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
         Optional<Reservation> o = Optional.of(entity);
 
-        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationRepositoryMocked.findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUserId)).thenReturn(o);
         Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
         ReservationDTO reservationDTO = reservationService.getReservation(reservationId);
 
         assertEquals(reservationId, reservationDTO.getId());
-        verify(reservationRepositoryMocked, times(1)).findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId);
+        verify(reservationRepositoryMocked, times(1)).findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUserId);
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ReservationServiceUnitTests {
 
         Long reservationId = 1L;
         Optional<Reservation> o = Optional.empty();
-        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationRepositoryMocked.findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUserId)).thenReturn(o);
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> reservationService.getReservation(reservationId));
         assertEquals("Reservation not found", exception.getMessage());
@@ -859,7 +859,7 @@ public class ReservationServiceUnitTests {
         ReservationDTO returnDTO = new ReservationDTO(reservationId, null, null, null, new ArrayList<>());
         Optional<Reservation> o = Optional.of(entity);
 
-        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationRepositoryMocked.findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUserId)).thenReturn(o);
         Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
 
         Exception exception = assertThrows(ImpossibleActionException.class, () -> reservationService.payReservationCreatePayment(reservationId));
@@ -882,7 +882,7 @@ public class ReservationServiceUnitTests {
         Payment payment = new Payment();
         payment.setId("paymentId");
 
-        Mockito.when(reservationRepositoryMocked.findByIdAndRegisteredUserIdAndIsCancelledFalse(reservationId, registeredUserId)).thenReturn(o);
+        Mockito.when(reservationRepositoryMocked.findByIdAndIsCancelledFalseAndRegisteredUserId(reservationId, registeredUserId)).thenReturn(o);
         Mockito.when(reservationMapperMocked.toDTO(entity)).thenReturn(returnDTO);
         PowerMockito.doReturn(payment).when(reservationServiceSpy, "makePaymentObject", entity);
         reservationServiceSpy.payReservationCreatePayment(reservationId);

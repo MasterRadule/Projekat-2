@@ -1,12 +1,15 @@
-<mat-toolbar color="primary" fxLayout="row" fxLayout.xs="column">
-  <span fxLayoutAlign="left" fxFlex>
+<mat-toolbar color="primary" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between center">
+  <span>
     <a mat-button routerLink="/dashboard/events/preview">My application</a>
     <button routerLink="/dashboard/events/preview" mat-button>Events</button>
     <button routerLink="/dashboard/locations/preview" mat-button>Locations</button>
     <button routerLink="/dashboard/reports" mat-button>Reports</button>
+    <button *ngIf="getRole != 'NO_ROLE'" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
   </span>
   <span fxLayoutAlign="right">
-    <button mat-button>My profile</button>
-    <button mat-button>Logout</button>
+    <button *ngIf="getRole != 'NO_ROLE'" mat-button>My profile</button>
+    <button *ngIf="getRole != 'NO_ROLE'" (click)="logOut()" mat-button>Logout</button>
+    <button *ngIf="getRole == 'NO_ROLE'" routerLink="/login" mat-button>Login</button>
+    <button *ngIf="getRole == 'NO_ROLE'" routerLink="/register" mat-button>Register</button>
   </span>
 </mat-toolbar>
