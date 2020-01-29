@@ -5,11 +5,17 @@ import {ReportsComponent} from '../reports/reports.component';
 import {LoginComponent} from '../auth/components/login/login.component';
 import {RegisterComponent} from '../auth/components/register/register.component';
 import {ReservationComponent} from '../reservation/reservation.component';
+import {EventComponent} from '../event/event.component';
 
 export const routes: Routes = [
   {
     path: 'dashboard/:content/preview',
     component: DashboardComponent
+  },
+  {
+    path: 'dashboard/events/:id',
+    component: EventComponent,
+    pathMatch: 'full'
   },
   {
     path: 'dashboard/locations/:id',
@@ -19,6 +25,11 @@ export const routes: Routes = [
   {
     path: 'dashboard/reservations/:id',
     component: ReservationComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'dashboard/events',
+    component: EventComponent,
     pathMatch: 'full'
   },
   {

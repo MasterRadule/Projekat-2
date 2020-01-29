@@ -39,9 +39,19 @@ ax-scheduler {
     line-height: 150px;
     text-align: center;
     width: 750px;
+    margin: 0 auto;
 }
 
-.upload-drop-zone.drop {
-    color: #222;
-    border-color: #222;
+#fileTable {
+  color: white;
+  border-spacing: 30px;
+  border-collapse: separate !important;
+}
+
+#fileTable td {
+  padding: 5px 10px;
+}
+
+.tableButton {
+  margin-left: 10px;
 }

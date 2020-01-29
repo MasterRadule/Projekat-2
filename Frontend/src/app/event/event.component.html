@@ -7,19 +7,64 @@
     </div>
   </div>
 
-    <div fxLayoutAlign="center">
-      <div [fileUploadInputFor]="fileUploadQueue" class="upload-drop-zone" accept=".xls,.xlsx">
-        Just drag and drop images/videos here
-      </div>
-    </div>
-    <div style="width: 500px">
-        <mat-file-upload-queue #fileUploadQueue
-            [fileAlias]="'file'"
-            [httpUrl]="getUploadURL()" multiple>
+  <div ng2FileDrop
+       [uploader]="uploader"
+       fxLayout="column" fxLayoutAlign="center"
+       class="upload-drop-zone">
+      Just drag and drop images/videos here
+  </div>
 
-            <mat-file-upload [file]="file" [id]="i" *ngFor="let file of fileUploadQueue.files; let i = index" (onUpload)="fileUploaded($event)"></mat-file-upload>
-        </mat-file-upload-queue>
+  <div *ngIf="!!uploader && uploader.queue.length" fxLayout="row wrap" fxLayoutAlign="center">
+      <table class="table" id="fileTable">
+          <thead>
+          <tr align="center">
+              <th width="50%">Name</th>
+              <th>Size</th>
+              <th>Progress</th>
+              <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of uploader.queue">
+              <td><strong>{{ item?.file?.name }}</strong></td>
+              <td *ngIf="uploader.options.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+              <td *ngIf="uploader.options.isHTML5">
+                  <div class="progress" style="width:100px;">
+                      <mat-progress-bar *ngIf="item.isUploading" mode="buffer"></mat-progress-bar>
+                      <mat-progress-bar *ngIf="item.isSuccess" mode="determinate"></mat-progress-bar>
+                  </div>
+              </td>
+              <td nowrap>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="upload(item)" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                      <mat-icon color="primary" matPrefix>cloud_upload</mat-icon> Upload
+                  </button>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="item.cancel()" [disabled]="!item.isUploading">
+                      <mat-icon color="primary" matPrefix>cancel</mat-icon> Cancel
+                  </button>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="item.remove()">
+                      <mat-icon color="primary" matPrefix>delete</mat-icon> Remove
+                  </button>
+              </td>
+          </tr>
+          </tbody>
+      </table>
     </div>
+
+      <div *ngIf="!!uploader && uploader.queue.length" style="color:white;" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="10px">
+          <button type="button" mat-raised-button
+                  (click)="uploadAll()" [disabled]="!uploader.getNotUploadedItems().length"><mat-icon color="primary" matPrefix>cloud_upload</mat-icon> Upload all
+          </button>
+          <button type="button" mat-raised-button
+                  (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading"><mat-icon color="primary" matPrefix>cancel</mat-icon> Cancel all
+          </button>
+          <button type="button" mat-raised-button
+                  (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length"><mat-icon color="primary" matPrefix>delete</mat-icon> Remove all
+          </button>
+      </div>
+
   
   <div *ngIf="!!slider && slider.ligthboxShow" id="delete">
     <span>

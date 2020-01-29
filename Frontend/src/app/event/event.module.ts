@@ -13,12 +13,12 @@ import {SharedModule} from '../shared/shared.module';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import { AxiomSchedulerModule } from 'axiom-scheduler';
 import { DialogComponent } from './dialog/dialog.component';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { NgImageSliderModule } from 'ng-image-slider';
-import { MatFileUploadModule } from 'angular-material-fileupload';
+import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
-  declarations: [EventComponent, DialogComponent],
+  declarations: [EventComponent, DialogComponent, FileDropDirective, FileSelectDirective],
   entryComponents: [DialogComponent],
     imports: [
         CommonModule,
@@ -36,10 +36,9 @@ import { MatFileUploadModule } from 'angular-material-fileupload';
         AxiomSchedulerModule,
         MatDialogModule,
         MatDatepickerModule,
-        NgxMaterialTimepickerModule,
         NgImageSliderModule,
         MatIconModule,
-        MatFileUploadModule
+        MatProgressBarModule
     ],
   exports: [
     EventComponent

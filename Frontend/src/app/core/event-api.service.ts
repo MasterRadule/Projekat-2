@@ -11,7 +11,7 @@ export class EventApiService {
   }
 
   getEvent(eventId: number) {
-    return this._http.get(`${this._baseUrl}/events/${eventId}`);
+    return this._http.get(`events/${eventId}`);
   }
 
   getEvents(page: number, size: number) {
@@ -29,18 +29,18 @@ export class EventApiService {
   }
 
   createEvent(event: Event) {
-    return this._http.post(`${this._baseUrl}/events`, event.serialize());
+    return this._http.post(`events`, event.serialize());
   }
 
   editEvent(event: Event) {
-    return this._http.put(`${this._baseUrl}/events`, event);
+    return this._http.put(`events`, event);
   }
 
   getEventsPicturesAndVideos(id: number) {
-    return this._http.get(`${this._baseUrl}/events/${id}/pictures-and-videos`);
+    return this._http.get(`events/${id}/pictures-and-videos`);
   }
 
   deleteMediaFile(eventID: number, id: number) {
-    return this._http.delete(`${this._baseUrl}/events/${eventID}/pictures-and-videos/${id}`);
+    return this._http.delete(`events/${eventID}/pictures-and-videos/${id}`);
   }
 }

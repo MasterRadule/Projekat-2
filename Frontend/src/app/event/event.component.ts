@@ -10,6 +10,7 @@ import { AxiomSchedulerEvent, AxiomSchedulerComponent } from 'axiom-scheduler';
 import {DialogComponent} from './dialog/dialog.component';
 import { colors } from './colors';
 import {NgImageSliderComponent} from 'ng-image-slider';
+import { FileUploader } from 'ng2-file-upload';
 import * as moment from 'moment';
 
 @Component({
@@ -22,11 +23,26 @@ export class EventComponent implements OnInit {
   private eventCategories: string[] = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
   private events: AxiomSchedulerEvent[] = [];
   private imageObject: Array<object> = [];
+  private uploader: FileUploader;
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
 
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private snackBar: MatSnackBar,
               private router: Router, private dialog: MatDialog) {
+    this.uploader = new FileUploader({
+      url: null
+    });
+ 
+    this.uploader.response.subscribe(res => {
+      this.snackBar.open(res, 'Dismiss', {
+        duration: 3000
+      });
+      this.getPicturesAndVideos();
+    });
+
+    this.uploader.onAfterAddingFile = (file) => {
+      file.withCredentials = false;
+    };
   }
 
   ngOnInit() {
@@ -202,13 +218,14 @@ export class EventComponent implements OnInit {
       );
   }
 
-  getUploadURL() {
-    return `http://localhost:8080/api/events/${this.event.id}/pictures-and-videos`;
+  upload(item) {
+    item.url = `http://localhost:8080/api/events/${this.event.id}/pictures-and-videos`;
+    item.upload();
   }
 
-  fileUploaded($event) {
-    if ($event.event.type === "load") {
-       this.getPicturesAndVideos();
+  uploadAll() { 
+    for (let file of this.uploader.queue) {
+       this.upload(file);
     }
   }
 
