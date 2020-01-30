@@ -16,6 +16,7 @@ import { DialogComponent } from './dialog/dialog.component';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {SeatGroupsModule} from '../seat-groups/seat-groups.module';
 
 @NgModule({
   declarations: [EventComponent, DialogComponent, FileDropDirective, FileSelectDirective],
@@ -38,7 +39,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
         MatDatepickerModule,
         NgImageSliderModule,
         MatIconModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        SeatGroupsModule
     ],
   exports: [
     EventComponent

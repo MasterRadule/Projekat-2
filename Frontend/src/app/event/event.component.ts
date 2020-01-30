@@ -4,6 +4,7 @@ import {EventDay} from '../shared/model/event-day.model';
 import {MediaFile} from '../shared/model/media-file.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EventApiService} from '../core/event-api.service';
+import {LocationApiService} from '../core/location-api.service';
 import {MatSnackBar} from '@angular/material';
 import {MatDialog} from '@angular/material/dialog';
 import { AxiomSchedulerEvent, AxiomSchedulerComponent } from 'axiom-scheduler';
@@ -11,6 +12,8 @@ import {DialogComponent} from './dialog/dialog.component';
 import { colors } from './colors';
 import {NgImageSliderComponent} from 'ng-image-slider';
 import { FileUploader } from 'ng2-file-upload';
+import {Page} from '../shared/model/page.model';
+import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 import * as moment from 'moment';
 
 @Component({
@@ -24,11 +27,13 @@ export class EventComponent implements OnInit {
   private events: AxiomSchedulerEvent[] = [];
   private imageObject: Array<object> = [];
   private uploader: FileUploader;
+  private locationsOptions: Location[];
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
+  @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
-  constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private snackBar: MatSnackBar,
-              private router: Router, private dialog: MatDialog) {
+  constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
+    private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
     this.uploader = new FileUploader({
       url: null
     });
@@ -43,6 +48,9 @@ export class EventComponent implements OnInit {
     this.uploader.onAfterAddingFile = (file) => {
       file.withCredentials = false;
     };
+
+    this.getLocationsOptions();
+    this.getSeatGroups(1);
   }
 
   ngOnInit() {
@@ -227,6 +235,35 @@ export class EventComponent implements OnInit {
     for (let file of this.uploader.queue) {
        this.upload(file);
     }
+  }
+
+  private getSeatGroups(id: number) {
+    this.locationApiService.getSeatGroups(id, 0, Number.MAX_SAFE_INTEGER).subscribe(
+      {
+        next: (result: Page) => {
+          this.seatGroupComponent.seatGroups = result.content;
+        },
+        error: (message: string) => {
+          this.snackBar.open(message, 'Dismiss', {
+            duration: 3000
+          });
+        }
+      });
+  }
+
+  private getLocationsOptions() {
+    this.locationApiService.getLocationsOptions().subscribe({
+      next: (result: Location[]) => {
+        this.locationsOptions = result;
+      },
+      error: (message: string) => {
+        this.snackBar.open(message);
+      }
+    });
+  }
+
+  private changeSelectedLocation($event) {
+    this.getSeatGroups($event.value);
   }
 
 }

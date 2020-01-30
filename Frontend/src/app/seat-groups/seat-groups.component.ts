@@ -11,6 +11,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
+  @Input() private draggable: boolean;
 
   private stage: Konva.Stage;
   private layer: Konva.Layer;
@@ -102,6 +103,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   set seatGroups(value: SeatGroup[]) {
     this._seatGroups = value;
+    this.layer.destroyChildren();
     this.setUpSeatGroups();
     this.layer.draw();
   }
@@ -153,33 +155,34 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
       rotation: seatGroup.angle,
-      draggable: true,
+      draggable: this.draggable,
       id: seatGroup.id.toString()
     });
 
-    seatGroupRepresentation.on('dragstart', () => {
-      this.stage.container().style.cursor = 'pointer';
-    });
+    if (this.draggable) {
+      seatGroupRepresentation.on('dragstart', () => {
+        this.stage.container().style.cursor = 'pointer';
+      });
 
-    seatGroupRepresentation.on('dragend', () => {
+      seatGroupRepresentation.on('dragend', () => {
         this.stage.container().style.cursor = 'default';
         seatGroup.angle = seatGroupRepresentation.rotation();
         seatGroup.xCoordinate = seatGroupRepresentation.getPosition().x - this.stage.getPosition().x;
         seatGroup.yCoordinate = seatGroupRepresentation.getPosition().y - this.stage.getPosition().y;
         seatGroup.changed = true;
-      }
-    );
+      });
 
-    seatGroupRepresentation.on('dblclick', () => {
-      if (!this.transformersMap.has(seatGroupRepresentation)) {
-        const rotationSnap = SeatGroupsComponent.setUpRotationSnaps(seatGroupRepresentation);
-        this.transformersMap.set(seatGroupRepresentation, rotationSnap);
-        this.layer.add(rotationSnap);
-      } else {
-        this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
-      }
-      this.layer.draw();
-    });
+      seatGroupRepresentation.on('dblclick', () => {
+        if (!this.transformersMap.has(seatGroupRepresentation)) {
+          const rotationSnap = SeatGroupsComponent.setUpRotationSnaps(seatGroupRepresentation);
+          this.transformersMap.set(seatGroupRepresentation, rotationSnap);
+          this.layer.add(rotationSnap);
+        } else {
+          this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
+        }
+        this.layer.draw();
+      });
+    }
 
     return seatGroupRepresentation;
   }

@@ -119,6 +119,28 @@
         [axEventToolbar]="true" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
         [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
   </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="center">
+    <mat-form-field>
+      <mat-label>Location</mat-label>
+      <mat-select name="locationID" (selectionChange)="changeSelectedLocation($event)">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let location of locationsOptions" [value]="location.id">
+          {{location.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="center">
+    <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false"></app-seat-groups>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="center">
+    <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save location</button>
+  </div>
+  
+
 </div>
 
 
