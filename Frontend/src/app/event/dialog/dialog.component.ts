@@ -6,8 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent implements OnInit {
-  public dateTime = {date:"", time:""};
-  public createMode: boolean = true;
+  public dateTime = {date: '', time: ''};
+  public createMode = true;
 
   constructor() { }
 

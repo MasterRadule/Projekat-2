@@ -26,7 +26,8 @@ export class EventApiService {
   searchEvents(parameters: SearchEventsDTO, page: number, size: number) {
     const locationID: number | string = parameters.locationID == null ? '' : parameters.locationID;
     const category: string = parameters.category == null ? '' : parameters.category;
-    return this._http.get(`events/search?name=${parameters.name}&locationID=${locationID}&category=${category}&startDate=${parameters.startDate}&endDate=${parameters.endDate}&page=${page}&size=${size}`);
+    return this._http.get(`events/search?name=${parameters.name}&locationID=${locationID}\
+    &category=${category}&startDate=${parameters.startDate}&endDate=${parameters.endDate}&page=${page}&size=${size}`);
   }
 
   createEvent(event: Event) {
