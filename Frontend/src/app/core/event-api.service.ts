@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchEventsDTO} from '../shared/model/search-events-dto.model';
+import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
 import {Event} from '../shared/model/event.model';
 
 @Injectable({
@@ -42,5 +43,13 @@ export class EventApiService {
 
   deleteMediaFile(eventID: number, id: number) {
     return this._http.delete(`events/${eventID}/pictures-and-videos/${id}`);
+  }
+
+  getEventLocationAndSeatGroups(eventID: number) {
+    return this._http.get(`events/${eventID}/location`);
+  }
+
+  setEventLocationAndSeatGroups(locationSeatGroupDTO: LocationSeatGroupDTO) {
+    return this._http.put(`events/location`, locationSeatGroupDTO);
   }
 }

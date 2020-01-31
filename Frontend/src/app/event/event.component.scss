@@ -4,7 +4,7 @@
   	width: 25%;
 }
 
-#eventForm > mat-checkbox, input, textarea {
+form > mat-checkbox, input, textarea {
   	color: #c1c1c1;
 }
 
@@ -54,4 +54,13 @@ ax-scheduler {
 
 .tableButton {
   margin-left: 10px;
+}
+
+#locationSelect {
+  margin-left:50px;
+  margin-top:50px;
+}
+
+.seatGroups {
+  margin-left:50px;
 }

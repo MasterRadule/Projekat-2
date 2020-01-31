@@ -500,10 +500,8 @@ public class EventControllerIntegrationTests {
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO(eventID, locationID);
         EventSeatGroupDTO esgDTO1 = new EventSeatGroupDTO(1L);
         esgDTO1.setPrice(200.0);
-        esgDTO1.setFreeSeats(200);
         EventSeatGroupDTO esgDTO2 = new EventSeatGroupDTO(26L);
         esgDTO2.setPrice(300.0);
-        esgDTO2.setFreeSeats(300);
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
         seatGroupDTO.getEventSeatGroups().add(esgDTO2);
 

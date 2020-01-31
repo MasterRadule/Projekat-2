@@ -14,6 +14,8 @@ import {NgImageSliderComponent} from 'ng-image-slider';
 import { FileUploader } from 'ng2-file-upload';
 import {Page} from '../shared/model/page.model';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
+import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
+import {EventSeatGroupDTO} from '../shared/model/event-seat-group-dto.model';
 import * as moment from 'moment';
 
 @Component({
@@ -28,6 +30,10 @@ export class EventComponent implements OnInit {
   private imageObject: Array<object> = [];
   private uploader: FileUploader;
   private locationsOptions: Location[];
+  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, []);
+  private selectedSeatGroupIndex: number;
+  private selectedSeatGroupId: number = -1;
+  private enabledSeatGroup: boolean = false;
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
@@ -50,7 +56,6 @@ export class EventComponent implements OnInit {
     };
 
     this.getLocationsOptions();
-    this.getSeatGroups(1);
   }
 
   ngOnInit() {
@@ -68,6 +73,7 @@ export class EventComponent implements OnInit {
           this.event = result;
           this.getEventDays();
           this.getPicturesAndVideos();
+          this.getEventLocationAndSeatGroups();
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
@@ -237,11 +243,18 @@ export class EventComponent implements OnInit {
     }
   }
 
-  private getSeatGroups(id: number) {
+  private getSeatGroups(id: number, newLoc: boolean) {
     this.locationApiService.getSeatGroups(id, 0, Number.MAX_SAFE_INTEGER).subscribe(
       {
         next: (result: Page) => {
           this.seatGroupComponent.seatGroups = result.content;
+          if (newLoc) {
+            this.locationSeatGroupDTO.eventSeatGroups = [];
+            this.selectedSeatGroupId = -1;
+            this.enabledSeatGroup = false;
+            this.seatGroupComponent.enabledSeatGroupsIds = [];
+            this.seatGroupComponent.redraw();
+          } 
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
@@ -263,7 +276,91 @@ export class EventComponent implements OnInit {
   }
 
   private changeSelectedLocation($event) {
-    this.getSeatGroups($event.value);
+    if ($event.value == null) {
+      this.locationSeatGroupDTO.eventSeatGroups = [];
+      this.selectedSeatGroupId = -1;
+      this.enabledSeatGroup = false;
+      this.seatGroupComponent.seatGroups = [];
+      return;
+    }
+    let newLoc = $event.value === this.locationSeatGroupDTO.eventID ? false : true;
+    if (newLoc) {
+      this.getSeatGroups($event.value, newLoc);
+    }
+    else {
+      this.getEventLocationAndSeatGroups();
+    }
+  }
+
+  private getEventLocationAndSeatGroups() {
+    this.eventApiService.getEventLocationAndSeatGroups(this.event.id).subscribe(
+      {
+        next: (result: LocationSeatGroupDTO) => {
+          this.locationSeatGroupDTO = result;
+          if (this.locationSeatGroupDTO.locationID != null) {
+            this.getSeatGroups(this.locationSeatGroupDTO.locationID, false);
+            this.locationSeatGroupDTO.eventSeatGroups.forEach(esg => this.seatGroupComponent.enabledSeatGroupsIds.push(esg.seatGroupID));
+          }
+          this.selectedSeatGroupId = -1;
+          this.enabledSeatGroup = false;
+        },
+        error: (message: string) => {
+          this.snackBar.open(message, 'Dismiss', {
+            duration: 3000
+          });
+        }
+      }
+    );
+  }
+
+  private seatGroupClicked($event) {
+    this.selectedSeatGroupId = $event;
+    this.enabledSeatGroup = false;
+    let selectedGroup = this.locationSeatGroupDTO.eventSeatGroups.filter(esg => esg.seatGroupID == $event);
+    if (selectedGroup.length != 0) {
+      this.selectedSeatGroupIndex = this.locationSeatGroupDTO.eventSeatGroups.indexOf(selectedGroup[0]);
+      this.enabledSeatGroup = true;
+    }
+  }
+
+  private seatGroupStatusChanged($event) {
+    if ($event.checked) {
+      let esgDTO: EventSeatGroupDTO = new EventSeatGroupDTO(this.selectedSeatGroupId, 1);
+      this.locationSeatGroupDTO.eventSeatGroups.push(esgDTO.serialize());
+      this.selectedSeatGroupIndex = this.locationSeatGroupDTO.eventSeatGroups.length - 1;
+      this.seatGroupComponent.enabledSeatGroupsIds.push(this.selectedSeatGroupId);
+    }
+    else {
+      this.locationSeatGroupDTO.eventSeatGroups.splice(this.selectedSeatGroupIndex, 1);
+      let idx = this.seatGroupComponent.enabledSeatGroupsIds.indexOf(this.selectedSeatGroupId);
+      this.seatGroupComponent.enabledSeatGroupsIds.splice(idx, 1);
+    }
+
+    this.seatGroupComponent.redraw();
+  }
+
+  private saveLocationAndSeatGroups() {
+    if (this.locationSeatGroupDTO.eventSeatGroups.length == 0) {
+      this.snackBar.open("At least one seat group must be enabled", 'Dismiss', {
+        duration: 3000
+      });
+      return;
+    }
+    this.eventApiService.setEventLocationAndSeatGroups(this.locationSeatGroupDTO).subscribe(
+      {
+        next: (result: Event) => {
+          this.snackBar.open("Location and seat groups successfully saved", 'Dismiss', {
+            duration: 3000
+          });
+        },
+        error: (message: string) => {
+          this.snackBar.open(message, 'Dismiss', {
+            duration: 3000
+          });
+          this.getEventLocationAndSeatGroups();
+        }
+      }
+    );
   }
 
 }

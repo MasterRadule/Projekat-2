@@ -120,10 +120,10 @@
         [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
   </div>
 
-  <div fxLayout="row wrap" fxLayoutAlign="center">
+  <div fxLayout="row wrap" id="locationSelect">
     <mat-form-field>
       <mat-label>Location</mat-label>
-      <mat-select name="locationID" (selectionChange)="changeSelectedLocation($event)">
+      <mat-select name="locationID" [(ngModel)]="locationSeatGroupDTO.locationID" (selectionChange)="changeSelectedLocation($event)">
         <mat-option [value]="null">None</mat-option>
         <mat-option *ngFor="let location of locationsOptions" [value]="location.id">
           {{location.name}}
@@ -132,12 +132,23 @@
     </mat-form-field>
   </div>
 
-  <div fxLayout="row wrap" fxLayoutAlign="center">
-    <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false"></app-seat-groups>
+  <div fxLayout="row wrap">
+    <div fxLayout="column" class="seatGroups">
+      <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false" 
+      (seatGroupClicked)="seatGroupClicked($event)"></app-seat-groups>
+    </div>
+    <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups">
+      <mat-checkbox *ngIf="selectedSeatGroupId != -1" [(ngModel)]="enabledSeatGroup" name="enabled" (change)="seatGroupStatusChanged($event)">
+        Enabled
+      </mat-checkbox>
+      <mat-form-field *ngIf="enabledSeatGroup">
+        <input [(ngModel)]="locationSeatGroupDTO.eventSeatGroups[selectedSeatGroupIndex].price" matInput matTooltip="Enter seat group price" name="price" placeholder="Seat group price" type="number" min=1>
+       </mat-form-field>
+    </form>
   </div>
 
   <div fxLayout="row wrap" fxLayoutAlign="center">
-    <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save location</button>
+    <button mat-raised-button color="primary" type="submit" style="margin-bottom:10px;" (click)="saveLocationAndSeatGroups()">Save location</button>
   </div>
   
 
