@@ -58,7 +58,7 @@ public class EventController {
 
     @PostMapping(value = "/{id}/pictures-and-videos")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("files") MultipartFile[] files) {
+    public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("file") MultipartFile[] files) {
         try {
             eventService.uploadPicturesAndVideos(id, files);
             return new ResponseEntity<>("Files uploaded successfully", HttpStatus.OK);
@@ -82,8 +82,7 @@ public class EventController {
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
-            eventService.deleteMediaFile(eventID, fileID);
-            return new ResponseEntity<>("File deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(eventService.deleteMediaFile(eventID, fileID), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -119,6 +118,16 @@ public class EventController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (EntityNotValidException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("{eventID}/location")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Object> getEventLocationAndSeatGroups(@PathVariable("eventID") Long id) {
+        try {
+            return new ResponseEntity<>(eventService.getEventLocationAndSeatGroups(id), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

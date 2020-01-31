@@ -9,6 +9,7 @@ import {DashboardModule} from './dashboard/dashboard.module';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core/core.module';
 import {LocationModule} from './location/location.module';
+import {EventModule} from './event/event.module';
 import {ToolbarModule} from './toolbar/toolbar.module';
 import {ReportsModule} from './reports/reports.module';
 import {SeatGroupsModule} from './seat-groups/seat-groups.module';
@@ -31,6 +32,7 @@ import {UrlInterceptor} from './interceptors/url.interceptor';
     CoreModule,
     FlexLayoutModule,
     LocationModule,
+    EventModule,
     ReservationModule,
     ToolbarModule,
     ReportsModule,

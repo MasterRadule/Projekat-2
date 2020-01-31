@@ -1,0 +1,162 @@
+<app-toolbar></app-toolbar>
+<div class="content" fxLayout="column" fxLayoutGap="20px">
+
+  <div *ngIf="imageObject.length != 0" fxLayout="row wrap" fxLayoutAlign="center">
+    <div id="slider">
+      <ng-image-slider [images]="imageObject" #slider></ng-image-slider>
+    </div>
+  </div>
+
+  <div ng2FileDrop
+       [uploader]="uploader"
+       fxLayout="column" fxLayoutAlign="center"
+       class="upload-drop-zone">
+      Just drag and drop images/videos here
+  </div>
+
+  <div *ngIf="uploader != undefined && uploader.queue.length" fxLayout="row wrap" fxLayoutAlign="center">
+      <table class="table" id="fileTable">
+          <thead>
+          <tr align="center">
+              <th width="50%">Name</th>
+              <th>Size</th>
+              <th>Progress</th>
+              <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of uploader.queue">
+              <td><strong>{{ item?.file?.name }}</strong></td>
+              <td *ngIf="uploader.options.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+              <td *ngIf="uploader.options.isHTML5">
+                  <div class="progress" style="width:100px;">
+                      <mat-progress-bar *ngIf="item.isUploading" mode="buffer"></mat-progress-bar>
+                      <mat-progress-bar *ngIf="item.isSuccess" mode="determinate"></mat-progress-bar>
+                  </div>
+              </td>
+              <td nowrap>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="upload(item)" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                      <mat-icon color="primary" matPrefix>cloud_upload</mat-icon> Upload
+                  </button>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="item.cancel()" [disabled]="!item.isUploading">
+                      <mat-icon color="primary" matPrefix>cancel</mat-icon> Cancel
+                  </button>
+                  <button type="button" mat-raised-button class="tableButton"
+                          (click)="item.remove()">
+                      <mat-icon color="primary" matPrefix>delete</mat-icon> Remove
+                  </button>
+              </td>
+          </tr>
+          </tbody>
+      </table>
+    </div>
+
+      <div *ngIf="uploader != undefined && uploader.queue.length" style="color:white;" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="10px">
+          <button type="button" mat-raised-button
+                  (click)="uploadAll()" [disabled]="!uploader.getNotUploadedItems().length"><mat-icon color="primary" matPrefix>cloud_upload</mat-icon> Upload all
+          </button>
+          <button type="button" mat-raised-button
+                  (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading"><mat-icon color="primary" matPrefix>cancel</mat-icon> Cancel all
+          </button>
+          <button type="button" mat-raised-button
+                  (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length"><mat-icon color="primary" matPrefix>delete</mat-icon> Remove all
+          </button>
+      </div>
+
+  
+  <div *ngIf="slider != undefined && slider.ligthboxShow" id="delete">
+    <span>
+      <button mat-fab color="primary" (click)="deleteMediaFile()" matTooltip="Delete">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </span>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutGap="50px">
+    <form id="eventForm" fxLayout="column" fxLayoutGap="5px">
+      <mat-form-field>
+        <input [(ngModel)]="event.name" matInput matTooltip="Enter event's name" name="name" placeholder="Name" spellcheck="false">
+      </mat-form-field>
+      <mat-form-field>
+        <textarea [(ngModel)]="event.description" matInput cdkTextareaAutosize matTooltip="Enter event's description" name="description" placeholder="Description" spellcheck="false"></textarea>
+      </mat-form-field>
+      <mat-form-field>
+          <mat-label>Event category</mat-label>
+          <mat-select [(ngModel)]="event.category" name="category">
+            <mat-option *ngFor="let category of eventCategories" [value]="category">
+              {{category}}
+            </mat-option>
+          </mat-select>
+       </mat-form-field>
+       <mat-form-field>
+          <input [(ngModel)]="event.reservationDeadlineDays" matInput matTooltip="Enter event's reservation deadline days" name="reservationDeadlineDays" placeholder="Reservation deadline days" type="number"min=1>
+       </mat-form-field>
+       <mat-form-field>
+          <input [(ngModel)]="event.maxTicketsPerReservation" matInput matTooltip="Enter event's max tickets per reservation" name="maxTicketsPerReservation" placeholder="Maximum tickets per reservation" type="number" min=1>
+       </mat-form-field>
+       <mat-checkbox [(ngModel)]="event.activeForReservations" name="activeForReservations">
+           Active for reservations
+       </mat-checkbox>
+       <mat-checkbox [(ngModel)]="event.cancelled" name="cancelled">
+           Cancelled
+       </mat-checkbox>
+
+       <span fxLayout="row" fxLayoutGap="10px">
+        <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)"
+        matTooltip="Add an event day to calendar">Add event day</button>
+      </span>
+
+      <span fxLayout="row" fxLayoutGap="10px" id="buttons">
+        <button mat-raised-button color="primary" type="submit" (click)="createOrEditEvent()" matTooltip="Save event's data and event's days">Save</button>
+        <button mat-raised-button type="button" routerLink="/dashboard/events/preview" 
+        matTooltip="Back to events preview">Cancel</button>
+      </span>
+    </form>
+
+    <ax-scheduler fxLayout="column" [axEventTemplate]="t" [axSchedulerView]="'month'"
+        [axEventToolbar]="true" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
+        [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
+  </div>
+
+  <div fxLayout="row wrap" id="locationSelect">
+    <mat-form-field>
+      <mat-label>Location</mat-label>
+      <mat-select name="locationID" [(ngModel)]="locationSeatGroupDTO.locationID" (selectionChange)="changeSelectedLocation($event)">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let location of locationsOptions" [value]="location.id">
+          {{location.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div fxLayout="row wrap">
+    <div fxLayout="column" class="seatGroups">
+      <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false" 
+      (seatGroupClicked)="seatGroupClicked($event)"></app-seat-groups>
+    </div>
+    <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups">
+      <mat-checkbox *ngIf="selectedSeatGroupId != -1" [(ngModel)]="enabledSeatGroup" name="enabled" (change)="seatGroupStatusChanged($event)">
+        Enabled
+      </mat-checkbox>
+      <mat-form-field *ngIf="enabledSeatGroup">
+        <input [(ngModel)]="locationSeatGroupDTO.eventSeatGroups[selectedSeatGroupIndex].price" matInput matTooltip="Enter seat group price" name="price" placeholder="Seat group price" type="number" min=1>
+       </mat-form-field>
+    </form>
+  </div>
+
+  <div fxLayout="row wrap" fxLayoutAlign="center">
+    <button mat-raised-button color="primary" type="submit" style="margin-bottom:10px;" (click)="saveLocationAndSeatGroups()">Save location</button>
+  </div>
+  
+
+</div>
+
+
+<ng-template #t let-item="item">
+  <div class="event-template">
+    Starts at <b> {{ item.from | date:'HH:mm' }} </b>
+  </div>
+</ng-template>

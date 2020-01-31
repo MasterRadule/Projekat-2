@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, Output, EventEmitter} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
 import Konva from 'konva';
 
@@ -11,16 +11,20 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
+  @Input() private draggable: boolean;
+  @Output() seatGroupClicked = new EventEmitter<number>();
 
   private stage: Konva.Stage;
   private layer: Konva.Layer;
   private seatGroupRepresentations: Konva.Group[] = [];
   private transformersMap = new Map<Konva.Group, Konva.Transformer>();
+  private selectedSeatGroupIndex: number;
+  public enabledSeatGroupsIds: number[] = [];
 
   constructor() {
   }
 
-  private static setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
+  private setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
       const text = new Konva.Text({
         x: 0,
@@ -37,7 +41,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       seatGroupRepresentation.add(new Konva.Rect({
         x: 0,
         y: 0,
-        stroke: '#c1c1c1',
+        stroke: this.draggable ? '#c1c1c1':'black',
         strokeWidth: 1,
         width: text.width(),
         height: text.height(),
@@ -102,6 +106,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   set seatGroups(value: SeatGroup[]) {
     this._seatGroups = value;
+    this.layer.destroyChildren();
     this.setUpSeatGroups();
     this.layer.draw();
   }
@@ -142,7 +147,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   private setUpSeatGroups() {
     for (const seatGroup of this._seatGroups) {
       const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
-      SeatGroupsComponent.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
+      this.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
       this.seatGroupRepresentations.push(seatGroupRepresentation);
       this.layer.add(seatGroupRepresentation);
     }
@@ -153,43 +158,74 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
       rotation: seatGroup.angle,
-      draggable: true,
+      draggable: this.draggable,
       id: seatGroup.id.toString()
     });
 
-    seatGroupRepresentation.on('dragstart', () => {
-      this.stage.container().style.cursor = 'pointer';
-    });
+    if (this.draggable) {
+      seatGroupRepresentation.on('dragstart', () => {
+        this.stage.container().style.cursor = 'pointer';
+      });
 
-    seatGroupRepresentation.on('dragend', () => {
+      seatGroupRepresentation.on('dragend', () => {
         this.stage.container().style.cursor = 'default';
         seatGroup.angle = seatGroupRepresentation.rotation();
         seatGroup.xCoordinate = seatGroupRepresentation.getPosition().x - this.stage.getPosition().x;
         seatGroup.yCoordinate = seatGroupRepresentation.getPosition().y - this.stage.getPosition().y;
         seatGroup.changed = true;
-      }
-    );
+      });
 
-    seatGroupRepresentation.on('dblclick', () => {
-      if (!this.transformersMap.has(seatGroupRepresentation)) {
-        const rotationSnap = SeatGroupsComponent.setUpRotationSnaps(seatGroupRepresentation);
-        this.transformersMap.set(seatGroupRepresentation, rotationSnap);
-        this.layer.add(rotationSnap);
-      } else {
-        this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
-      }
-      this.layer.draw();
-    });
-
+      seatGroupRepresentation.on('dblclick', () => {
+        if (!this.transformersMap.has(seatGroupRepresentation)) {
+          const rotationSnap = SeatGroupsComponent.setUpRotationSnaps(seatGroupRepresentation);
+          this.transformersMap.set(seatGroupRepresentation, rotationSnap);
+          this.layer.add(rotationSnap);
+        } else {
+          this.transformersMap.get(seatGroupRepresentation).attachTo(seatGroupRepresentation);
+        }
+        this.layer.draw();
+      });
+    }
+    else {
+      seatGroupRepresentation.on('click', () => {
+        this.redraw();
+        this.changeStroke(seatGroupRepresentation, "red", 2);
+        this.selectedSeatGroupIndex = seatGroupRepresentation._id;
+        this.layer.draw();
+        this.seatGroupClicked.emit(parseInt(seatGroupRepresentation.id()));
+      });
+    }
+    
     return seatGroupRepresentation;
   }
 
   addSeatGroup(seatGroup: SeatGroup) {
     this.seatGroups.push(seatGroup);
     const seatGroupRepresentation = this.setUpSeatGroup(seatGroup);
-    SeatGroupsComponent.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
+    this.setUpSeatsOrParterre(seatGroup, seatGroupRepresentation);
     this.seatGroupRepresentations.push(seatGroupRepresentation);
     this.layer.add(seatGroupRepresentation);
     seatGroupRepresentation.draw();
+  }
+
+  changeStroke(seatGroupRepresentation: Konva.Group | Konva.Shape, color: String, strokeWidth: number) {
+    seatGroupRepresentation.children.each((child, index) => {
+      if (index != 0) {
+        child.setAttr("stroke", color);
+        child.setAttr("strokeWidth", strokeWidth);
+      }
+    });
+  }
+
+  redraw() {
+    this.layer.children.each((child, index) => {
+      if (this.enabledSeatGroupsIds.includes(parseInt(child.id()))) {
+        this.changeStroke(child, "black", 1);
+      }
+      else {
+        this.changeStroke(child, "#c1c1c1", 2);
+      }
+    });
+    this.layer.draw();
   }
 }

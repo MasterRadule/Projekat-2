@@ -6,6 +6,8 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.EventDayMapper;
 import ktsnvt.tim1.mappers.EventMapper;
+import ktsnvt.tim1.mappers.EventSeatGroupMapper;
+import ktsnvt.tim1.mappers.MediaFileMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -43,12 +45,18 @@ public class EventService {
     @Autowired
     private EventDayMapper eventDayMapper;
 
+    @Autowired
+    private EventSeatGroupMapper eventSeatGroupMapper;
+
+    @Autowired
+    private MediaFileMapper mediaFileMapper;
+
     public Page<EventDTO> getEvents(Pageable pageable) {
         return eventRepository.findAll(pageable).map(e -> eventMapper.toDTO(e));
     }
 
     public EventDTO getEvent(Long id) throws EntityNotFoundException {
-        return eventMapper.toDTO(eventRepository.findByIdAndIsCancelledFalse(id)
+        return eventMapper.toDTO(eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found")));
     }
 
@@ -60,7 +68,7 @@ public class EventService {
         if (event.getId() == null)
             throw new EntityNotValidException("Event must have an ID");
 
-        Event e = eventRepository.findByIdAndIsCancelledFalse(event.getId())
+        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(event.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         if (!e.getName().equalsIgnoreCase(event.getName()) && eventRepository.findOneByName(event.getName()) != null) {
             throw new EntityAlreadyExistsException("Event with given name already exists");
@@ -79,7 +87,7 @@ public class EventService {
     }
 
     public void uploadPicturesAndVideos(Long id, MultipartFile[] files) throws EntityNotValidException, EntityNotFoundException {
-        Event e = eventRepository.findByIdAndIsCancelledFalse(id)
+        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         for (MultipartFile file : files) {
             MediaFile mediaFile;
@@ -95,24 +103,27 @@ public class EventService {
         eventRepository.save(e);
     }
 
-    public Set<MediaFile> getPicturesAndVideos(Long id) throws EntityNotFoundException {
-        Event e = eventRepository.findByIdAndIsCancelledFalse(id)
+    public Set<MediaFileDTO> getPicturesAndVideos(Long id) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
-        return e.getPicturesAndVideos();
+        return e.getPicturesAndVideos().stream()
+                .map(mf -> mediaFileMapper.toDTO(mf)).collect(Collectors.toSet());
     }
 
-    public void deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
-        Event e = eventRepository.findByIdAndIsCancelledFalse(eventID)
+    public Long deleteMediaFile(Long eventID, Long fileID) throws EntityNotFoundException {
+        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         MediaFile mf = mediaFileRepository.findById(fileID)
                 .orElseThrow(() -> new EntityNotFoundException("File not found"));
         e.getPicturesAndVideos().remove(mf);
         eventRepository.save(e);
+
+        return fileID;
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
-        Event e = eventRepository.findByIdAndIsCancelledFalse(seatGroupsDTO.getEventID())
+        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(seatGroupsDTO.getEventID())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Location l = locationRepository.findByIdAndDisabledFalse(seatGroupsDTO.getLocationID())
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
@@ -184,14 +195,19 @@ public class EventService {
             return false;
         });
         if (invalidRemove) {
-            throw new EntityNotValidException("Event day for which reservations exist cannot be removed");
+            throw new EntityNotValidException("Event day for which reservations exist cannot be edited or removed");
         } else {
             e.getEventDays().removeIf(eDay -> {
                 if (eventDays.contains(eDay)) {
                     Set<ReservableSeatGroup> resSeatGroups = eDay.getReservableSeatGroups();
-                    for (ReservableSeatGroup rsg : resSeatGroups) {
-                        if (rsg.getTickets().isEmpty())
-                            return true;
+                    if (resSeatGroups.isEmpty()) {
+                        return true;
+                    }
+                    else {
+                        for (ReservableSeatGroup rsg : resSeatGroups) {
+                            if (rsg.getTickets().isEmpty())
+                                return true;
+                        }
                     }
                 }
                 return false;
@@ -252,11 +268,16 @@ public class EventService {
             }
             if (toDisable) {
                 Set<ReservableSeatGroup> resSeatGroups = esg.getReservableSeatGroups();
-                for (ReservableSeatGroup rsg : resSeatGroups) {
-                    if (rsg.getTickets().isEmpty()) {
-                        iter.remove();
-                    } else {
-                        throw new EntityNotValidException("Seat group which has at least one reservation cannot be disabled");
+                if (resSeatGroups.isEmpty()) {
+                    iter.remove();
+                }
+                else {
+                    for (ReservableSeatGroup rsg : resSeatGroups) {
+                        if (rsg.getTickets().isEmpty()) {
+                            iter.remove();
+                        } else {
+                            throw new EntityNotValidException("Seat group which has at least one reservation cannot be disabled");
+                        }
                     }
                 }
             }
@@ -293,5 +314,14 @@ public class EventService {
 
     public List<EventOptionDTO> getEventsOptions() {
         return eventRepository.findAll().stream().map(EventOptionDTO::new).collect(Collectors.toList());
+    }
+
+    public LocationSeatGroupDTO getEventLocationAndSeatGroups(Long id) throws EntityNotFoundException {
+        Event e = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Long locationID = e.getLocation() != null ? e.getLocation().getId() : null;
+        LocationSeatGroupDTO lsgDTO = new LocationSeatGroupDTO(e.getId(), locationID);
+        e.getEventSeatGroups().forEach(esg -> lsgDTO.getEventSeatGroups().add(eventSeatGroupMapper.toDTO(esg)));
+
+        return lsgDTO;
     }
 }

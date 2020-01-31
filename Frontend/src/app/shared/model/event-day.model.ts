@@ -1,11 +1,20 @@
 import {Event} from './event.model';
+import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 
-export class EventDay {
+@Serialize({})
+export class EventDay extends Serializable {
+  @SerializeProperty({
+    map: 'id'
+  })
   private _id: number;
-  private _date: Date;
+  @SerializeProperty({
+    map: 'date'
+  })
+  private _date: string;
   private _event: Event;
 
-  constructor(id: number, date: Date, event: Event) {
+  constructor(id: number, date: string, event: Event) {
+    super();
     this._id = id;
     this._date = date;
     this._event = event;
@@ -19,11 +28,11 @@ export class EventDay {
     this._id = value;
   }
 
-  get date(): Date {
+  get date(): string {
     return this._date;
   }
 
-  set date(value: Date) {
+  set date(value: string) {
     this._date = value;
   }
 

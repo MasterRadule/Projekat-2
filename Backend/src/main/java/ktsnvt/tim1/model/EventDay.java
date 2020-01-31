@@ -2,7 +2,6 @@ package ktsnvt.tim1.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Entity

@@ -6,7 +6,6 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.Event;
 import ktsnvt.tim1.model.EventCategory;
-import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.repositories.EventRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -173,7 +172,7 @@ public class EventServiceIntegrationTests {
 
         eventService.uploadPicturesAndVideos(5L, files);
 
-        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(5L);
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(5L);
         Event e = null;
         if (eventOptional.isPresent())
             e = eventOptional.get();
@@ -206,7 +205,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Test
     void getPicturesAndVideos_eventExists_picturesAndVideosReturned() throws EntityNotFoundException {
-        Set<MediaFile> files = eventService.getPicturesAndVideos(4L);
+        Set<MediaFileDTO> files = eventService.getPicturesAndVideos(4L);
 
         assertEquals(2, files.size());
     }
@@ -227,7 +226,7 @@ public class EventServiceIntegrationTests {
 
         eventService.deleteMediaFile(eventID, fileID);
 
-        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(eventID);
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(eventID);
         Event e = null;
         if (eventOptional.isPresent())
             e = eventOptional.get();
@@ -266,7 +265,7 @@ public class EventServiceIntegrationTests {
 
         eventService.setEventLocationAndSeatGroups(seatGroupDTO);
 
-        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalse(eventID);
+        Optional<Event> eventOptional = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(eventID);
         Event event = null;
         if (eventOptional.isPresent())
             event = eventOptional.get();
