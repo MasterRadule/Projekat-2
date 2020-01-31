@@ -6,6 +6,7 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.EventDayMapper;
 import ktsnvt.tim1.mappers.EventMapper;
+import ktsnvt.tim1.mappers.EventSeatGroupMapper;
 import ktsnvt.tim1.mappers.MediaFileMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
@@ -43,6 +44,9 @@ public class EventService {
 
     @Autowired
     private EventDayMapper eventDayMapper;
+
+    @Autowired
+    private EventSeatGroupMapper eventSeatGroupMapper;
 
     @Autowired
     private MediaFileMapper mediaFileMapper;
@@ -310,5 +314,14 @@ public class EventService {
 
     public List<EventOptionDTO> getEventsOptions() {
         return eventRepository.findAll().stream().map(EventOptionDTO::new).collect(Collectors.toList());
+    }
+
+    public LocationSeatGroupDTO getEventLocationAndSeatGroups(Long id) throws EntityNotFoundException {
+        Event e = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Long locationID = e.getLocation() != null ? e.getLocation().getId() : null;
+        LocationSeatGroupDTO lsgDTO = new LocationSeatGroupDTO(e.getId(), locationID);
+        e.getEventSeatGroups().forEach(esg -> lsgDTO.getEventSeatGroups().add(eventSeatGroupMapper.toDTO(esg)));
+
+        return lsgDTO;
     }
 }
