@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-@Component
 public class EventSeatGroupDTO {
 
     @NotNull(message = "Seat group ID cannot be null")

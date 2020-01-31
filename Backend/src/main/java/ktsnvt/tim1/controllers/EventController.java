@@ -57,7 +57,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/{id}/pictures-and-videos")
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> uploadEventsPicturesAndVideos(@PathVariable("id") Long id, @RequestParam("file") MultipartFile[] files) {
         try {
             eventService.uploadPicturesAndVideos(id, files);
@@ -79,7 +79,7 @@ public class EventController {
     }
 
     @DeleteMapping(value = "{eventID}/pictures-and-videos/{fileID}")
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteMediaFile(@PathVariable("eventID") Long eventID, @PathVariable("fileID") Long fileID) {
         try {
             return new ResponseEntity<>(eventService.deleteMediaFile(eventID, fileID), HttpStatus.OK);
@@ -89,7 +89,7 @@ public class EventController {
     }
 
     @PutMapping
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> editEvent(@Valid @RequestBody EventDTO event) {
         try {
             return new ResponseEntity<>(eventService.editEvent(event), HttpStatus.OK);
@@ -110,7 +110,7 @@ public class EventController {
     }
 
     @PutMapping("/location")
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> setEventLocationAndSeatGroups(@Valid @RequestBody LocationSeatGroupDTO locSeatGroupDTO) {
         try {
             return new ResponseEntity<>(eventService.setEventLocationAndSeatGroups(locSeatGroupDTO), HttpStatus.OK);
@@ -122,7 +122,7 @@ public class EventController {
     }
 
     @GetMapping("{eventID}/location")
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> getEventLocationAndSeatGroups(@PathVariable("eventID") Long id) {
         try {
             return new ResponseEntity<>(eventService.getEventLocationAndSeatGroups(id), HttpStatus.OK);

@@ -186,8 +186,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
         this.layer.draw();
       });
     }
-
-    if (!this.draggable) {
+    else {
       seatGroupRepresentation.on('click', () => {
         this.redraw();
         this.changeStroke(seatGroupRepresentation, "red", 2);

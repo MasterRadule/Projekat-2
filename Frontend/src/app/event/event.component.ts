@@ -40,6 +40,9 @@ export class EventComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
     private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+  }
+
+  ngOnInit() {
     this.uploader = new FileUploader({
       url: null
     });
@@ -56,9 +59,7 @@ export class EventComponent implements OnInit {
     };
 
     this.getLocationsOptions();
-  }
-
-  ngOnInit() {
+    
     this.route.params.subscribe(params => {
       if (params.id) {
         this.getEvent(params.id);
@@ -66,7 +67,7 @@ export class EventComponent implements OnInit {
     });
   }
 
-  getEvent(id: number) {
+  private getEvent(id: number) {
     this.eventApiService.getEvent(id).subscribe(
       {
         next: (result: Event) => {
@@ -83,7 +84,7 @@ export class EventComponent implements OnInit {
       });
   }
 
-  createOrEditEvent() {
+  private createOrEditEvent() {
     this.event.eventDays = [];
     for (let eventDay of this.events) {
       let date: string = moment(eventDay.from).format('DD.MM.YYYY. HH:mm');
@@ -127,7 +128,7 @@ export class EventComponent implements OnInit {
     }
   }
 
-  getEventDays() {
+  private getEventDays() {
     for (let ev of this.event.eventDays) {
        let from :Date = moment(ev.date, "DD.MM.YYYY. HH:mm").toDate();
        let to: Date = moment(ev.date, "DD.MM.YYYY. HH:mm").set({hour:23, minute:59, second:59}).toDate();
@@ -136,12 +137,12 @@ export class EventComponent implements OnInit {
     this.refreshView();
   }
 
-  openDialog($event, create) {
+  private openDialog($event, create) {
     const dialogRef = this.dialog.open(DialogComponent);
     if (create) {
         dialogRef.componentInstance.createMode = true;
         dialogRef.afterClosed().subscribe(result => {
-        if (result !== "" && result !== undefined) {
+        if (result) {
           let time = result.time.split(":");
           let from: Date = result.date.set({hour:time[0], minute:time[1]}).toDate();
           for (let evDay of this.events) {
@@ -175,7 +176,7 @@ export class EventComponent implements OnInit {
     }
   }
 
-  removeEventDay($event) {
+  private removeEventDay($event) {
     let index = this.events.indexOf($event);
     if (index != -1) {
       this.events.splice(index, 1);
@@ -183,11 +184,11 @@ export class EventComponent implements OnInit {
     }
   }
 
-  refreshView() : void {
+  private refreshView() : void {
     this.scheduler.refreshScheduler();
   }
 
-  getPicturesAndVideos() {
+  private getPicturesAndVideos() {
     this.eventApiService.getEventsPicturesAndVideos(this.event.id).subscribe(
         {
           next: (result: MediaFile[]) => {
@@ -214,7 +215,7 @@ export class EventComponent implements OnInit {
       );
   }
 
-  deleteMediaFile() {
+  private deleteMediaFile() {
   	let activeImage = this.slider.activeImageIndex;
   	let id = this.imageObject[activeImage]["data"]["id"];
   	this.eventApiService.deleteMediaFile(this.event.id, id).subscribe(
@@ -232,12 +233,12 @@ export class EventComponent implements OnInit {
       );
   }
 
-  upload(item) {
+  private upload(item) {
     item.url = `http://localhost:8080/api/events/${this.event.id}/pictures-and-videos`;
     item.upload();
   }
 
-  uploadAll() { 
+  private uploadAll() { 
     for (let file of this.uploader.queue) {
        this.upload(file);
     }
@@ -362,5 +363,4 @@ export class EventComponent implements OnInit {
       }
     );
   }
-
 }
