@@ -9,17 +9,9 @@ import {Location} from '../../../shared/model/location.model';
   styleUrls: ['./location-preview.component.scss']
 })
 export class LocationPreviewComponent {
-  @Input() private location: Location;
+  @Input() location: Location;
 
   constructor(private locationApiService: LocationApiService, private snackBar: MatSnackBar) {
-  }
-
-  get getLocation(): Location {
-    return this.location;
-  }
-
-  set setLocation(value: Location) {
-    this.location = value;
   }
 
   private toggleLocationStatus($event: MatSlideToggleChange) {
