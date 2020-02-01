@@ -8,25 +8,27 @@ import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
 import ktsnvt.tim1.services.LocationService;
 import ktsnvt.tim1.utils.RestResponsePage;
-import org.hibernate.Session;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +53,16 @@ public class LocationControllerIntegrationTests {
     @Autowired
     EntityManager entityManager;
 
-    @SuppressWarnings("ConstantConditions")
+    @Autowired
+    private DataSource dataSource;
+
+    @AfterEach
+    public void rollback() {
+        Resource resource = new ClassPathResource("data-h2.sql");
+        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
+        resourceDatabasePopulator.execute(dataSource);
+    }
+
     @Test
     public void getLocations_locationsReturned() {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
@@ -59,6 +70,8 @@ public class LocationControllerIntegrationTests {
 
         ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate
                 .exchange("/locations?page=0&size=5", HttpMethod.GET, null, responseType);
+
+        assertNotNull(result.getBody());
 
         List<LocationDTO> locations = result.getBody().getContent();
 
@@ -90,7 +103,6 @@ public class LocationControllerIntegrationTests {
         assertEquals("Location not found", errorMessage);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void searchLocations_searchParameterProvided_locationsReturned() {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
@@ -101,6 +113,7 @@ public class LocationControllerIntegrationTests {
         ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
                 "/locations/search?page=0&size=5&name=black", HttpMethod.GET, null, responseType);
 
+        assertNotNull(result.getBody());
         List<LocationDTO> locations = result.getBody().getContent();
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -111,7 +124,6 @@ public class LocationControllerIntegrationTests {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void searchLocations_searchParameterEmpty_locationsReturned() {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
@@ -120,6 +132,7 @@ public class LocationControllerIntegrationTests {
         ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
                 "/locations/search?page=0&size=5&name=", HttpMethod.GET, null, responseType);
 
+        assertNotNull(result.getBody());
         List<LocationDTO> locations = result.getBody().getContent();
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -127,7 +140,6 @@ public class LocationControllerIntegrationTests {
         assertEquals(30, result.getBody().getTotalElements());
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void searchLocations_searchParameterDoesNotMatchAnyLocation_emptyPageReturned() {
         ParameterizedTypeReference<RestResponsePage<LocationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<LocationDTO>>() {
@@ -136,14 +148,13 @@ public class LocationControllerIntegrationTests {
         ResponseEntity<RestResponsePage<LocationDTO>> result = testRestTemplate.exchange(
                 "/locations/search?page=0&size=5&name=dsadahfghbfghvcs", HttpMethod.GET, null, responseType);
 
+        assertNotNull(result.getBody());
         List<LocationDTO> locations = result.getBody().getContent();
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(0, locations.size());
     }
 
-    @Transactional
-    @Rollback
     @Test
     public void createLocation_locationCreated() {
         LocationDTO newDTO = new LocationDTO(null, "Spens", 50.0, 30.0, false);
@@ -169,8 +180,6 @@ public class LocationControllerIntegrationTests {
         assertEquals(initialSize + 1, locationPage.getTotalElements());
     }
 
-    @Transactional
-    @Rollback
     @Test
     public void editLocation_locationIdIsNull_errorMessageReturned() {
         LocationDTO editedDTO = new LocationDTO(null, "Spens", 50.0, 60.0, false);
@@ -184,8 +193,6 @@ public class LocationControllerIntegrationTests {
         assertEquals("Location must have an ID", result.getBody());
     }
 
-    @Transactional
-    @Rollback
     @Test
     public void editLocation_locationDoesNotExist_errorMessageReturned() {
         LocationDTO editedDTO = new LocationDTO(31L, "Spens", 50.0, 60.0, false);
@@ -199,8 +206,6 @@ public class LocationControllerIntegrationTests {
         assertEquals("Location not found", result.getBody());
     }
 
-    @Transactional
-    @Rollback
     @Test
     public void editLocation_locationExists_locationEditedAndReturned() {
         LocationDTO editedDTO = new LocationDTO(30L, "Spens", 50.0, 60.0, false);
@@ -313,8 +318,6 @@ public class LocationControllerIntegrationTests {
         assertFalse(l.isPresent());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void createSeatGroup_locationExistsAndSeatGroupIsValid_seatGroupCreated() {
         Long locationId = 1L;
@@ -344,9 +347,6 @@ public class LocationControllerIntegrationTests {
 
         SeatGroupDTO returnedValue = result.getBody();
 
-        Session session = (Session) entityManager.getDelegate();
-        session.evict(l);
-
         locationOptional = locationRepository.findById(locationId);
 
         if (locationOptional.isPresent())
@@ -366,8 +366,6 @@ public class LocationControllerIntegrationTests {
         assertEquals(startingNumberOfSeatGroups + 1, l.getSeatGroups().size());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void createSeatGroup_locationExistsAndSeatGroupIsNotValid_errorMessageReturned() {
         SeatGroupDTO newDTO = new SeatGroupDTO();
@@ -388,8 +386,6 @@ public class LocationControllerIntegrationTests {
         assertEquals("Invalid value for parterre's total seats.", result.getBody());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void createSeatGroup_locationDoesNotExist_errorMessageReturned() {
         Long locationId = 31L;
@@ -415,7 +411,7 @@ public class LocationControllerIntegrationTests {
 
     @Test
     void getLocationsOptions_locationsOptionsReturned() {
-        int locationOptionsCount = 31;
+        int locationOptionsCount = 30;
 
         ParameterizedTypeReference<List<LocationOptionDTO>> responseType =
                 new ParameterizedTypeReference<List<LocationOptionDTO>>() {
@@ -430,8 +426,6 @@ public class LocationControllerIntegrationTests {
         assertEquals(locationOptionsCount, result.getBody().size());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void editSeatGroupPosition_locationAndSeatGroupExist_seatGroupPositionChanged() {
         Long seatGroupId = 1L;
@@ -455,8 +449,6 @@ public class LocationControllerIntegrationTests {
         assertEquals(newYCoordinate, result.getBody().getyCoordinate());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void editSeatGroupPosition_locationDoesNotExist_notFoundStatusReturned() {
         Long seatGroupId = 1L;
@@ -478,8 +470,6 @@ public class LocationControllerIntegrationTests {
         assertEquals("Location not found", result.getBody());
     }
 
-    @Transactional
-    @Rollback
     @Test
     void editSeatGroupPosition_locationExistsAndSeatGroupDoesNotExist_notFoundStatusReturned() {
         Long seatGroupId = 120L;
