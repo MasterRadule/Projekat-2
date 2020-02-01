@@ -6,6 +6,9 @@ public class LocationOptionDTO {
     private Long id;
     private String name;
 
+    public LocationOptionDTO() {
+    }
+
     public LocationOptionDTO(Location l) {
         this.id = l.getId();
         this.name = l.getName();

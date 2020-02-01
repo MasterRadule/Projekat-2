@@ -1,6 +1,7 @@
 package ktsnvt.tim1.services;
 
 import ktsnvt.tim1.DTOs.LocationDTO;
+import ktsnvt.tim1.DTOs.LocationOptionDTO;
 import ktsnvt.tim1.DTOs.SeatGroupDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -18,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -261,6 +264,74 @@ public class LocationServiceIntegrationTests {
         newDTO.setyCoordinate(4.0);
 
         assertThrows(EntityNotFoundException.class, () -> locationService.createSeatGroup(locationId, newDTO));
+    }
+
+    @Test
+    void getLocationsOptions_optionsReturned() {
+        int numberOfLocations = 30;
+
+        List<LocationOptionDTO> locationOptions = locationService.getLocationsOptions();
+
+        assertNotNull(locationOptions);
+        assertEquals(numberOfLocations, locationOptions.size());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationAndSeatGroupExist_seatGroupPositionChanged() throws EntityNotFoundException {
+        Long locationId = 1L;
+        Long seatGroupId = 1L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        SeatGroupDTO result = locationService.editSeatGroupPosition(locationId, changedSeatGroup);
+
+        assertNotNull(result);
+        assertEquals(newAngle, result.getAngle());
+        assertEquals(newXCoordinate, result.getxCoordinate());
+        assertEquals(newYCoordinate, result.getyCoordinate());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationDoesNotExist_entityNotFoundExceptionThrown() {
+        Long locationId = 120L;
+        Long seatGroupId = 1L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        assertThrows(EntityNotFoundException.class, () -> locationService.editSeatGroupPosition(locationId,
+                changedSeatGroup));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editSeatGroupPosition_locationExistsAndSeatGroupDoesNotExist_entityNotFoundExceptionThrown() {
+        Long locationId = 1L;
+        Long seatGroupId = 120L;
+
+        Double newAngle = 0.0;
+        Double newXCoordinate = 0.0;
+        Double newYCoordinate = 0.0;
+
+        SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
+                "Side", newAngle);
+
+        assertThrows(EntityNotFoundException.class, () -> locationService.editSeatGroupPosition(locationId,
+                changedSeatGroup));
     }
 
 

@@ -29,6 +29,18 @@ public class SeatGroupDTO {
     public SeatGroupDTO() {
     }
 
+    public SeatGroupDTO(Long id, Integer rowsNum, Integer colsNum, @NotNull(message = "Seat group parterre must be specified") Boolean parterre, @NotNull(message = "X coordiante of seat group must be specified") Double xCoordinate, @NotNull(message = "Y coordinate of seat group must be specified") Double yCoordinate, Integer totalSeats, @NotNull(message = "Seat group name must be provided") String name, @NotNull(message = "Seat group alignment must be specified") Double angle) {
+        this.id = id;
+        this.rowsNum = rowsNum;
+        this.colsNum = colsNum;
+        this.parterre = parterre;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
+        this.totalSeats = totalSeats;
+        this.name = name;
+        this.angle = angle;
+    }
+
     public Long getId() {
         return id;
     }
