@@ -3,14 +3,24 @@ import {Location} from '../shared/model/location.model';
 import {Page} from '../shared/model/page.model';
 import {of} from 'rxjs';
 import {SeatGroup} from '../shared/model/seat-group.model';
+import {HttpClient} from '@angular/common/http';
+import {TestBed} from '@angular/core/testing';
 
 describe('LocationApiService', () => {
   let locationApiService: LocationApiService;
-  let httpClientSpy;
+  let httpClientSpy: jasmine.SpyObj<HttpClient>;
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'post', 'put']);
-    locationApiService = new LocationApiService(httpClientSpy as any);
+    const spy = jasmine.createSpyObj('HttpClient', ['get', 'post', 'put']);
+
+    TestBed.configureTestingModule({
+      providers: [
+        LocationApiService,
+        {provide: HttpClient, useValue: spy}
+      ]
+    });
+    locationApiService = TestBed.get(LocationApiService);
+    httpClientSpy = TestBed.get(HttpClient);
   });
 
   it('should be created', () => {
