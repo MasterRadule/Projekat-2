@@ -6,6 +6,7 @@ import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.EventDayMapper;
 import ktsnvt.tim1.mappers.EventMapper;
+import ktsnvt.tim1.mappers.EventSeatGroupMapper;
 import ktsnvt.tim1.model.*;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.LocationRepository;
@@ -69,6 +70,9 @@ public class EventServiceUnitTests {
 
     @MockBean
     private EventDayMapper eventDayMapperMocked;
+
+    @MockBean
+    private EventSeatGroupMapper eventSeatGroupMapperMocked;
 
     private static DateTimeFormatter formatter;
 
@@ -150,6 +154,23 @@ public class EventServiceUnitTests {
     }
 
     @Test
+    public void createEvent_eventDayDateIsBeforeTodayDate_entityNotValidExceptionThrown() throws EntityNotValidException {
+        EventDTO eventDTO = new EventDTO(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "30.11.2019. 12:30"));
+
+        Event event = new Event(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie, false);
+        LocalDateTime evDay = LocalDateTime.parse("30.11.2019. 12:30", formatter);
+        EventDay ev = new EventDay(null, evDay);
+        event.getEventDays().add(ev);
+
+        Mockito.when(eventMapperMocked.toEntity(eventDTO)).thenReturn(event);
+
+        assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Test
     public void editEvent_eventExists_eventReturned() throws Exception {
         Long id = 1L;
         EventService eventServiceSpy = PowerMockito.spy(eventService);
@@ -219,6 +240,22 @@ public class EventServiceUnitTests {
         Mockito.when(eventRepositoryMocked.findOneByName(editedDTO.getName())).thenReturn(event);
 
         assertThrows(EntityAlreadyExistsException.class, () -> eventService.editEvent(editedDTO));
+    }
+
+    @Test
+    public void editEvent_eventDayDateIsBeforeTodayDate_entityNotValidExceptionThrown() {
+        Long id = 1L;
+
+        Event oldEntity = new Event(id, "Event 1", "Description of Event 1",
+                EventCategory.Movie, false);
+
+        EventDTO eventDTO = new EventDTO(id, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "30.11.2019. 12:30"));
+
+        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(id)).thenReturn(Optional.of(oldEntity));
+
+        assertThrows(EntityNotValidException.class, () -> eventService.editEvent(eventDTO));
     }
 
     @Test
@@ -751,5 +788,41 @@ public class EventServiceUnitTests {
         Whitebox.invokeMethod(eventService, "enableEventGroups", event, location, lsg);
 
         assertEquals(300.0, event.getEventSeatGroups().iterator().next().getPrice(), 0.0);
+    }
+
+    @Test
+    public void getEventsOptions_repositoryMethodCalledOnce() {
+        Mockito.when(eventRepositoryMocked.findAll()).thenReturn(new ArrayList<>());
+        eventService.getEventsOptions();
+        verify(eventRepositoryMocked, times(1)).findAll();
+    }
+
+    @Test
+    public void getEventLocationAndSeatGroups_eventExists_locationSeatGroupDTOReturned() throws EntityNotFoundException {
+        Long eventID = 1L;
+        Long locationID = 2L;
+        Event event = new Event(eventID, "Event 1", "Description of Event 1",
+                EventCategory.Movie, false);
+        event.setLocation(new Location(locationID, "Location", 50.0, 50.0, false));
+        EventSeatGroup esg = new EventSeatGroup(1L);
+        event.getEventSeatGroups().add(esg);
+        EventSeatGroupDTO esgDTO = new EventSeatGroupDTO();
+
+        Mockito.when(eventRepositoryMocked.findById(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventSeatGroupMapperMocked.toDTO(esg)).thenReturn(esgDTO);
+
+        LocationSeatGroupDTO lsgDTO = eventService.getEventLocationAndSeatGroups(eventID);
+
+        assertEquals(eventID, lsgDTO.getEventID());
+        assertEquals(locationID, lsgDTO.getLocationID());
+        assertEquals(1, lsgDTO.getEventSeatGroups().size());
+        assertEquals(esgDTO, lsgDTO.getEventSeatGroups().get(0));
+    }
+
+    @Test
+    public void getEventLocationAndSeatGroups_eventDoesNotExist_entityNotFoundExceptionThrown() {
+        Long eventID = 1L;
+        Mockito.when(eventRepositoryMocked.findById(eventID)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> eventService.getEventLocationAndSeatGroups(eventID));
     }
 }
