@@ -17,6 +17,18 @@ export class DashboardPage {
     return element.all(by.tagName('app-location-preview'));
   }
 
+  getLocationPreviewTitles() {
+    return element.all(by.css('mat-card-title'));
+  }
+
+  getFirstLocationPreviewToggleStatusButton() {
+    return element.all(by.css('mat-slide-toggle')).first();
+  }
+
+  getFirstLocationPreviewEditButton() {
+    return element.all(by.css('app-location-preview button')).first();
+  }
+
   getPaginatorLabel() {
     return element(by.className('mat-paginator-range-label'));
   }
