@@ -3,6 +3,7 @@ package ktsnvt.tim1.controllers;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.security.TokenUtils;
+import ktsnvt.tim1.utils.HeaderTokenGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,20 +36,15 @@ public class UserControllerIntegrationTests {
     @Autowired
     TokenUtils tokenUtils;
 
-    private HttpHeaders generateHeaderWithToken(String userEmail) {
-        UserDetails userDetails = new User(null, null, null, null, userEmail, null);
-        String token = tokenUtils.generateToken(userDetails);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", token);
-        return headers;
-    }
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
 
     @Transactional
     @Rollback
     @Test
-    void editUser_usedIdIsNull_errorMessageReturned(){
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
-        UserDTO editedDTO  = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
+    void editUser_usedIdIsNull_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
+        UserDTO editedDTO = new UserDTO(null, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
         HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
@@ -62,10 +59,10 @@ public class UserControllerIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_notAllowedUser_errorMessageReturned(){
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    void editUser_notAllowedUser_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        UserDTO editedDTO  = new UserDTO(60L, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
+        UserDTO editedDTO = new UserDTO(60L, "Petar", "Petrovic", "KtsNvt1+", "ppetrovic@gmail.com", true);
 
         HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
@@ -80,9 +77,9 @@ public class UserControllerIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_userEmailChanged_errorMessageReturned(){
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
-        UserDTO editedDTO  = new UserDTO(6L, "Jack", "Bowlin", "KtsNvt1+", "JennifferHooker1@example.com", true);
+    void editUser_userEmailChanged_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
+        UserDTO editedDTO = new UserDTO(6L, "Jack", "Bowlin", "KtsNvt1+", "JennifferHooker1@example.com", true);
 
         HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
@@ -97,10 +94,10 @@ public class UserControllerIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void editUser_userExists_editedUserReturned(){
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    void editUser_userExists_editedUserReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        UserDTO editedDTO  = new UserDTO(6L, "Jackson", "Bowlin", "KtsNvt11+", "JennifferHooker@example.com", true);
+        UserDTO editedDTO = new UserDTO(6L, "Jackson", "Bowlin", "KtsNvt11+", "JennifferHooker@example.com", true);
 
         HttpEntity<UserDTO> entity = new HttpEntity<>(editedDTO, headers);
 
@@ -120,13 +117,13 @@ public class UserControllerIntegrationTests {
 
     @Test
     @Transactional
-    void getUser_userLoggedIn_userReturned(){
+    void getUser_userLoggedIn_userReturned() {
         UserDetails userDetails = new User(6L, "Jack", "Bowlin", "$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra", "JennifferHooker@example.com", true);
         String token = tokenUtils.generateToken(userDetails);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", token);
         ResponseEntity<User> result = testRestTemplate.exchange(createURLWithPort("/user"),
-                HttpMethod.GET,new HttpEntity<>(headers), User.class);
+                HttpMethod.GET, new HttpEntity<>(headers), User.class);
 
         User user = result.getBody();
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -135,7 +132,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    void getUser_noUserLoggedIn_errorMessageReturned(){
+    void getUser_noUserLoggedIn_errorMessageReturned() {
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user"),
                 HttpMethod.GET, null, String.class);
 

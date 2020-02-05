@@ -7,6 +7,7 @@ import ktsnvt.tim1.model.Location;
 import ktsnvt.tim1.model.SeatGroup;
 import ktsnvt.tim1.repositories.LocationRepository;
 import ktsnvt.tim1.services.LocationService;
+import ktsnvt.tim1.utils.HeaderTokenGenerator;
 import ktsnvt.tim1.utils.RestResponsePage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -55,6 +53,9 @@ public class LocationControllerIntegrationTests {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
 
     @AfterEach
     public void rollback() {
@@ -161,7 +162,8 @@ public class LocationControllerIntegrationTests {
 
         long initialSize = locationRepository.count();
 
-        HttpEntity<LocationDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<LocationDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<LocationDTO> result = testRestTemplate.exchange("/locations",
                 HttpMethod.POST, entity, LocationDTO.class);
@@ -184,7 +186,8 @@ public class LocationControllerIntegrationTests {
     public void editLocation_locationIdIsNull_errorMessageReturned() {
         LocationDTO editedDTO = new LocationDTO(null, "Spens", 50.0, 60.0, false);
 
-        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, String.class);
@@ -197,7 +200,8 @@ public class LocationControllerIntegrationTests {
     public void editLocation_locationDoesNotExist_errorMessageReturned() {
         LocationDTO editedDTO = new LocationDTO(31L, "Spens", 50.0, 60.0, false);
 
-        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, String.class);
@@ -210,7 +214,8 @@ public class LocationControllerIntegrationTests {
     public void editLocation_locationExists_locationEditedAndReturned() {
         LocationDTO editedDTO = new LocationDTO(30L, "Spens", 50.0, 60.0, false);
 
-        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<LocationDTO> entity = new HttpEntity<>(editedDTO, headers);
 
         ResponseEntity<LocationDTO> result = testRestTemplate.exchange("/locations",
                 HttpMethod.PUT, entity, LocationDTO.class);
@@ -340,7 +345,8 @@ public class LocationControllerIntegrationTests {
         newDTO.setName("Group1");
         newDTO.setAngle(0.0);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<SeatGroupDTO> result = testRestTemplate
                 .exchange("/locations/1/seat-groups", HttpMethod.POST, entity, SeatGroupDTO.class);
@@ -377,7 +383,8 @@ public class LocationControllerIntegrationTests {
         newDTO.setName("Group1");
         newDTO.setAngle(30.0);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange("/locations/1/seat-groups",
                 HttpMethod.POST, entity, String.class);
@@ -399,7 +406,8 @@ public class LocationControllerIntegrationTests {
         newDTO.setName("Group1");
         newDTO.setAngle(30.0);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate
                 .exchange("/locations/31/seat-groups", HttpMethod.POST, entity, String.class);
@@ -437,7 +445,8 @@ public class LocationControllerIntegrationTests {
         SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
                 "Side", newAngle);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup, headers);
         ResponseEntity<SeatGroupDTO> result = testRestTemplate.exchange("/locations/1/seat-groups", HttpMethod.PUT,
                 entity, SeatGroupDTO.class);
 
@@ -460,7 +469,8 @@ public class LocationControllerIntegrationTests {
         SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
                 "Side", newAngle);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup, headers);
         ResponseEntity<String> result = testRestTemplate.exchange("/locations/120/seat-groups", HttpMethod.PUT,
                 entity, String.class);
 
@@ -481,7 +491,8 @@ public class LocationControllerIntegrationTests {
         SeatGroupDTO changedSeatGroup = new SeatGroupDTO(seatGroupId, 3, 3, false, newXCoordinate, newYCoordinate, 9,
                 "Side", newAngle);
 
-        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<SeatGroupDTO> entity = new HttpEntity<>(changedSeatGroup, headers);
         ResponseEntity<String> result = testRestTemplate.exchange("/locations/1/seat-groups", HttpMethod.PUT,
                 entity, String.class);
 

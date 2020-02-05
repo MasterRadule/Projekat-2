@@ -9,6 +9,7 @@ import ktsnvt.tim1.model.EventCategory;
 import ktsnvt.tim1.model.MediaFile;
 import ktsnvt.tim1.repositories.EventRepository;
 import ktsnvt.tim1.repositories.MediaFileRepository;
+import ktsnvt.tim1.utils.HeaderTokenGenerator;
 import ktsnvt.tim1.utils.RestResponsePage;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
@@ -58,6 +59,9 @@ public class EventControllerIntegrationTests {
     @Autowired
     EntityManager entityManager;
 
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
+
     @Test
     void getEvents_eventsReturned() {
         ParameterizedTypeReference<RestResponsePage<EventDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<EventDTO>>() {
@@ -75,7 +79,7 @@ public class EventControllerIntegrationTests {
     @Test
     void getEvent_eventExists_eventReturned() {
         ResponseEntity<EventDTO> result = testRestTemplate.exchange(createURLWithPort("/events/1"), HttpMethod.GET,
-                        null, EventDTO.class);
+                null, EventDTO.class);
 
         EventDTO event = result.getBody();
 
@@ -107,7 +111,8 @@ public class EventControllerIntegrationTests {
 
         long initialSize = eventRepository.count();
 
-        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<EventDTO> result = testRestTemplate.exchange(createURLWithPort("/events"),
                 HttpMethod.POST, entity, EventDTO.class);
@@ -146,7 +151,8 @@ public class EventControllerIntegrationTests {
         newDTO.setReservationDeadlineDays(1);
         newDTO.setMaxTicketsPerReservation(3);
 
-        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events"),
                 HttpMethod.POST, entity, String.class);
@@ -192,12 +198,12 @@ public class EventControllerIntegrationTests {
         FileUtils.writeByteArrayToFile(file2, video);
         parameters.add("file", new FileSystemResource(file2));
 
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/2/pictures-and-videos"),
-              HttpMethod.POST, requestEntity, String.class);
+                HttpMethod.POST, requestEntity, String.class);
 
         file1.delete();
         file2.delete();
@@ -233,7 +239,7 @@ public class EventControllerIntegrationTests {
         FileUtils.writeByteArrayToFile(file1, image);
         parameters.add("files", new FileSystemResource(file1));
 
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
 
@@ -260,7 +266,7 @@ public class EventControllerIntegrationTests {
         FileUtils.writeByteArrayToFile(file1, txt);
         parameters.add("file", new FileSystemResource(file1));
 
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
 
@@ -277,7 +283,7 @@ public class EventControllerIntegrationTests {
 
     @Test
     void getEventsPicturesAndVideos_eventDoesNotExist_errorMessageReturned() {
-       ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/31/pictures-and-videos"),
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/31/pictures-and-videos"),
                 HttpMethod.GET, null, String.class);
 
         String errorMessage = result.getBody();
@@ -301,8 +307,10 @@ public class EventControllerIntegrationTests {
     @Transactional
     @Test
     void deleteMediaFile_eventExistsAndMediaFileExists_mediaFileDeleted() throws IOException {
-       ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos/1"),
-                HttpMethod.DELETE, null, String.class);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos/1"),
+                HttpMethod.DELETE, entity, String.class);
 
         String message = result.getBody();
 
@@ -322,7 +330,6 @@ public class EventControllerIntegrationTests {
         FileUtils.writeByteArrayToFile(file1, image);
         parameters.add("files", new FileSystemResource(file1));
 
-        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
 
@@ -347,8 +354,11 @@ public class EventControllerIntegrationTests {
 
     @Test
     void deleteMediaFile_eventDoesNotExist_errorMessageReturned() {
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/31/pictures-and-videos/51"),
-                HttpMethod.DELETE, null, String.class);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> result = testRestTemplate
+                .exchange(createURLWithPort("/events/31/pictures-and-videos/51"),
+                        HttpMethod.DELETE, entity, String.class);
 
         String errorMessage = result.getBody();
 
@@ -358,8 +368,10 @@ public class EventControllerIntegrationTests {
 
     @Test
     void deleteMediaFile_eventExistsAndMediaFileDoesNotExist_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/1/pictures-and-videos/51"),
-                HttpMethod.DELETE, null, String.class);
+                HttpMethod.DELETE, entity, String.class);
 
         String errorMessage = result.getBody();
 
@@ -380,7 +392,8 @@ public class EventControllerIntegrationTests {
         EventDayDTO eventDayDTO1 = new EventDayDTO(52L, formatter.format(eventDayDate));
         newDTO.getEventDays().add(eventDayDTO1);
 
-        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<EventDTO> result = testRestTemplate.exchange(createURLWithPort("/events"),
                 HttpMethod.PUT, entity, EventDTO.class);
@@ -413,8 +426,10 @@ public class EventControllerIntegrationTests {
         newDTO.getEventDays().add(eventDayDTO1);
         newDTO.getEventDays().add(eventDayDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events"),
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -434,8 +449,10 @@ public class EventControllerIntegrationTests {
         newDTO.getEventDays().add(eventDayDTO1);
         newDTO.getEventDays().add(eventDayDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events"),
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -456,8 +473,10 @@ public class EventControllerIntegrationTests {
         newDTO.getEventDays().add(eventDayDTO1);
         newDTO.getEventDays().add(eventDayDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events"),
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -505,8 +524,10 @@ public class EventControllerIntegrationTests {
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
         seatGroupDTO.getEventSeatGroups().add(esgDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<EventDTO> result = testRestTemplate.exchange(createURLWithPort("/events/location"),
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), EventDTO.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), EventDTO.class);
 
         EventDTO eventDTO = result.getBody();
         Event event = eventRepository.getOne(eventID);
@@ -527,8 +548,10 @@ public class EventControllerIntegrationTests {
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
         seatGroupDTO.getEventSeatGroups().add(esgDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/location"),
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -546,8 +569,10 @@ public class EventControllerIntegrationTests {
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
         seatGroupDTO.getEventSeatGroups().add(esgDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/location"),
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -565,8 +590,10 @@ public class EventControllerIntegrationTests {
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
         seatGroupDTO.getEventSeatGroups().add(esgDTO2);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/location"),
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -582,8 +609,10 @@ public class EventControllerIntegrationTests {
         EventSeatGroupDTO esgDTO1 = new EventSeatGroupDTO(1L);
         seatGroupDTO.getEventSeatGroups().add(esgDTO1);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/events/location"),
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 

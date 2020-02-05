@@ -1,8 +1,7 @@
 package ktsnvt.tim1.controllers;
 
 import ktsnvt.tim1.DTOs.ReportDTO;
-import ktsnvt.tim1.exceptions.BadParametersException;
-import ktsnvt.tim1.exceptions.EntityNotFoundException;
+import ktsnvt.tim1.utils.HeaderTokenGenerator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -30,6 +27,9 @@ public class ReportControllerIntegrationTests {
     @Autowired
     TestRestTemplate testRestTemplate;
 
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
+
     private static DateTimeFormatter dateTimeFormatter;
 
     @BeforeAll
@@ -45,8 +45,10 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
-                "=%d", startDateMilliseconds, endDateMilliseconds), HttpMethod.GET, null, String.class);
+                "=%d", startDateMilliseconds, endDateMilliseconds), HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Start date must be before end date", response.getBody());
@@ -61,9 +63,11 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
                         "=%d&locationId=%d", startDateMilliseconds, endDateMilliseconds, locationId), HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -80,10 +84,13 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
                         "=%d&locationId=%d&eventId=%d", startDateMilliseconds, endDateMilliseconds, locationId, eventId),
                 HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -100,10 +107,13 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
                         "=%d&locationId=%d&eventId=%d", startDateMilliseconds, endDateMilliseconds, locationId, eventId),
                 HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -120,10 +130,13 @@ public class ReportControllerIntegrationTests {
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d&endDate" +
                         "=%d&locationId=%d&eventId=%d", startDateMilliseconds, endDateMilliseconds, locationId, eventId),
                 HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -131,7 +144,7 @@ public class ReportControllerIntegrationTests {
     }
 
     @Test
-    public void getReport_everythingOk_reportDTOReturned() throws BadParametersException, EntityNotFoundException {
+    public void getReport_everythingOk_reportDTOReturned() {
         LocalDateTime startDate = LocalDateTime.parse("2020-01-01 13:44:33", dateTimeFormatter);
         LocalDateTime endDate = LocalDateTime.parse("2020-01-05 13:44:33", dateTimeFormatter);
 
@@ -144,10 +157,13 @@ public class ReportControllerIntegrationTests {
 
         int expectedNumberOfResults = 2;
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<ReportDTO> response = testRestTemplate
                 .exchange(String.format("/reports?startDate=%d&endDate=%d", startDateMilliseconds, endDateMilliseconds),
                         HttpMethod.GET,
-                        null, responseType
+                        entity, responseType
                 );
 
         ReportDTO body = response.getBody();
@@ -163,10 +179,13 @@ public class ReportControllerIntegrationTests {
 
         Long endDateMilliseconds = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?endDate=%d",
                 endDateMilliseconds),
                 HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -178,10 +197,13 @@ public class ReportControllerIntegrationTests {
 
         Long startDateMilliseconds = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<Object> entity = new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = testRestTemplate.exchange(String.format("/reports?startDate=%d",
                 startDateMilliseconds),
                 HttpMethod.GET,
-                null,
+                entity,
                 String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
