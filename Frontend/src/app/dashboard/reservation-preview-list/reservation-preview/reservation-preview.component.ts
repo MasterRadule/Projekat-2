@@ -21,7 +21,7 @@ export class ReservationPreviewComponent implements OnInit {
     this._reservation = value;
     this._ticketNumber = value.tickets.length;
     this._price = value.tickets.reduce<number>((sum, ticket) => sum + ticket.price, 0);
-    this._paid = value.orderId === null ? 'yes' : 'no';
+    this._paid = value.orderId === null ? 'no' : 'yes';
   }
 
   constructor() {

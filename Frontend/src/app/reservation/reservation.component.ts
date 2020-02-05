@@ -32,7 +32,7 @@ export class ReservationComponent implements OnInit {
           this.reservation = result;
           this._ticketNumber = result.tickets.length;
           this._price = result.tickets.reduce<number>((sum, ticket) => sum + ticket.price, 0);
-          this._paid = result.orderId === null ? 'yes' : 'no';
+          this._paid = result.orderId === null ? 'no' : 'yes';
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
