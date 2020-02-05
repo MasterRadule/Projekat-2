@@ -7,7 +7,7 @@ import {Event} from '../../../shared/model/event.model';
   styleUrls: ['./event-preview.component.scss']
 })
 export class EventPreviewComponent implements OnInit {
-  @Input() private event: Event;
+  @Input() public event: Event;
 
   constructor() {
   }
