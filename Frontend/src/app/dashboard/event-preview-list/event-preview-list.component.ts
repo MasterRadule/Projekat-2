@@ -4,6 +4,8 @@ import {MatSnackBar, PageEvent} from '@angular/material';
 import {SearchEventsDTO} from '../../shared/model/search-events-dto.model';
 import {LocationApiService} from '../../core/location-api.service';
 import {EventApiService} from '../../core/event-api.service';
+import {Event} from '../../shared/model/event.model';
+import {Location} from '../../shared/model/location.model';
 import * as moment from 'moment';
 
 @Component({
@@ -21,10 +23,9 @@ export class EventPreviewListComponent implements OnInit {
   @Output() eventsPageChanged = new EventEmitter<Page>();
   @Output() resetPaginator = new EventEmitter<any>();
 
-  constructor(private _eventApiService: EventApiService, private _locationApiService: LocationApiService,
-              private _snackBar: MatSnackBar) {
+  constructor(private eventApiService: EventApiService, private locationApiService: LocationApiService,
+              private snackBar: MatSnackBar) {
     this._eventCategories = ['Music', 'Sport', 'Fair', 'Movie', 'Performance', 'Competition'];
-    this.getLocationsOptions();
     this._searchParameters = new SearchEventsDTO('', null, null, '', '');
     this._activeSearchParameters = new SearchEventsDTO('', null, null, '', '');
   }
@@ -78,29 +79,30 @@ export class EventPreviewListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getLocationsOptions();
     this.getEvents(0, 6);
   }
 
   private getLocationsOptions() {
-    this._locationApiService.getLocationsOptions().subscribe({
+    this.locationApiService.getLocationsOptions().subscribe({
       next: (result: Location[]) => {
         this._locationsOptions = result;
       },
       error: (message: string) => {
-        this._snackBar.open(message);
+        this.snackBar.open(message);
       }
     });
   }
 
   public getEvents(page: number, size: number) {
-    this._eventApiService.getEvents(page, size).subscribe({
+    this.eventApiService.getEvents(page, size).subscribe({
       next: (result: Page) => {
         this._page = result;
         this.eventsPageChanged.emit(result);
-        this._events = result.content;
+        this.events = result.content;
       },
       error: (message: string) => {
-        this._snackBar.open(message);
+        this.snackBar.open(message);
       }
     });
   }
@@ -126,14 +128,14 @@ export class EventPreviewListComponent implements OnInit {
     if (parameters.endDate !== '') {
       parameters.endDate = moment(parameters.endDate).format('DD.MM.YYYY. HH:mm');
     }
-    this._eventApiService.searchEvents(parameters, page, size).subscribe({
+    this.eventApiService.searchEvents(parameters, page, size).subscribe({
       next: (result: Page) => {
         this._page = result;
         this.eventsPageChanged.emit(result);
-        this._events = result.content;
+        this.events = result.content;
       },
       error: (message: string) => {
-        this._snackBar.open(message);
+        this.snackBar.open(message);
       }
     });
   }
