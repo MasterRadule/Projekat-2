@@ -2,24 +2,33 @@
 <div fxLayout="row" fxLayoutAlign="space-around" fxLayout.xs="column" id="content">
   <form id="locationForm" fxLayout="column" fxLayoutGap="10px">
     <mat-form-field>
-      <input [(ngModel)]="location.name" matInput matTooltip="Enter location's name" name="name" placeholder="Name">
+      <input [readonly]="authenticationApiService.getRole() !== 'ROLE_ADMIN'" [(ngModel)]="location.name" matInput
+             matTooltip="Location's name" name="name"
+             placeholder="Name">
     </mat-form-field>
-    <mat-checkbox matTooltip="Enable or disable location" [(ngModel)]="location.disabled" name="disabled">
+    <mat-checkbox [disabled]="authenticationApiService.getRole() !== 'ROLE_ADMIN'"
+                  matTooltip="Enable or disable location"
+                  [(ngModel)]="location.disabled"
+                  name="disabled">
       Disabled
     </mat-checkbox>
     <div id="mapDiv" *ngIf="this.initialized">
       <app-map [_latitude]="location.latitude" [_longitude]="location.longitude"
                [_zoom]="9"
                [_maxZoom]="13"
-               [_mapName]="'location'" [_draggable]="true" (markerDrag)="updatePosition($event)"></app-map>
+               [_mapName]="'location'" [_draggable]="authenticationApiService.getRole() === 'ROLE_ADMIN'"
+               (markerDrag)="updatePosition($event)"></app-map>
     </div>
     <span fxLayout="row" fxLayoutGap="10px">
-    <button mat-raised-button type="button" routerLink="/dashboard/locations/preview">Cancel</button>
-    <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save</button>
+    <button mat-raised-button type="button" routerLink="/dashboard/locations/preview" matTooltip="Go back">Back</button>
+    <button *ngIf="authenticationApiService.getRole() === 'ROLE_ADMIN'" mat-raised-button color="primary" type="submit"
+            (click)="createOrEditLocation()">Save</button>
     </span>
   </form>
   <app-seat-groups id="sg" [width]="600" [height]="500" [draggable]="true"></app-seat-groups>
-  <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()" [formGroup]="this.addSeatGroupForm">
+  <form *ngIf="authenticationApiService.getRole() === 'ROLE_ADMIN'" id="seatGroupForm" fxLayout="column"
+        (ngSubmit)="addSeatGroup()"
+        [formGroup]="this.addSeatGroupForm">
     <mat-checkbox formControlName="parterre" (change)="toggleParterre()" [disabled]="this.location.id ===
     undefined">
       Parterre

@@ -7,6 +7,7 @@ import {SeatGroup} from '../shared/model/seat-group.model';
 import {Page} from '../shared/model/page.model';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
+import {AuthenticationApiService} from '../core/authentication-api.service';
 
 
 @Component({
@@ -29,7 +30,7 @@ export class LocationComponent implements OnInit {
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
-              private router: Router) {
+              private router: Router, private authenticationApiService: AuthenticationApiService) {
   }
 
   ngOnInit() {

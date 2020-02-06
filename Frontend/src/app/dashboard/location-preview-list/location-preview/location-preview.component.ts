@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {LocationApiService} from '../../../core/location-api.service';
 import {MatSlideToggleChange, MatSnackBar} from '@angular/material';
 import {Location} from '../../../shared/model/location.model';
+import {AuthenticationApiService} from '../../../core/authentication-api.service';
 
 @Component({
   selector: 'app-location-preview',
@@ -11,7 +12,8 @@ import {Location} from '../../../shared/model/location.model';
 export class LocationPreviewComponent {
   @Input() location: Location;
 
-  constructor(private locationApiService: LocationApiService, private snackBar: MatSnackBar) {
+  constructor(private locationApiService: LocationApiService, private snackBar: MatSnackBar,
+              private authenticationApiService: AuthenticationApiService) {
   }
 
   private toggleLocationStatus($event: MatSlideToggleChange) {
