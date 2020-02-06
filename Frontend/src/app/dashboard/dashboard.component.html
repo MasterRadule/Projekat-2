@@ -9,7 +9,7 @@
     <div *ngIf="_content==='events'">
       <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)"></app-event-preview-list>
     </div>
-    <div *ngIf="_content==='reservations'">
+    <div *ngIf="_content==='reservations' && getRole == 'ROLE_USER'">
       <app-reservation-preview-list (reservationsPageChanged)="contentPageChanged($event)"></app-reservation-preview-list>
     </div>
   </div>

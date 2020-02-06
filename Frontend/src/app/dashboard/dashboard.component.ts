@@ -4,6 +4,7 @@ import {EventPreviewListComponent} from './event-preview-list/event-preview-list
 import {LocationPreviewListComponent} from './location-preview-list/location-preview-list.component';
 import {PaginatorComponent} from './paginator/paginator.component';
 import {ReservationPreviewListComponent} from './reservation-preview-list/reservation-preview-list.component';
+import {AuthenticationApiService} from '../core/authentication-api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,8 +18,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(ReservationPreviewListComponent, {static: false}) reservationListComponent: ReservationPreviewListComponent;
   private _content: string;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private authService: AuthenticationApiService) {
   }
+
+  private getRole: string = this.authService.getRole();
 
   get content(): string {
     return this._content;

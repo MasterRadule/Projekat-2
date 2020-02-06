@@ -3,8 +3,8 @@
     <a mat-button routerLink="/dashboard/events/preview">My application</a>
     <button routerLink="/dashboard/events/preview" mat-button>Events</button>
     <button routerLink="/dashboard/locations/preview" mat-button>Locations</button>
-    <button routerLink="/dashboard/reports" mat-button>Reports</button>
-    <button *ngIf="getRole != 'NO_ROLE'" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
+    <button *ngIf="getRole == 'ROLE_ADMIN'" routerLink="/dashboard/reports" mat-button>Reports</button>
+    <button *ngIf="getRole == 'ROLE_USER'" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
   </span>
   <span fxLayoutAlign="right">
     <button *ngIf="getRole != 'NO_ROLE'" mat-button>My profile</button>

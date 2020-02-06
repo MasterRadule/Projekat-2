@@ -1,24 +1,11 @@
 package ktsnvt.tim1.controllers;
 
-import com.paypal.api.payments.*;
-import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.PayPalRESTException;
 import ktsnvt.tim1.DTOs.*;
-import ktsnvt.tim1.exceptions.EntityNotFoundException;
-import ktsnvt.tim1.exceptions.EntityNotValidException;
-import ktsnvt.tim1.exceptions.ImpossibleActionException;
-import ktsnvt.tim1.exceptions.PayPalException;
-import ktsnvt.tim1.model.RegisteredUser;
-import ktsnvt.tim1.model.Reservation;
-import ktsnvt.tim1.model.User;
-import ktsnvt.tim1.security.TokenUtils;
-import ktsnvt.tim1.services.ReservationService;
+import ktsnvt.tim1.utils.HeaderTokenGenerator;
 import ktsnvt.tim1.utils.RestResponsePage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,25 +13,15 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,13 +37,13 @@ public class ReservationControllerIntegrationTests {
     private TestRestTemplate testRestTemplate;
 
     @Autowired
-    private TokenUtils tokenUtils;
-
-    @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
+
     @AfterEach
-    public void rollback(){
+    public void rollback() {
         Resource resource = new ClassPathResource("data-h2.sql");
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
         resourceDatabasePopulator.execute(dataSource);
@@ -74,7 +51,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void getReservations_parameterALL_allReturned() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ParameterizedTypeReference<RestResponsePage<ReservationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<ReservationDTO>>() {
         };
@@ -83,13 +60,14 @@ public class ReservationControllerIntegrationTests {
                 "/reservations?type=ALL&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), responseType);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals(2, result.getBody().getTotalElements());
         assertEquals(2, result.getBody().getNumberOfElements());
     }
 
     @Test
     public void getReservations_parameterBOUGHT_boughtReturned() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ParameterizedTypeReference<RestResponsePage<ReservationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<ReservationDTO>>() {
         };
@@ -98,13 +76,14 @@ public class ReservationControllerIntegrationTests {
                 "/reservations?type=BOUGHT&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), responseType);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals(1, result.getBody().getTotalElements());
         assertEquals(1, result.getBody().getNumberOfElements());
     }
 
     @Test
     public void getReservations_parameterRESERVED_reservedReturned() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ParameterizedTypeReference<RestResponsePage<ReservationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<ReservationDTO>>() {
         };
@@ -113,24 +92,26 @@ public class ReservationControllerIntegrationTests {
                 "/reservations?type=RESERVED&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), responseType);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals(1, result.getBody().getTotalElements());
         assertEquals(1, result.getBody().getNumberOfElements());
     }
 
     @Test
     public void getReservations_parameterEmpty_typeIsEmpty() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations?type=&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals("Type is empty", result.getBody());
     }
 
     @Test
     public void getReservations_userHasNoUncancelledReservations_emptyReturned() {
-        HttpHeaders headers = generateHeaderWithToken("ogqojyxj5136@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("ogqojyxj5136@example.com");
 
         ParameterizedTypeReference<RestResponsePage<ReservationDTO>> responseType = new ParameterizedTypeReference<RestResponsePage<ReservationDTO>>() {
         };
@@ -139,14 +120,15 @@ public class ReservationControllerIntegrationTests {
                 "/reservations?type=RESERVED&$page=0&size=5"), HttpMethod.GET, new HttpEntity<>(headers), responseType);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals(0, result.getBody().getTotalElements());
         assertEquals(0, result.getBody().getNumberOfElements());
     }
 
 
     @Test
-    public void getReservation_reservationExists_reservationReturned() throws EntityNotFoundException {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    public void getReservation_reservationExists_reservationReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         Long reservationId = 1L;
 
@@ -154,14 +136,15 @@ public class ReservationControllerIntegrationTests {
                 "/reservations/" + reservationId), HttpMethod.GET, new HttpEntity<>(headers), ReservationDTO.class);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
         assertEquals(reservationId, result.getBody().getId());
     }
 
     @Test
     public void getReservation_reservationDoesNotExist_entityNotFoundExceptionThrown() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        Long reservationId = 100L;
+        long reservationId = 100L;
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.GET, new HttpEntity<>(headers), String.class);
@@ -172,8 +155,8 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void createReservation_validSeatTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    public void createReservation_validSeatTicketSingleDay_reservationCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -183,6 +166,7 @@ public class ReservationControllerIntegrationTests {
 
         ResponseEntity<ReservationDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations"), HttpMethod.POST, new HttpEntity<>(newReservationDTO, headers), ReservationDTO.class);
+        assertNotNull(result.getBody());
         ReservationDTO reservationDTO = result.getBody();
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -202,8 +186,8 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void createReservation_validSeatTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    public void createReservation_validSeatTicketAllDays_reservationCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, true);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -212,6 +196,7 @@ public class ReservationControllerIntegrationTests {
 
         ResponseEntity<ReservationDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations"), HttpMethod.POST, new HttpEntity<>(newReservationDTO, headers), ReservationDTO.class);
+        assertNotNull(result.getBody());
         ReservationDTO reservationDTO = result.getBody();
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -232,8 +217,8 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void createReservation_validParterreTicketSingleDay_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    public void createReservation_validParterreTicketSingleDay_reservationCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(26L, null, false);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -242,6 +227,7 @@ public class ReservationControllerIntegrationTests {
 
         ResponseEntity<ReservationDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations"), HttpMethod.POST, new HttpEntity<>(newReservationDTO, headers), ReservationDTO.class);
+        assertNotNull(result.getBody());
         ReservationDTO reservationDTO = result.getBody();
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -261,8 +247,8 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void createReservation_validParterreTicketAllDays_reservationCreated() throws EntityNotFoundException, ImpossibleActionException, EntityNotValidException {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+    public void createReservation_validParterreTicketAllDays_reservationCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(26L, null, true);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -271,6 +257,7 @@ public class ReservationControllerIntegrationTests {
 
         ResponseEntity<ReservationDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations"), HttpMethod.POST, new HttpEntity<>(newReservationDTO, headers), ReservationDTO.class);
+        assertNotNull(result.getBody());
         ReservationDTO reservationDTO = result.getBody();
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -292,7 +279,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_noSuchEvent_entityNotFoundException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -309,7 +296,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_tooManyTickets_entityNotValidException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(2L, 10L, false));
@@ -327,7 +314,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_eventStarted_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(2L, 10L, false));
@@ -344,7 +331,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_seatDoesNotExist_entityNotFoundException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(1L, 10L, false));
@@ -361,7 +348,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_seatTaken_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(1L, 1L, false));
@@ -379,7 +366,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_seatNotFreeAllDays_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(1L, 1L, true));
@@ -396,7 +383,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_parterreDoesNotExist_entityNotFoundException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(25L, null, false));
@@ -413,7 +400,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_parterreFull_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(50L, null, false));
@@ -430,7 +417,7 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void createReservation_parterreNotFreeAllDays_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
         tickets.add(new NewTicketDTO(50L, null, true));
@@ -447,9 +434,9 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void cancelReservation_reservationDoesNotExist_entityNotFoundExceptionThrown() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        Long reservationId = 100L;
+        long reservationId = 100L;
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.DELETE, new HttpEntity<>(headers), String.class);
@@ -461,9 +448,9 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void cancelReservation_reservationAlreadyPaid_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        Long reservationId = 1L;
+        long reservationId = 1L;
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.DELETE, new HttpEntity<>(headers), String.class);
 
@@ -473,13 +460,14 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void cancelReservation_everythingValid_reservationCanceled() throws ImpossibleActionException, EntityNotFoundException {
-        HttpHeaders headers = generateHeaderWithToken("ktsnvt.tim1@gmail.com");
+    public void cancelReservation_everythingValid_reservationCanceled() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("ktsnvt.tim1@gmail.com");
 
-        Long reservationId = 20L;
+        long reservationId = 20L;
 
         ResponseEntity<ReservationDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.DELETE, new HttpEntity<>(headers), ReservationDTO.class);
+        assertNotNull(result.getBody());
         ReservationDTO reservationDTO = result.getBody();
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -488,12 +476,11 @@ public class ReservationControllerIntegrationTests {
     }
 
 
-
     @Test
     public void payReservationCreatePayment_reservationDoesNotExist_entityNotFoundExceptionThrown() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        Long reservationId = 100L;
+        long reservationId = 100L;
 
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.POST, new HttpEntity<>(headers), String.class);
@@ -505,9 +492,9 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void payReservationCreatePayment_reservationAlreadyPaid_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
 
-        Long reservationId = 1L;
+        long reservationId = 1L;
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.POST, new HttpEntity<>(headers), String.class);
 
@@ -517,28 +504,28 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void payReservationCreatePayment_everythingValid_paymentCreated() throws PayPalRESTException, PayPalException, ImpossibleActionException, EntityNotFoundException {
-        HttpHeaders headers = generateHeaderWithToken("ktsnvt.tim1@gmail.com");
+    public void payReservationCreatePayment_everythingValid_paymentCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("ktsnvt.tim1@gmail.com");
 
-        Long reservationId = 20L;
+        long reservationId = 20L;
         ResponseEntity<PaymentDTO> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId), HttpMethod.POST, new HttpEntity<>(headers), PaymentDTO.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertNotNull(result.getBody());
         PaymentDTO paymentDTO = result.getBody();
         assertNotNull(paymentDTO.getPaymentID());
     }
 
 
-
     @Test
     public void payReservationExecutePayment_reservationDoesNotExist_entityNotFoundExceptionThrown() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
         String payerId = "payerId";
         PaymentDTO paymentDTO = new PaymentDTO("paymentId");
         paymentDTO.setPayerID(payerId);
 
-        Long reservationId = 100L;
+        long reservationId = 100L;
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId + "/execute-payment"), HttpMethod.POST, new HttpEntity<>(paymentDTO, headers), String.class);
 
@@ -549,12 +536,12 @@ public class ReservationControllerIntegrationTests {
 
     @Test
     public void payReservationExecutePayment_reservationAlreadyPaid_impossibleActionException() {
-        HttpHeaders headers = generateHeaderWithToken("JennifferHooker@example.com");
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
         String payerId = "payerId";
         PaymentDTO paymentDTO = new PaymentDTO("paymentId");
         paymentDTO.setPayerID(payerId);
 
-        Long reservationId = 1L;
+        long reservationId = 1L;
         ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort(
                 "/reservations/" + reservationId + "/execute-payment"), HttpMethod.POST, new HttpEntity<>(paymentDTO, headers), String.class);
 
@@ -564,8 +551,8 @@ public class ReservationControllerIntegrationTests {
 
 
     @Test
-    public void createAndPayReservationCreatePayment_everythingValid_paymentCreated() throws PayPalRESTException, PayPalException, ImpossibleActionException, EntityNotValidException, EntityNotFoundException {
-        HttpHeaders headers = generateHeaderWithToken("ktsnvt.tim1@gmail.com");
+    public void createAndPayReservationCreatePayment_everythingValid_paymentCreated() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("ktsnvt.tim1@gmail.com");
 
         NewTicketDTO newTicketDTO = new NewTicketDTO(1L, 2L, false);
         ArrayList<NewTicketDTO> tickets = new ArrayList<>();
@@ -576,6 +563,7 @@ public class ReservationControllerIntegrationTests {
                 "/reservations/create-and-pay"), HttpMethod.POST, new HttpEntity<>(newReservationDTO, headers), PaymentDTO.class);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertNotNull(result.getBody());
         PaymentDTO paymentDTO = result.getBody();
         assertNotNull(paymentDTO.getPaymentID());
     }
@@ -583,13 +571,5 @@ public class ReservationControllerIntegrationTests {
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + "/api" + uri;
-    }
-
-    private HttpHeaders generateHeaderWithToken(String userEmail) {
-        UserDetails userDetails = new User(null, null, null, null, userEmail, null);
-        String token = tokenUtils.generateToken(userDetails);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", token);
-        return headers;
     }
 }

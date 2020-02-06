@@ -6,11 +6,12 @@ import {LoginComponent} from '../auth/components/login/login.component';
 import {RegisterComponent} from '../auth/components/register/register.component';
 import {ReservationComponent} from '../reservation/reservation.component';
 import {EventComponent} from '../event/event.component';
+import {RoleGuard} from '../auth/guards/role.guard';
 
 export const routes: Routes = [
   {
     path: 'dashboard/:content/preview',
-    component: DashboardComponent
+    component: DashboardComponent,
   },
   {
     path: 'dashboard/events/:id',
@@ -25,7 +26,9 @@ export const routes: Routes = [
   {
     path: 'dashboard/reservations/:id',
     component: ReservationComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'ROLE_USER'}
   },
   {
     path: 'dashboard/events',
@@ -40,7 +43,9 @@ export const routes: Routes = [
   {
     path: 'dashboard/reports',
     component: ReportsComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'ROLE_ADMIN'}
   },
   {
     path: 'dashboard',
@@ -54,9 +59,18 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'NO_ROLE'}
   },
   {
     path: 'register',
-    component: RegisterComponent}
+    component: RegisterComponent,
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'NO_ROLE'}
+  },
+  {
+    path: '**',
+    redirectTo: '/dashboard/events/preview',
+  },
 ];
