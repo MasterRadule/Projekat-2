@@ -13,5 +13,5 @@
 </div>
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-reservation-preview *ngFor="let reservation of _reservations"
-                           [reservation]="reservation"></app-reservation-preview>
+                           [reservation]="reservation" (reservationCancelled)="getReservations()"></app-reservation-preview>
 </div>

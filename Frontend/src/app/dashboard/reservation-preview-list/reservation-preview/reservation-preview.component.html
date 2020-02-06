@@ -19,17 +19,14 @@
       </tr>
     </table>
   </mat-card-content>
-  <mat-card-actions>
-    <span fxLayoutGap="20px">
-    <span>
-      <button mat-raised-button color="primary" [routerLink]="['/dashboard/reservations/', this._reservation.id]">Details</button>
-    </span>
-    <span [style.visibility]="_paid==='no' ? 'visible' : 'hidden'">
-      <button mat-raised-button color="primary">Pay</button>
-    </span>
-    <span [style.visibility]="_paid==='no' ? 'visible' : 'hidden'">
-      <button mat-raised-button color="primary">Cancel</button>
-    </span>
-    </span>
+  <mat-card-actions fxLayout="column" fxLayoutGap="2vh">
+    <div fxLayout="row" fxFlex fxLayoutAlign="center" fxLayoutGap="2vh">
+      <button  mat-raised-button color="primary" [routerLink]="['/dashboard/reservations/', this.reservation.id]">Details</button>
+      <button  *ngIf="_paid==='no'" mat-raised-button color="primary"
+               (click)="cancelReservation(this.reservation)">Cancel</button>
+    </div>
+    <div *ngIf="_paid==='no'" fxLayout="row" fxFlex fxLayoutAlign="center" fxLayoutGap="2vh">
+      <div id="pay-button-{{this.reservation.id}}"></div>
+    </div>
   </mat-card-actions>
 </mat-card>
