@@ -44,7 +44,6 @@ export class ReservationPreviewComponent implements OnInit {
   }
 
   private configPayPal() {
-    console.log(paypal);
     paypal.Button.render({
       style: {
         size: 'small',

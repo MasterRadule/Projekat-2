@@ -21,8 +21,8 @@
   </mat-card-content>
   <mat-card-actions fxLayout="column" fxLayoutGap="2vh">
     <div fxLayout="row" fxFlex fxLayoutAlign="center" fxLayoutGap="2vh">
-      <button  mat-raised-button color="primary" [routerLink]="['/dashboard/reservations/', this.reservation.id]">Details</button>
-      <button  *ngIf="_paid==='no'" mat-raised-button color="primary"
+      <button id="detailsButton" mat-raised-button color="primary" [routerLink]="['/dashboard/reservations/', this.reservation.id]">Details</button>
+      <button id="cancelButton" *ngIf="_paid==='no'" mat-raised-button color="primary"
                (click)="cancelReservation(this.reservation)">Cancel</button>
     </div>
     <div *ngIf="_paid==='no'" fxLayout="row" fxFlex fxLayoutAlign="center" fxLayoutGap="2vh">
