@@ -6,6 +6,8 @@ public class EventOptionDTO {
     private Long id;
     private String name;
 
+    public EventOptionDTO() {}
+
     public EventOptionDTO(Event e) {
         this.id = e.getId();
         this.name = e.getName();

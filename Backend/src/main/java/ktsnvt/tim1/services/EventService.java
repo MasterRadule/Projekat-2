@@ -61,7 +61,14 @@ public class EventService {
     }
 
     public EventDTO createEvent(EventDTO event) throws EntityNotValidException {
-        return eventMapper.toDTO(eventRepository.save(eventMapper.toEntity(event)));
+        Event e = eventMapper.toEntity(event);
+        LocalDateTime today = LocalDateTime.now();
+        for (EventDay ev: e.getEventDays()) {
+            if (ev.getDate().toLocalDate().compareTo(today.toLocalDate()) < 1) {
+                throw new EntityNotValidException("Event day date must be after today's date");
+            }
+        }
+        return eventMapper.toDTO(eventRepository.save(e));
     }
 
     public EventDTO editEvent(EventDTO event) throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
@@ -73,6 +80,17 @@ public class EventService {
         if (!e.getName().equalsIgnoreCase(event.getName()) && eventRepository.findOneByName(event.getName()) != null) {
             throw new EntityAlreadyExistsException("Event with given name already exists");
         }
+
+        LocalDateTime today = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+        LocalDateTime evDay;
+        for (EventDayDTO ev: event.getEventDays()) {
+            evDay = LocalDateTime.parse(ev.getDate(), formatter);
+            if (evDay.toLocalDate().compareTo(today.toLocalDate()) < 1) {
+                throw new EntityNotValidException("Event day date must be after today's date");
+            }
+        }
+
         e.setName(event.getName());
         e.setDescription(event.getDescription());
         e.setCategory(EventCategory.valueOf(event.getCategory()));
