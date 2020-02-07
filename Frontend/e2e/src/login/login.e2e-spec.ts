@@ -39,7 +39,7 @@ describe('login page', () => {
     page.getLoginButton().click().then(() => {
       expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/dashboard/events/preview');
       let valLocalStorage = browser.executeScript("return window.localStorage.getItem('token');");
-      expect(valLocalStorage).toBeDefined();
+      expect(valLocalStorage).not.toBeNull();
     });
   });
 
