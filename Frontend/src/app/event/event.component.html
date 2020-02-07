@@ -120,7 +120,7 @@
         [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
   </div>
 
-  <div fxLayout="row wrap" id="locationSelect">
+  <div *ngIf="false" fxLayout="row wrap" id="locationSelect">
     <mat-form-field>
       <mat-label>Location</mat-label>
       <mat-select name="locationID" [(ngModel)]="locationSeatGroupDTO.locationID" (selectionChange)="changeSelectedLocation($event)">
@@ -132,9 +132,20 @@
     </mat-form-field>
   </div>
 
+  <div fxLayout="row wrap" id="eventDaySelect">
+    <mat-form-field>
+      <mat-label>Event days</mat-label>
+      <mat-select name="eventDay" [(ngModel)]="selectedEventDayID">
+        <mat-option *ngFor="let eDay of event.eventDays" [value]="eDay.id">
+          {{eDay.date}}, {{eDay.id}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   <div fxLayout="row wrap">
     <div fxLayout="column" class="seatGroups">
-      <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false" 
+      <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false" [selectedEventDayID]="selectedEventDayID" [enabledEventSeatGroups]="locationSeatGroupDTO"
       (seatGroupClicked)="seatGroupClicked($event)"></app-seat-groups>
     </div>
     <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups">

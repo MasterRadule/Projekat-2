@@ -34,6 +34,7 @@ export class EventComponent implements OnInit {
   private selectedSeatGroupIndex: number;
   private selectedSeatGroupId = -1;
   private enabledSeatGroup = false;
+  private selectedEventDayID: number;
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
@@ -133,6 +134,7 @@ export class EventComponent implements OnInit {
        const to: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').set({hour: 23, minute: 59, second: 59}).toDate();
        this.events.push(new AxiomSchedulerEvent('Event day', from, to, {id: ev.id}, colors[Math.floor(Math.random() * 15)]));
     }
+    this.selectedEventDayID = this.event.eventDays[0].id;
     this.refreshView();
   }
 
@@ -251,7 +253,6 @@ export class EventComponent implements OnInit {
             this.locationSeatGroupDTO.eventSeatGroups = [];
             this.selectedSeatGroupId = -1;
             this.enabledSeatGroup = false;
-            this.seatGroupComponent.enabledSeatGroupsIds = [];
             this.seatGroupComponent.redraw();
           }
         },
@@ -297,7 +298,6 @@ export class EventComponent implements OnInit {
           this.locationSeatGroupDTO = result;
           if (this.locationSeatGroupDTO.locationID != null) {
             this.getSeatGroups(this.locationSeatGroupDTO.locationID, false);
-            this.locationSeatGroupDTO.eventSeatGroups.forEach(esg => this.seatGroupComponent.enabledSeatGroupsIds.push(esg.seatGroupID));
           }
           this.selectedSeatGroupId = -1;
           this.enabledSeatGroup = false;
@@ -323,14 +323,11 @@ export class EventComponent implements OnInit {
 
   private seatGroupStatusChanged($event) {
     if ($event.checked) {
-      const esgDTO: EventSeatGroupDTO = new EventSeatGroupDTO(this.selectedSeatGroupId, 1);
+      const esgDTO: EventSeatGroupDTO = new EventSeatGroupDTO(this.selectedSeatGroupId, 1, []);
       this.locationSeatGroupDTO.eventSeatGroups.push(esgDTO.serialize());
       this.selectedSeatGroupIndex = this.locationSeatGroupDTO.eventSeatGroups.length - 1;
-      this.seatGroupComponent.enabledSeatGroupsIds.push(this.selectedSeatGroupId);
     } else {
       this.locationSeatGroupDTO.eventSeatGroups.splice(this.selectedSeatGroupIndex, 1);
-      const idx = this.seatGroupComponent.enabledSeatGroupsIds.indexOf(this.selectedSeatGroupId);
-      this.seatGroupComponent.enabledSeatGroupsIds.splice(idx, 1);
     }
 
     this.seatGroupComponent.redraw();
