@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.Set;
 
 public class EventSeatGroupDTO {
 
@@ -12,6 +13,7 @@ public class EventSeatGroupDTO {
 
     @Positive
     private Double price;
+    private Set<ReservableSeatGroupDTO> reservableSeatGroups;
 
     public EventSeatGroupDTO() {}
 
@@ -33,5 +35,13 @@ public class EventSeatGroupDTO {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Set<ReservableSeatGroupDTO> getReservableSeatGroups() {
+        return reservableSeatGroups;
+    }
+
+    public void setReservableSeatGroups(Set<ReservableSeatGroupDTO> reservableSeatGroups) {
+        this.reservableSeatGroups = reservableSeatGroups;
     }
 }

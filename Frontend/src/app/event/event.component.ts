@@ -16,6 +16,7 @@ import {Page} from '../shared/model/page.model';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
 import {EventSeatGroupDTO} from '../shared/model/event-seat-group-dto.model';
+import {AuthenticationApiService} from '../core/authentication-api.service';
 import * as moment from 'moment';
 
 @Component({
@@ -30,16 +31,22 @@ export class EventComponent implements OnInit {
   private imageObject: Array<object> = [];
   private uploader: FileUploader;
   private locationsOptions: Location[];
-  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, []);
+  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, [], "");
   private selectedSeatGroupIndex: number;
   private selectedSeatGroupId = -1;
   private enabledSeatGroup = false;
+  private selectedEventDayID: number;
   @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
+  private role: string;
+  private seatComponentMode: string;
+
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
-              private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+      private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+    this.role = this.authService.getRole();
+    this.seatComponentMode = this.role.concat("_EVENT");
   }
 
   ngOnInit() {
@@ -85,6 +92,12 @@ export class EventComponent implements OnInit {
   }
 
   private createOrEditEvent() {
+    if (this.locationSeatGroupDTO.eventSeatGroups.length === 0) {
+      this.snackBar.open('At least one seat group must be enabled', 'Dismiss', {
+        duration: 3000
+      });
+      return;
+    }
     this.event.eventDays = [];
     for (const eventDay of this.events) {
       const date: string = moment(eventDay.from).format('DD.MM.YYYY. HH:mm');
@@ -95,9 +108,7 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.snackBar.open('Event edited successfully', 'Dismiss', {
-              duration: 3000
-            });
+            this.saveLocationAndSeatGroups();
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -111,11 +122,8 @@ export class EventComponent implements OnInit {
       this.eventApiService.createEvent(this.event).subscribe(
         {
           next: (result: Event) => {
-            this.snackBar.open('Event created successfully', 'Dismiss', {
-              duration: 3000
-            });
-            this.router.navigate(['/dashboard/events/', result.id]).then(r => {
-            });
+            this.event = result;
+            this.saveLocationAndSeatGroups();
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -133,6 +141,7 @@ export class EventComponent implements OnInit {
        const to: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').set({hour: 23, minute: 59, second: 59}).toDate();
        this.events.push(new AxiomSchedulerEvent('Event day', from, to, {id: ev.id}, colors[Math.floor(Math.random() * 15)]));
     }
+    this.selectedEventDayID = this.event.eventDays[0].id;
     this.refreshView();
   }
 
@@ -251,7 +260,6 @@ export class EventComponent implements OnInit {
             this.locationSeatGroupDTO.eventSeatGroups = [];
             this.selectedSeatGroupId = -1;
             this.enabledSeatGroup = false;
-            this.seatGroupComponent.enabledSeatGroupsIds = [];
             this.seatGroupComponent.redraw();
           }
         },
@@ -297,7 +305,6 @@ export class EventComponent implements OnInit {
           this.locationSeatGroupDTO = result;
           if (this.locationSeatGroupDTO.locationID != null) {
             this.getSeatGroups(this.locationSeatGroupDTO.locationID, false);
-            this.locationSeatGroupDTO.eventSeatGroups.forEach(esg => this.seatGroupComponent.enabledSeatGroupsIds.push(esg.seatGroupID));
           }
           this.selectedSeatGroupId = -1;
           this.enabledSeatGroup = false;
@@ -323,31 +330,24 @@ export class EventComponent implements OnInit {
 
   private seatGroupStatusChanged($event) {
     if ($event.checked) {
-      const esgDTO: EventSeatGroupDTO = new EventSeatGroupDTO(this.selectedSeatGroupId, 1);
+      const esgDTO: EventSeatGroupDTO = new EventSeatGroupDTO(this.selectedSeatGroupId, 1, []);
       this.locationSeatGroupDTO.eventSeatGroups.push(esgDTO.serialize());
       this.selectedSeatGroupIndex = this.locationSeatGroupDTO.eventSeatGroups.length - 1;
-      this.seatGroupComponent.enabledSeatGroupsIds.push(this.selectedSeatGroupId);
     } else {
       this.locationSeatGroupDTO.eventSeatGroups.splice(this.selectedSeatGroupIndex, 1);
-      const idx = this.seatGroupComponent.enabledSeatGroupsIds.indexOf(this.selectedSeatGroupId);
-      this.seatGroupComponent.enabledSeatGroupsIds.splice(idx, 1);
     }
 
     this.seatGroupComponent.redraw();
   }
 
   private saveLocationAndSeatGroups() {
-    if (this.locationSeatGroupDTO.eventSeatGroups.length === 0) {
-      this.snackBar.open('At least one seat group must be enabled', 'Dismiss', {
-        duration: 3000
-      });
-      return;
-    }
     this.eventApiService.setEventLocationAndSeatGroups(this.locationSeatGroupDTO).subscribe(
       {
         next: (result: Event) => {
-          this.snackBar.open('Location and seat groups successfully saved', 'Dismiss', {
-            duration: 3000
+          this.snackBar.open('Event saved successfully', 'Dismiss', {
+              duration: 3000
+          });
+          this.router.navigate(['/dashboard/events/', result.id]).then(r => {
           });
         },
         error: (message: string) => {

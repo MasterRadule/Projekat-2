@@ -122,7 +122,6 @@ public class EventController {
     }
 
     @GetMapping("{eventID}/location")
-    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> getEventLocationAndSeatGroups(@PathVariable("eventID") Long id) {
         try {
             return new ResponseEntity<>(eventService.getEventLocationAndSeatGroups(id), HttpStatus.OK);

@@ -9,13 +9,13 @@
   </mat-card-content>
   <mat-card-actions fxLayout="row" fxLayoutGap="3%">
     <button mat-raised-button color="primary"
-            [matTooltip]="authenticationApiService.getRole() === 'ROLE_ADMIN' ? 'Edit location': 'View location'"
+            [matTooltip]="role === 'ROLE_ADMIN' ? 'Edit location': 'View location'"
             [routerLink]="['/dashboard/locations/',
     this.location.id]">
-      <mat-icon *ngIf="authenticationApiService.getRole() === 'ROLE_ADMIN'; else viewButton">edit</mat-icon>
+      <mat-icon *ngIf="role === 'ROLE_ADMIN'; else viewButton">edit</mat-icon>
       <ng-template #viewButton><mat-icon>pageview</mat-icon></ng-template>
     </button>
-    <mat-slide-toggle *ngIf="authenticationApiService.getRole() === 'ROLE_ADMIN'"
+    <mat-slide-toggle *ngIf="role === 'ROLE_ADMIN'"
                       matTooltip="Enable or disable location"
                       color="primary"
                       [checked]="!location.disabled" (change)="toggleLocationStatus($event)"></mat-slide-toggle>

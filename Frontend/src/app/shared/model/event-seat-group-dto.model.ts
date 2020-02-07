@@ -1,3 +1,4 @@
+import {ReservableSeatGroupDTO} from './reservable-seat-group-dto.model';
 import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 
 @Serialize({})
@@ -10,11 +11,16 @@ export class EventSeatGroupDTO extends Serializable {
     map: 'price'
   })
   private _price: number;
+  @SerializeProperty({
+    map: 'reservableSeatGroups'
+  })
+  private _reservableSeatGroups: ReservableSeatGroupDTO[];
 
-  constructor(seatGroupID: number, price: number) {
+  constructor(seatGroupID: number, price: number, reservableSeatGroups: ReservableSeatGroupDTO[]) {
     super();
     this._seatGroupID = seatGroupID;
     this._price = price;
+    this._reservableSeatGroups = reservableSeatGroups;
   }
 
   get seatGroupID(): number {
@@ -31,5 +37,13 @@ export class EventSeatGroupDTO extends Serializable {
 
   set price(price: number) {
     this._price = price;
+  }
+
+  get reservableSeatGroups(): ReservableSeatGroupDTO[] {
+    return this._reservableSeatGroups;
+  }
+
+  set reservableSeatGroups(reservableSeatGroups: ReservableSeatGroupDTO[]) {
+    this._reservableSeatGroups = reservableSeatGroups;
   }
 }

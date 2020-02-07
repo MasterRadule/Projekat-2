@@ -9,12 +9,12 @@ import {Router} from '@angular/router';
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
+  private role: string;
 
   constructor(private authService: AuthenticationApiService, private snackBar: MatSnackBar,
               private router: Router) {
+    this.role = this.authService.getRole();
   }
-
-  getRole: string = this.authService.getRole();
 
   ngOnInit() {
   }

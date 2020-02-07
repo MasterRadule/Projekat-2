@@ -1,5 +1,10 @@
 import {Component, Input, OnDestroy, OnInit, Output, EventEmitter} from '@angular/core';
 import {SeatGroup} from '../shared/model/seat-group.model';
+import {EventDay} from '../shared/model/event-day.model';
+import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
+import {EventSeatGroupDTO} from '../shared/model/event-seat-group-dto.model';
+import {ReservableSeatGroupDTO} from '../shared/model/reservable-seat-group-dto.model';
+import {SeatDTO} from '../shared/model/seat-dto.model';
 import Konva from 'konva';
 
 @Component({
@@ -11,25 +16,44 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
-  @Input() private draggable: boolean;
+  @Input() private mode: string;
+  @Input() private enabledEventSeatGroups: LocationSeatGroupDTO;
   @Output() seatGroupClicked = new EventEmitter<number>();
 
   private stage: Konva.Stage;
   private layer: Konva.Layer;
   private seatGroupRepresentations: Konva.Group[] = [];
   private transformersMap = new Map<Konva.Group, Konva.Transformer>();
+  private _selectedEventDayID: number;
   private selectedSeatGroupIndex: number;
-  public enabledSeatGroupsIds: number[] = [];
 
   constructor() {
   }
 
+  get selectedEventDayID(): number {
+    return this._selectedEventDayID;
+  }
+
+  @Input('selectedEventDayID')
+  set selectedEventDayID(selectedEventDayID: number) {
+    if (selectedEventDayID) {
+      this._selectedEventDayID = selectedEventDayID;
+      this.layer.destroyChildren();
+      this.setUpSeatGroups();
+      this.layer.draw();
+    }
+  }
+
   private setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
+      let freeSeats = null;
+      if (['NO_ROLE_EVENT', 'ROLE_USER_EVENT'].includes(this.mode)) {
+        freeSeats = this.getNumberOfFreeSeats(seatGroup.id);
+      }
       const text = new Konva.Text({
         x: 0,
         y: 0,
-        text: seatGroup.name,
+        text: freeSeats ? freeSeats : seatGroup.name,
         fontSize: 18,
         fontFamily: 'Roboto',
         fill: '#c1c1c1',
@@ -41,7 +65,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       seatGroupRepresentation.add(new Konva.Rect({
         x: 0,
         y: 0,
-        stroke: this.draggable ? '#c1c1c1' : 'black',
+        stroke: this.mode.includes('LOCATION') ? '#c1c1c1':'black',
         strokeWidth: 1,
         width: text.width(),
         height: text.height(),
@@ -64,14 +88,19 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
         align: 'center',
         padding: 5,
       }));
+      let reserved = null;
       for (let i = 0; i < seatGroup.colsNum; i++) {
         for (let j = 0; j < seatGroup.rowsNum; j++) {
+          console.log(this.mode);
+          if (['NO_ROLE_EVENT', 'ROLE_USER_EVENT'].includes(this.mode)) {
+            reserved = this.checkIfSeatIsReserved(seatGroup.id, i + 1, j + 1);
+          }
           seatGroupRepresentation.add(new Konva.Rect({
             x: i * 35,
             y: j * 35,
             width: 30,
             height: 30,
-            fill: '#086275',
+            fill: reserved ? '#FF0000':'#086275',
             stroke: 'black',
             strokeWidth: 1,
             cornerRadius: 5
@@ -158,11 +187,11 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
       rotation: seatGroup.angle,
-      draggable: this.draggable,
+      draggable: this.mode === 'ROLE_ADMIN_LOCATION',
       id: seatGroup.id.toString()
     });
 
-    if (this.draggable) {
+    if (this.mode === 'ROLE_ADMIN_LOCATION') {
       seatGroupRepresentation.on('dragstart', () => {
         this.stage.container().style.cursor = 'pointer';
       });
@@ -218,12 +247,62 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   redraw() {
     this.layer.children.each((child, index) => {
-      if (this.enabledSeatGroupsIds.includes(parseInt(child.id()))) {
-        this.changeStroke(child, 'black', 1);
-      } else {
-        this.changeStroke(child, '#c1c1c1', 2);
+      const enabledSeatGroupIds = this.enabledEventSeatGroups.eventSeatGroups.map(esg => esg.seatGroupID);
+      if (enabledSeatGroupIds.includes(parseInt(child.id()))) {
+        this.changeStroke(child, "black", 1);
+      }
+      else {
+        this.changeStroke(child, "#c1c1c1", 2);
       }
     });
     this.layer.draw();
+  }
+
+  checkIfSeatIsReserved(seatGroupID: number, rowNum: number, colNum: number) {
+    let eventSeatGroup : EventSeatGroupDTO;
+    for (let esg of this.enabledEventSeatGroups.eventSeatGroups) {
+      if (esg.seatGroupID === seatGroupID) {
+        eventSeatGroup = esg;
+        break;
+      }
+    }
+
+    let reservableSeatGroup: ReservableSeatGroupDTO;
+    for (let rsg of eventSeatGroup.reservableSeatGroups) {
+      if (rsg.eventDayID === this.selectedEventDayID) {
+        reservableSeatGroup = rsg;
+        break;
+      }
+    }
+
+    let seat: SeatDTO;
+    for (let s of reservableSeatGroup.seats) {
+      if (s.rowNum === rowNum && s.colNum === colNum) {
+        seat = s;
+        break;
+      }
+    }
+
+    return seat.reserved;
+  }
+
+  getNumberOfFreeSeats(seatGroupID: number) {
+    let eventSeatGroup : EventSeatGroupDTO;
+    for (let esg of this.enabledEventSeatGroups.eventSeatGroups) {
+      if (esg.seatGroupID === seatGroupID) {
+        eventSeatGroup = esg;
+        break;
+      }
+    }
+
+    let reservableSeatGroup: ReservableSeatGroupDTO;
+    for (let rsg of eventSeatGroup.reservableSeatGroups) {
+      if (rsg.eventDayID === this.selectedEventDayID) {
+        reservableSeatGroup = rsg;
+        break;
+      }
+    }
+
+    return reservableSeatGroup.freeSeats.toString();
   }
 }
