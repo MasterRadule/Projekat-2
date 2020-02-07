@@ -31,7 +31,7 @@ export class EventComponent implements OnInit {
   private imageObject: Array<object> = [];
   private uploader: FileUploader;
   private locationsOptions: Location[];
-  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, []);
+  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, [], "");
   private selectedSeatGroupIndex: number;
   private selectedSeatGroupId = -1;
   private enabledSeatGroup = false;

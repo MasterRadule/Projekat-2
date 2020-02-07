@@ -6,10 +6,12 @@
   <mat-card-content>
     <p>{{event.description}}</p>
   </mat-card-content>
-  <mat-card-actions fxLayout="row" fxLayoutGap="3%" *ngIf="getRole == 'ROLE_ADMIN'">
-    <button mat-raised-button color="primary" matTooltip="Edit location" [routerLink]="['/dashboard/events/',
-    event.id]">
-      <mat-icon>edit</mat-icon>
+  <mat-card-actions>
+    <button mat-raised-button color="primary"
+            [matTooltip]="getRole === 'ROLE_ADMIN' ? 'Edit event': 'View event'"
+            [routerLink]="['/dashboard/events/', event.id]">
+      <mat-icon *ngIf="getRole === 'ROLE_ADMIN'; else viewButton">edit</mat-icon>
+      <ng-template #viewButton><mat-icon>pageview</mat-icon></ng-template>
     </button>
   </mat-card-actions>
 </mat-card>
