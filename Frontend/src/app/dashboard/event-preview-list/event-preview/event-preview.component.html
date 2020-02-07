@@ -11,7 +11,9 @@
             [matTooltip]="role === 'ROLE_ADMIN' ? 'Edit event': 'View event'"
             [routerLink]="['/dashboard/events/', event.id]">
       <mat-icon *ngIf="role === 'ROLE_ADMIN'; else viewButton">edit</mat-icon>
-      <ng-template #viewButton><mat-icon>pageview</mat-icon></ng-template>
+      <ng-template #viewButton>
+        <mat-icon>pageview</mat-icon>
+      </ng-template>
     </button>
   </mat-card-actions>
 </mat-card>

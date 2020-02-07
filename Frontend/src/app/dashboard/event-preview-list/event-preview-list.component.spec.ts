@@ -22,6 +22,7 @@ import {
   MAT_DATE_LOCALE,
   DateAdapter,
   MatInputModule,
+  MatTooltipModule,
   PageEvent
 } from '@angular/material';
 import {FlexModule} from '@angular/flex-layout';
@@ -33,6 +34,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {Router} from '@angular/router';
 import {Page} from '../../shared/model/page.model';
 import {MomentDateAdapter} from '@angular/material-moment-adapter';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('EventPreviewListComponent', () => {
   let component: EventPreviewListComponent;
@@ -72,6 +74,8 @@ describe('EventPreviewListComponent', () => {
         FlexModule,
         MatNativeDateModule,
         MatInputModule,
+        MatTooltipModule,
+        HttpClientTestingModule,
         RouterTestingModule.withRoutes([
           {
             path: 'dashboard/events/preview',

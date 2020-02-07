@@ -10,11 +10,10 @@ import {
   MatGridListModule,
   MatIconModule, MatInputModule, MatSlideToggleModule,
   MatSnackBarModule, MatToolbarModule,
-  MatTooltipModule,
   MatPaginatorModule, MatSelectModule,
   MatDatepickerModule, MatNativeDateModule,
   MatFormFieldModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE,
-  DateAdapter
+  DateAdapter, MatTooltipModule
 } from '@angular/material';
 import {CoreModule} from '../core/core.module';
 import {LocationPreviewComponent} from './location-preview-list/location-preview/location-preview.component';
@@ -26,7 +25,7 @@ import {LocationPreviewListComponent} from './location-preview-list/location-pre
 import {RouterModule} from '@angular/router';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import {ReservationPreviewListComponent} from './reservation-preview-list/reservation-preview-list.component';
-import { ReservationPreviewComponent } from './reservation-preview-list/reservation-preview/reservation-preview.component';
+import {ReservationPreviewComponent} from './reservation-preview-list/reservation-preview/reservation-preview.component';
 
 
 @NgModule({
