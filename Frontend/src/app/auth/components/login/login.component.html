@@ -6,23 +6,19 @@
       <form [formGroup]="ngForm" (ngSubmit)="onSubmit()">
         <p>
           <mat-form-field>
-            <input type="text" matInput placeholder="Email" formControlName="email"(click)="ngForm.controls.email.markAsTouched()">
-            <mat-error *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
+            <input id="email" type="text" matInput placeholder="Email" formControlName="email"(click)="ngForm.controls.email.markAsTouched()">
+            <mat-error id="errorEmail" *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
           </mat-form-field>
         </p>
 
         <p>
           <mat-form-field>
-            <input type="password" matInput placeholder="Password" formControlName="password">
+            <input id="password" type="password" matInput placeholder="Password" formControlName="password">
           </mat-form-field>
         </p>
 
-        <p *ngIf="error" class="error">
-          {{ error }}
-        </p>
-
         <div class="button">
-          <button type="submit" [disabled]="!ngForm.valid" mat-button>Login</button>
+          <button type="submit" id="loginButton" [disabled]="!ngForm.valid" mat-button>Login</button>
         </div>
 
       </form>
