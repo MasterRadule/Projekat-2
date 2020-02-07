@@ -41,7 +41,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       seatGroupRepresentation.add(new Konva.Rect({
         x: 0,
         y: 0,
-        stroke: this.draggable ? '#c1c1c1':'black',
+        stroke: this.draggable ? '#c1c1c1' : 'black',
         strokeWidth: 1,
         width: text.width(),
         height: text.height(),
@@ -185,17 +185,16 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
         }
         this.layer.draw();
       });
-    }
-    else {
+    } else {
       seatGroupRepresentation.on('click', () => {
         this.redraw();
-        this.changeStroke(seatGroupRepresentation, "red", 2);
+        this.changeStroke(seatGroupRepresentation, 'red', 2);
         this.selectedSeatGroupIndex = seatGroupRepresentation._id;
         this.layer.draw();
         this.seatGroupClicked.emit(parseInt(seatGroupRepresentation.id()));
       });
     }
-    
+
     return seatGroupRepresentation;
   }
 
@@ -211,8 +210,8 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   changeStroke(seatGroupRepresentation: Konva.Group | Konva.Shape, color: String, strokeWidth: number) {
     seatGroupRepresentation.children.each((child, index) => {
       if (index != 0) {
-        child.setAttr("stroke", color);
-        child.setAttr("strokeWidth", strokeWidth);
+        child.setAttr('stroke', color);
+        child.setAttr('strokeWidth', strokeWidth);
       }
     });
   }
@@ -220,10 +219,9 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   redraw() {
     this.layer.children.each((child, index) => {
       if (this.enabledSeatGroupsIds.includes(parseInt(child.id()))) {
-        this.changeStroke(child, "black", 1);
-      }
-      else {
-        this.changeStroke(child, "#c1c1c1", 2);
+        this.changeStroke(child, 'black', 1);
+      } else {
+        this.changeStroke(child, '#c1c1c1', 2);
       }
     });
     this.layer.draw();
