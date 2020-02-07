@@ -18,7 +18,7 @@
     <button mat-raised-button color="primary" type="submit" (click)="createOrEditLocation()">Save</button>
     </span>
   </form>
-  <app-seat-groups id="sg" [width]="600" [height]="500" [draggable]="true"></app-seat-groups>
+  <app-seat-groups id="sg" [width]="600" [height]="500" [mode]="seatComponentMode"></app-seat-groups>
   <form id="seatGroupForm" fxLayout="column" (ngSubmit)="addSeatGroup()" [formGroup]="this.addSeatGroupForm">
     <mat-checkbox formControlName="parterre" (change)="toggleParterre()" [disabled]="this.location.id ===
     undefined">

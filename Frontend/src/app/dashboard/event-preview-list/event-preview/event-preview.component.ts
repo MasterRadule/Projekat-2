@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Event} from '../../../shared/model/event.model';
+import {AuthenticationApiService} from '../../../core/authentication-api.service';
 
 @Component({
   selector: 'app-event-preview',
@@ -8,8 +9,9 @@ import {Event} from '../../../shared/model/event.model';
 })
 export class EventPreviewComponent implements OnInit {
   @Input() private event: Event;
+  private getRole: string = this.authService.getRole();
 
-  constructor() {
+  constructor(private authService: AuthenticationApiService) {
   }
 
   ngOnInit() {

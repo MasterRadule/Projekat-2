@@ -56,11 +56,16 @@ ax-scheduler {
   margin-left: 10px;
 }
 
-#locationSelect, #eventDaySelect {
+#locationSelect {
   margin-left:50px;
   margin-top:50px;
 }
 
 .seatGroups {
   margin-left:50px;
+}
+
+.centered {
+  margin: 0 auto;
+  margin-bottom: 10px;
 }

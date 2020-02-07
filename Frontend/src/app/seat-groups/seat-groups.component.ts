@@ -16,7 +16,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   private _seatGroups: SeatGroup[] = [];
   @Input() private width: number;
   @Input() private height: number;
-  @Input() private draggable: boolean;
+  @Input() private mode: string;
   @Input() private enabledEventSeatGroups: LocationSeatGroupDTO;
   @Output() seatGroupClicked = new EventEmitter<number>();
 
@@ -46,12 +46,14 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   private setUpSeatsOrParterre(seatGroup: SeatGroup, seatGroupRepresentation: Konva.Group) {
     if (seatGroup.parterre) {
-      let freeSeats = this.getNumberOfFreeSeats(seatGroup.id);
-      console.log(freeSeats);
+      let freeSeats = null;
+      if (['NO_ROLE_EVENT', 'ROLE_USER_EVENT'].includes(this.mode)) {
+        freeSeats = this.getNumberOfFreeSeats(seatGroup.id);
+      }
       const text = new Konva.Text({
         x: 0,
         y: 0,
-        text: freeSeats,
+        text: freeSeats ? freeSeats : seatGroup.name,
         fontSize: 18,
         fontFamily: 'Roboto',
         fill: '#c1c1c1',
@@ -63,7 +65,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       seatGroupRepresentation.add(new Konva.Rect({
         x: 0,
         y: 0,
-        stroke: this.draggable ? '#c1c1c1':'black',
+        stroke: this.mode.includes('LOCATION') ? '#c1c1c1':'black',
         strokeWidth: 1,
         width: text.width(),
         height: text.height(),
@@ -86,9 +88,13 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
         align: 'center',
         padding: 5,
       }));
+      let reserved = null;
       for (let i = 0; i < seatGroup.colsNum; i++) {
         for (let j = 0; j < seatGroup.rowsNum; j++) {
-          let reserved = this.checkIfSeatIsReserved(seatGroup.id, i + 1, j + 1);
+          console.log(this.mode);
+          if (['NO_ROLE_EVENT', 'ROLE_USER_EVENT'].includes(this.mode)) {
+            reserved = this.checkIfSeatIsReserved(seatGroup.id, i + 1, j + 1);
+          }
           seatGroupRepresentation.add(new Konva.Rect({
             x: i * 35,
             y: j * 35,
@@ -181,11 +187,11 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
       x: this.stage.getPosition().x + seatGroup.xCoordinate,
       y: this.stage.getPosition().y + seatGroup.yCoordinate,
       rotation: seatGroup.angle,
-      draggable: this.draggable,
+      draggable: this.mode === 'ROLE_ADMIN_LOCATION',
       id: seatGroup.id.toString()
     });
 
-    if (this.draggable) {
+    if (this.mode === 'ROLE_ADMIN_LOCATION') {
       seatGroupRepresentation.on('dragstart', () => {
         this.stage.container().style.cursor = 'pointer';
       });

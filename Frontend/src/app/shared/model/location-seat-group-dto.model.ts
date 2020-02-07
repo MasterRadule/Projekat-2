@@ -12,15 +12,21 @@ export class LocationSeatGroupDTO extends Serializable {
   })
   private _locationID: number;
   @SerializeProperty({
+    map: 'locationName'
+  })
+  private _locationName: string;
+  @SerializeProperty({
     map: 'eventSeatGroups'
   })
   private _eventSeatGroups: EventSeatGroupDTO[];
 
-  constructor(eventID: number, locationID: number, eventSeatGroups: EventSeatGroupDTO[]) {
+  constructor(eventID: number, locationID: number, eventSeatGroups: EventSeatGroupDTO[], 
+      locationName: string) {
     super();
     this._eventID = eventID;
     this._locationID = locationID;
     this._eventSeatGroups = eventSeatGroups;
+    this._locationName = locationName;
   }
 
   get eventID(): number {
@@ -37,6 +43,14 @@ export class LocationSeatGroupDTO extends Serializable {
 
   set locationID(locationID: number) {
     this._locationID = locationID;
+  }
+
+  get locationName(): string {
+    return this._locationName;
+  }
+
+  set locationName(locationName: string) {
+    this._locationName = locationName;
   }
 
   get eventSeatGroups(): EventSeatGroupDTO[] {

@@ -16,6 +16,7 @@ import {Page} from '../shared/model/page.model';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
 import {EventSeatGroupDTO} from '../shared/model/event-seat-group-dto.model';
+import {AuthenticationApiService} from '../core/authentication-api.service';
 import * as moment from 'moment';
 
 @Component({
@@ -39,8 +40,11 @@ export class EventComponent implements OnInit {
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
+  private getRole: string = this.authService.getRole();
+  private seatComponentMode = this.getRole.concat("_EVENT");
+
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
-              private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+    private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
   }
 
   ngOnInit() {

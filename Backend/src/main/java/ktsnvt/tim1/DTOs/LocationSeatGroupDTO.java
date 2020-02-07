@@ -13,6 +13,8 @@ public class LocationSeatGroupDTO {
     @NotNull(message = "Location's ID cannot be null")
     private Long locationID;
 
+    private String locationName;
+
     @Valid
     @NotEmpty
     private ArrayList<EventSeatGroupDTO> eventSeatGroups;
@@ -39,6 +41,14 @@ public class LocationSeatGroupDTO {
 
     public void setLocationID(Long locationID) {
         this.locationID = locationID;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public ArrayList<EventSeatGroupDTO> getEventSeatGroups() {

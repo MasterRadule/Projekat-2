@@ -10,7 +10,7 @@
   <div ng2FileDrop
        [uploader]="uploader"
        fxLayout="column" fxLayoutAlign="center"
-       class="upload-drop-zone">
+       class="upload-drop-zone" *ngIf="getRole == 'ROLE_ADMIN'">
       Just drag and drop images/videos here
   </div>
 
@@ -66,7 +66,7 @@
       </div>
 
   
-  <div *ngIf="slider != undefined && slider.ligthboxShow" id="delete">
+  <div *ngIf="slider != undefined && slider.ligthboxShow && getRole == 'ROLE_ADMIN'" id="delete">
     <span>
       <button mat-fab color="primary" (click)="deleteMediaFile()" matTooltip="Delete">
         <mat-icon>delete</mat-icon>
@@ -77,38 +77,41 @@
   <div fxLayout="row wrap" fxLayoutGap="50px">
     <form id="eventForm" fxLayout="column" fxLayoutGap="5px">
       <mat-form-field>
-        <input [(ngModel)]="event.name" matInput matTooltip="Enter event's name" name="name" placeholder="Name" spellcheck="false">
+        <input [(ngModel)]="event.name" matInput matTooltip="Enter event's name" name="name" placeholder="Name" spellcheck="false" [disabled]="getRole != 'ROLE_ADMIN'">
       </mat-form-field>
       <mat-form-field>
-        <textarea [(ngModel)]="event.description" matInput cdkTextareaAutosize matTooltip="Enter event's description" name="description" placeholder="Description" spellcheck="false"></textarea>
+        <textarea [(ngModel)]="event.description" matInput cdkTextareaAutosize matTooltip="Enter event's description" name="description" placeholder="Description" spellcheck="false" [disabled]="getRole != 'ROLE_ADMIN'"></textarea>
       </mat-form-field>
       <mat-form-field>
           <mat-label>Event category</mat-label>
-          <mat-select [(ngModel)]="event.category" name="category">
+          <mat-select [(ngModel)]="event.category" name="category" [disabled]="getRole != 'ROLE_ADMIN'">
             <mat-option *ngFor="let category of eventCategories" [value]="category">
               {{category}}
             </mat-option>
           </mat-select>
        </mat-form-field>
        <mat-form-field>
-          <input [(ngModel)]="event.reservationDeadlineDays" matInput matTooltip="Enter event's reservation deadline days" name="reservationDeadlineDays" placeholder="Reservation deadline days" type="number"min=1>
+        <input [(ngModel)]="locationSeatGroupDTO.locationName" matInput name="locationName" placeholder="Location" spellcheck="false" disabled>
+      </mat-form-field>
+       <mat-form-field>
+          <input [(ngModel)]="event.reservationDeadlineDays" matInput matTooltip="Enter event's reservation deadline days" name="reservationDeadlineDays" placeholder="Reservation deadline days" type="number" min=1 [disabled]="getRole != 'ROLE_ADMIN'">
        </mat-form-field>
        <mat-form-field>
-          <input [(ngModel)]="event.maxTicketsPerReservation" matInput matTooltip="Enter event's max tickets per reservation" name="maxTicketsPerReservation" placeholder="Maximum tickets per reservation" type="number" min=1>
+          <input [(ngModel)]="event.maxTicketsPerReservation" matInput matTooltip="Enter event's max tickets per reservation" name="maxTicketsPerReservation" placeholder="Maximum tickets per reservation" type="number" min=1 [disabled]="getRole != 'ROLE_ADMIN'">
        </mat-form-field>
-       <mat-checkbox [(ngModel)]="event.activeForReservations" name="activeForReservations">
+       <mat-checkbox [(ngModel)]="event.activeForReservations" name="activeForReservations" [disabled]="getRole != 'ROLE_ADMIN'">
            Active for reservations
        </mat-checkbox>
-       <mat-checkbox [(ngModel)]="event.cancelled" name="cancelled">
+       <mat-checkbox [(ngModel)]="event.cancelled" name="cancelled" [disabled]="getRole != 'ROLE_ADMIN'">
            Cancelled
        </mat-checkbox>
 
-       <span fxLayout="row" fxLayoutGap="10px">
+       <span fxLayout="row" fxLayoutGap="10px" *ngIf="getRole == 'ROLE_ADMIN'">
         <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)"
         matTooltip="Add an event day to calendar">Add event day</button>
       </span>
 
-      <span fxLayout="row" fxLayoutGap="10px" id="buttons">
+      <span fxLayout="row" fxLayoutGap="10px" id="buttons" *ngIf="getRole == 'ROLE_ADMIN'">
         <button mat-raised-button color="primary" type="submit" (click)="createOrEditEvent()" matTooltip="Save event's data and event's days">Save</button>
         <button mat-raised-button type="button" routerLink="/dashboard/events/preview" 
         matTooltip="Back to events preview">Cancel</button>
@@ -116,11 +119,11 @@
     </form>
 
     <ax-scheduler fxLayout="column" [axEventTemplate]="t" [axSchedulerView]="'month'"
-        [axEventToolbar]="true" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
+        [axEventToolbar]="getRole == 'ROLE_ADMIN'" [axAnimation]="'default'" [axTheme]="'dark'" [axEvents]="events"
         [axDragStep]="5" (axEventDeleteClick)="removeEventDay($event)" (axEventEditClick)="openDialog($event, false)"></ax-scheduler>
   </div>
 
-  <div *ngIf="false" fxLayout="row wrap" id="locationSelect">
+  <div *ngIf="getRole == 'ROLE_ADMIN'" fxLayout="row wrap" id="locationSelect">
     <mat-form-field>
       <mat-label>Location</mat-label>
       <mat-select name="locationID" [(ngModel)]="locationSeatGroupDTO.locationID" (selectionChange)="changeSelectedLocation($event)">
@@ -132,20 +135,21 @@
     </mat-form-field>
   </div>
 
-  <div fxLayout="row wrap" id="eventDaySelect">
+  <div *ngIf="getRole != 'ROLE_ADMIN'" fxLayout="row wrap" id="eventDaySelect" fxLayoutAlign="center">
     <mat-form-field>
       <mat-label>Event days</mat-label>
       <mat-select name="eventDay" [(ngModel)]="selectedEventDayID">
         <mat-option *ngFor="let eDay of event.eventDays" [value]="eDay.id">
-          {{eDay.date}}, {{eDay.id}}
+          {{eDay.date}}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div fxLayout="row wrap">
-    <div fxLayout="column" class="seatGroups">
-      <app-seat-groups id="sg" [width]="1000" [height]="500" [draggable]="false" [selectedEventDayID]="selectedEventDayID" [enabledEventSeatGroups]="locationSeatGroupDTO"
+    <div fxLayout="column" class="seatGroups" [ngClass]="{'centered': getRole != 'ROLE_ADMIN'}">
+      <app-seat-groups id="sg" [width]="1000" [height]="500" [mode]="seatComponentMode" 
+      [selectedEventDayID]="selectedEventDayID" [enabledEventSeatGroups]="locationSeatGroupDTO"
       (seatGroupClicked)="seatGroupClicked($event)"></app-seat-groups>
     </div>
     <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups">
@@ -158,8 +162,8 @@
     </form>
   </div>
 
-  <div fxLayout="row wrap" fxLayoutAlign="center">
-    <button mat-raised-button color="primary" type="submit" style="margin-bottom:10px;" (click)="saveLocationAndSeatGroups()">Save location</button>
+  <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="getRole == 'ROLE_ADMIN'">
+    <button mat-raised-button color="primary" type="submit" style="margin-top:10px; margin-bottom:10px;" (click)="saveLocationAndSeatGroups()">Save location</button>
   </div>
   
 

@@ -7,7 +7,7 @@ import {SeatGroup} from '../shared/model/seat-group.model';
 import {Page} from '../shared/model/page.model';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
-
+import {AuthenticationApiService} from '../core/authentication-api.service';
 
 @Component({
   selector: 'app-location',
@@ -17,6 +17,8 @@ import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 export class LocationComponent implements OnInit {
   private location: Location = new Location(undefined, '', 45.0, 45.0, false);
   private initialized = false;
+  private getRole: string = this.authService.getRole();
+  private seatComponentMode = this.getRole.concat("_LOCATION");
 
   private addSeatGroupForm = new FormGroup({
     parterre: new FormControl(false),
@@ -29,7 +31,7 @@ export class LocationComponent implements OnInit {
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
-              private router: Router) {
+              private router: Router, private authService: AuthenticationApiService) {
   }
 
   ngOnInit() {

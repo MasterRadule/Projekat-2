@@ -320,6 +320,8 @@ public class EventService {
         Event e = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Long locationID = e.getLocation() != null ? e.getLocation().getId() : null;
         LocationSeatGroupDTO lsgDTO = new LocationSeatGroupDTO(e.getId(), locationID);
+        if (locationID != null)
+            lsgDTO.setLocationName(e.getLocation().getName());
         e.getEventSeatGroups().forEach(esg -> lsgDTO.getEventSeatGroups().add(eventSeatGroupMapper.toDTO(esg)));
 
         return lsgDTO;
