@@ -24,5 +24,13 @@ export class LoginPage {
   getSnackBar(){
     return element(by.className('mat-simple-snackbar'));
   }
+
+  login(email, password){
+    this.navigateTo();
+    this.getEmailInput().sendKeys(email);
+    this.getPasswordInput().sendKeys(password);
+    this.getLoginButton().click();
+  }
+
 }
 

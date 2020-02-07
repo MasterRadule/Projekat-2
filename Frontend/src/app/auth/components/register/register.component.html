@@ -6,33 +6,33 @@
       <form [formGroup]="ngForm" (ngSubmit)="onSubmit()">
         <p>
           <mat-form-field>
-            <input type="text" matInput placeholder="First Name" formControlName="firstName">
+            <input type="text" id="firstName" matInput placeholder="First Name" formControlName="firstName">
           </mat-form-field>
         </p>
 
         <p>
           <mat-form-field>
-            <input type="text" matInput placeholder="Last Name" formControlName="lastName">
+            <input type="text" id="lastName" matInput placeholder="Last Name" formControlName="lastName">
           </mat-form-field>
         </p>
         <p>
           <mat-form-field>
-            <input type="text" matInput placeholder="Email" formControlName="email" (click)="ngForm.controls.email.markAsTouched()">
-            <mat-error *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
+            <input type="text" id="email" matInput placeholder="Email" formControlName="email" (click)="ngForm.controls.email.markAsTouched()">
+            <mat-error id="emailError" *ngIf="ngForm.controls.email.invalid">Not a valid email</mat-error>
           </mat-form-field>
         </p>
 
         <p>
           <mat-form-field>
-            <input type="password" matInput placeholder="Password" formControlName="password" (click)="ngForm.controls.password.markAsTouched()">
-            <mat-error *ngIf="ngForm.controls.password.invalid">Your password must contain at least one uppercase, one lowercase,
+            <input type="password" id="password" matInput placeholder="Password" formControlName="password" (click)="ngForm.controls.password.markAsTouched()">
+            <mat-error id="passwordError" *ngIf="ngForm.controls.password.invalid">Your password must contain at least one uppercase, one lowercase,
             one number and one special character.</mat-error>
-            <mat-error *ngIf="ngForm.controls.password.hasError('minlength')">Password must be at least 8 characters long.</mat-error>
+            <mat-error id="passwordLengthError" *ngIf="ngForm.controls.password.hasError('minlength')">Password must be at least 8 characters long.</mat-error>
           </mat-form-field>
         </p>
 
         <div class="button">
-          <button type="submit" [disabled]="!ngForm.valid" mat-button>Register</button>
+          <button id="registerButton" type="submit" [disabled]="!ngForm.valid" mat-button>Register</button>
         </div>
 
       </form>
