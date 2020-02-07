@@ -24,12 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,6 +105,17 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
+    void createEvent_eventDayDateIsBeforeTodayDate_entityNotValidExceptionThrown() {
+        EventDTO eventDTO = new EventDTO(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "30.11.2019. 12:30"));
+
+        assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
     void editEvent_eventExists_eventEdited() throws EntityNotFoundException, EntityAlreadyExistsException, EntityNotValidException {
         EventDTO newDTO = new EventDTO(5L, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
@@ -150,6 +163,17 @@ public class EventServiceIntegrationTests {
                 EventCategory.Movie.name(), false);
 
         assertThrows(EntityAlreadyExistsException.class, () -> eventService.editEvent(newDTO));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void editEvent_eventDayDateIsBeforeTodayDate_entityNotValidExceptionThrown() {
+        EventDTO eventDTO = new EventDTO(1L, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(1L, "30.11.2019. 12:30"));
+
+        assertThrows(EntityNotValidException.class, () -> eventService.editEvent(eventDTO));
     }
 
     @Transactional
@@ -334,5 +358,28 @@ public class EventServiceIntegrationTests {
         Pageable pageable = PageRequest.of(0, 5);
 
         assertThrows(EntityNotValidException.class, () -> eventService.searchEvents(searchDTO, pageable));
+    }
+
+    @Test
+    void getEventsOptions_optionsReturned() {
+        int numberOfEvents = 25;
+
+        List<EventOptionDTO> eventOptions = eventService.getEventsOptions();
+
+        assertNotNull(eventOptions);
+        assertEquals(numberOfEvents, eventOptions.size());
+    }
+
+    @Test
+    void getEventLocationAndSeatGroups_eventExists_locationSeatGroupDTOReturned() throws EntityNotFoundException {
+        LocationSeatGroupDTO lsgDTO = eventService.getEventLocationAndSeatGroups(2L);
+
+        assertNotNull(lsgDTO);
+        assertEquals(2, lsgDTO.getEventSeatGroups().size());
+    }
+
+    @Test
+    void getEventLocationAndSeatGroups_eventExists_entityNotFoundExceptionThrown() {
+        assertThrows(EntityNotFoundException.class, () -> eventService.getEventLocationAndSeatGroups(52L));
     }
 }

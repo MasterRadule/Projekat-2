@@ -214,17 +214,16 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
         }
         this.layer.draw();
       });
-    }
-    else {
+    } else {
       seatGroupRepresentation.on('click', () => {
         this.redraw();
-        this.changeStroke(seatGroupRepresentation, "red", 2);
+        this.changeStroke(seatGroupRepresentation, 'red', 2);
         this.selectedSeatGroupIndex = seatGroupRepresentation._id;
         this.layer.draw();
         this.seatGroupClicked.emit(parseInt(seatGroupRepresentation.id()));
       });
     }
-    
+
     return seatGroupRepresentation;
   }
 
@@ -240,8 +239,8 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
   changeStroke(seatGroupRepresentation: Konva.Group | Konva.Shape, color: String, strokeWidth: number) {
     seatGroupRepresentation.children.each((child, index) => {
       if (index != 0) {
-        child.setAttr("stroke", color);
-        child.setAttr("strokeWidth", strokeWidth);
+        child.setAttr('stroke', color);
+        child.setAttr('strokeWidth', strokeWidth);
       }
     });
   }

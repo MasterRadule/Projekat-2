@@ -8,7 +8,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Event category</mat-label>
-      <mat-select [(ngModel)]="_searchParameters.category" name="category">
+      <mat-select [(ngModel)]="_searchParameters.category" name="category" id="matSelect">
         <mat-option [value]="null">None</mat-option>
         <mat-option *ngFor="let category of _eventCategories" [value]="category">
           {{category}}
@@ -36,11 +36,11 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <button type="submit" mat-raised-button class="searchButton">Search</button>
-    <button type="button" mat-raised-button class="searchButton" (click)="resetForm(searchForm)">Reset</button>
+    <button type="submit" mat-raised-button class="searchButton" id="buttonSearch">Search</button>
+    <button type="button" mat-raised-button class="searchButton" (click)="resetForm(searchForm)" id="buttonReset">Reset</button>
   </form>
 </div>
 
-<div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
+<div id="eventsPreview" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5%" fxLayoutAlign="center">
   <app-event-preview *ngFor="let event of _events" [event]="event"></app-event-preview>
 </div>

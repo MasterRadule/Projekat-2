@@ -8,7 +8,7 @@ import {AuthenticationApiService} from '../../../core/authentication-api.service
   styleUrls: ['./event-preview.component.scss']
 })
 export class EventPreviewComponent implements OnInit {
-  @Input() private event: Event;
+  @Input() public event: Event;
   private getRole: string = this.authService.getRole();
 
   constructor(private authService: AuthenticationApiService) {
