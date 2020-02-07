@@ -92,6 +92,12 @@ export class EventComponent implements OnInit {
   }
 
   private createOrEditEvent() {
+    if (this.locationSeatGroupDTO.eventSeatGroups.length === 0) {
+      this.snackBar.open('At least one seat group must be enabled', 'Dismiss', {
+        duration: 3000
+      });
+      return;
+    }
     this.event.eventDays = [];
     for (const eventDay of this.events) {
       const date: string = moment(eventDay.from).format('DD.MM.YYYY. HH:mm');
@@ -102,9 +108,7 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.snackBar.open('Event edited successfully', 'Dismiss', {
-              duration: 3000
-            });
+            this.saveLocationAndSeatGroups();
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -118,11 +122,8 @@ export class EventComponent implements OnInit {
       this.eventApiService.createEvent(this.event).subscribe(
         {
           next: (result: Event) => {
-            this.snackBar.open('Event created successfully', 'Dismiss', {
-              duration: 3000
-            });
-            this.router.navigate(['/dashboard/events/', result.id]).then(r => {
-            });
+            this.event = result;
+            this.saveLocationAndSeatGroups();
           },
           error: (message: string) => {
             this.snackBar.open(message, 'Dismiss', {
@@ -340,17 +341,13 @@ export class EventComponent implements OnInit {
   }
 
   private saveLocationAndSeatGroups() {
-    if (this.locationSeatGroupDTO.eventSeatGroups.length === 0) {
-      this.snackBar.open('At least one seat group must be enabled', 'Dismiss', {
-        duration: 3000
-      });
-      return;
-    }
     this.eventApiService.setEventLocationAndSeatGroups(this.locationSeatGroupDTO).subscribe(
       {
         next: (result: Event) => {
-          this.snackBar.open('Location and seat groups successfully saved', 'Dismiss', {
-            duration: 3000
+          this.snackBar.open('Event saved successfully', 'Dismiss', {
+              duration: 3000
+          });
+          this.router.navigate(['/dashboard/events/', result.id]).then(r => {
           });
         },
         error: (message: string) => {

@@ -113,7 +113,6 @@
 
       <span fxLayout="row" fxLayoutGap="10px" id="buttons">
         <button mat-raised-button type="button" routerLink="/dashboard/events/preview" matTooltip="Go back">Back</button>
-        <button mat-raised-button color="primary" type="submit" *ngIf="role == 'ROLE_ADMIN'" (click)="createOrEditEvent()" matTooltip="Save event's data and event's days">Save</button>
       </span>
     </form>
 
@@ -162,7 +161,7 @@
   </div>
 
   <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="role == 'ROLE_ADMIN'">
-    <button mat-raised-button color="primary" type="submit" style="margin-top:10px; margin-bottom:10px;" (click)="saveLocationAndSeatGroups()">Save location</button>
+    <button mat-raised-button color="primary" type="submit" *ngIf="role == 'ROLE_ADMIN'" style="margin-top:10px; margin-bottom:10px;" (click)="createOrEditEvent()" matTooltip="Save event's data, event's days and location">Save event</button>
   </div>
   
 

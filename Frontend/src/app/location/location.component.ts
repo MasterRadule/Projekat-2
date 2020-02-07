@@ -18,7 +18,7 @@ export class LocationComponent implements OnInit {
   private location: Location = new Location(undefined, '', 45.0, 45.0, false);
   private initialized = false;
   private role: string;
-  private seatComponentMode = this.getRole.concat("_LOCATION");
+  private seatComponentMode: string;
 
   private addSeatGroupForm = new FormGroup({
     parterre: new FormControl(false),
@@ -33,6 +33,7 @@ export class LocationComponent implements OnInit {
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
               private router: Router, private authService: AuthenticationApiService) {
     this.role = this.authService.getRole();
+    this.seatComponentMode = this.role.concat("_LOCATION");
   }
 
   ngOnInit() {
