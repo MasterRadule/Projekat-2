@@ -10,7 +10,7 @@ import {
   MatCardModule,
   MatIconModule, MatSlideToggleModule,
   MatSnackBar,
-  MatSnackBarModule
+  MatSnackBarModule, MatTooltipModule
 } from '@angular/material';
 import {CoreModule} from '../../../core/core.module';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -20,11 +20,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LocationComponent} from '../../../location/location.component';
 import {LocationModule} from '../../../location/location.module';
 import {Router} from '@angular/router';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {AuthenticationApiService} from '../../../core/authentication-api.service';
 
 describe('LocationPreviewComponent', () => {
   let component: LocationPreviewComponent;
   let fixture: ComponentFixture<LocationPreviewComponent>;
   let locationApiServiceSpy: jasmine.SpyObj<LocationApiService>;
+  let authenticationApiServiceSpy: jasmine.SpyObj<AuthenticationApiService>;
   let urlLocation: UrlLocation;
   let router: Router;
   const location: Location = new Location(0, 'Spens', 54.0, 30.0, false);
@@ -32,6 +35,7 @@ describe('LocationPreviewComponent', () => {
 
   beforeEach(async(() => {
     const spy = jasmine.createSpyObj('LocationApiService', ['editLocation']);
+    const authSpy = jasmine.createSpyObj('AuthenticationApiService', ['getRole']);
 
     TestBed.configureTestingModule({
       imports: [
@@ -44,6 +48,8 @@ describe('LocationPreviewComponent', () => {
         BrowserAnimationsModule,
         CoreModule,
         LocationModule,
+        HttpClientTestingModule,
+        MatTooltipModule,
         RouterTestingModule.withRoutes([
           {
             path: 'dashboard/locations/:id',
@@ -55,13 +61,16 @@ describe('LocationPreviewComponent', () => {
       declarations: [LocationPreviewComponent],
       providers: [
         MatSnackBar,
-        {provide: LocationApiService, useValue: spy}
+        {provide: LocationApiService, useValue: spy},
+        {provide: AuthenticationApiService, useValue: authSpy}
       ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
+    authenticationApiServiceSpy = TestBed.get(AuthenticationApiService);
+    authenticationApiServiceSpy.getRole.and.returnValue('ROLE_ADMIN');
     fixture = TestBed.createComponent(LocationPreviewComponent);
     component = fixture.componentInstance;
     component.location = location;
@@ -98,7 +107,7 @@ describe('LocationPreviewComponent', () => {
     expect(locationApiServiceSpy.editLocation.calls.count()).toBe(1, 'oneCall');
   });
 
-  it('should go to location edit page', fakeAsync(() => {
+  it('should go to location edit/view page', fakeAsync(() => {
     const editButton = fixture.debugElement.query(By.css('button'));
     editButton.triggerEventHandler('click', {});
 
