@@ -40,11 +40,13 @@ export class EventComponent implements OnInit {
   @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
   @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
 
-  private getRole: string = this.authService.getRole();
-  private seatComponentMode = this.getRole.concat("_EVENT");
+  private role: string;
+  private seatComponentMode: string;
 
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
-    private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+      private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+    this.role = this.authService.getRole();
+    this.seatComponentMode = this.role.concat("_EVENT");
   }
 
   ngOnInit() {

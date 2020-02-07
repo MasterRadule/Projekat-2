@@ -9,9 +9,10 @@ import {AuthenticationApiService} from '../../../core/authentication-api.service
 })
 export class EventPreviewComponent implements OnInit {
   @Input() public event: Event;
-  private getRole: string = this.authService.getRole();
+  private role: string;
 
   constructor(private authService: AuthenticationApiService) {
+    this.role = this.authService.getRole();
   }
 
   ngOnInit() {

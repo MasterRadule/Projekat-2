@@ -11,10 +11,11 @@ import {AuthenticationApiService} from '../../../core/authentication-api.service
 })
 export class LocationPreviewComponent {
   @Input() location: Location;
-  private getRole: string = this.authService.getRole();
+  private role: string;
 
   constructor(private locationApiService: LocationApiService, private snackBar: MatSnackBar,
               private authService: AuthenticationApiService) {
+    this.role = this.authService.getRole();
   }
 
   private toggleLocationStatus($event: MatSlideToggleChange) {

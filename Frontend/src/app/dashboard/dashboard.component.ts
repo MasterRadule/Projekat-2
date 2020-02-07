@@ -17,11 +17,11 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(LocationPreviewListComponent, {static: false}) locationListComponent: LocationPreviewListComponent;
   @ViewChild(ReservationPreviewListComponent, {static: false}) reservationListComponent: ReservationPreviewListComponent;
   private _content: string;
+  private role: string;
 
   constructor(private route: ActivatedRoute, private authService: AuthenticationApiService) {
+    this.role = this.authService.getRole();
   }
-
-  private getRole: string = this.authService.getRole();
 
   get content(): string {
     return this._content;

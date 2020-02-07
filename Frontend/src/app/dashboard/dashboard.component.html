@@ -9,14 +9,14 @@
     <div *ngIf="_content==='events'">
       <app-event-preview-list (eventsPageChanged)="contentPageChanged($event)"></app-event-preview-list>
     </div>
-    <div *ngIf="_content==='reservations' && getRole == 'ROLE_USER'">
+    <div *ngIf="_content==='reservations' && role == 'ROLE_USER'">
       <app-reservation-preview-list
         (reservationsPageChanged)="contentPageChanged($event)"></app-reservation-preview-list>
     </div>
   </div>
 
   <div class="footer">
-    <div *ngIf="authService.getRole() === 'ROLE_ADMIN' && (_content==='locations' || _content==='events')"
+    <div *ngIf="role === 'ROLE_ADMIN' && (_content==='locations' || _content==='events')"
          fxLayoutAlign="end"
          id="add">
       <button mat-fab color="primary" [routerLink]='["/dashboard", _content]'>
