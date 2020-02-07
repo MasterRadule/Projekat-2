@@ -1,5 +1,6 @@
 import {browser} from 'protractor';
 import {LoginPage} from './login.po';
+import {DashboardPage} from '../dashboard/dashboard.po';
 
 describe('login page', () => {
   let page: LoginPage;
@@ -20,7 +21,7 @@ describe('login page', () => {
     expect(page.getLoginButton().isEnabled()).toBe(true);
     page.getLoginButton().click().then(() => {
       expect(page.getSnackBar().getText()).toContain('Invalid email or password');
-      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/login')
+      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/login');
     });
   });
 
@@ -38,9 +39,16 @@ describe('login page', () => {
     expect(page.getLoginButton().isEnabled()).toBe(true);
     page.getLoginButton().click().then(() => {
       expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/dashboard/events/preview');
-      let valLocalStorage = browser.executeScript("return window.localStorage.getItem('token');");
+      let valLocalStorage = browser.executeScript('return window.localStorage.getItem(\'token\');');
       expect(valLocalStorage).not.toBeNull();
     });
+  });
+
+  afterAll(() => {
+    const dashboardPage = new DashboardPage();
+    dashboardPage.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
   });
 
 });
