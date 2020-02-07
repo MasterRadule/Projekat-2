@@ -20,5 +20,9 @@ export class LoginPage {
   getErrorMessage(){
     return element(by.id('errorEmail'));
   }
+
+  getSnackBar(){
+    return element(by.className('mat-simple-snackbar'));
+  }
 }
 

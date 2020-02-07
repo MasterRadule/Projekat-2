@@ -1,4 +1,4 @@
-import {browser, logging} from 'protractor';
+import {browser} from 'protractor';
 import {LoginPage} from './login.po';
 
 describe('login page', () => {
@@ -19,6 +19,7 @@ describe('login page', () => {
     page.getPasswordInput().sendKeys('111');
     expect(page.getLoginButton().isEnabled()).toBe(true);
     page.getLoginButton().click().then(() => {
+      expect(page.getSnackBar().getText()).toContain('Invalid email or password');
       expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/login')
     });
   });
@@ -36,7 +37,9 @@ describe('login page', () => {
     page.getPasswordInput().sendKeys('123');
     expect(page.getLoginButton().isEnabled()).toBe(true);
     page.getLoginButton().click().then(() => {
-      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/dashboard/events/preview')
+      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/dashboard/events/preview');
+      let valLocalStorage = browser.executeScript("return window.localStorage.getItem('token');");
+      expect(valLocalStorage).toBeDefined();
     });
   });
 
