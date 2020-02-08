@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.ChangePasswordDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.model.User;
@@ -91,6 +92,33 @@ public class UserServiceIntegrationTests {
         assertEquals(editedDTO.getEmail(), returnedDTO.getEmail());
         assertEquals(editedDTO.getVerified(), returnedDTO.getVerified());
         assertNull(returnedDTO.getPassword());
+    }
+
+    @Test
+    void changePassword_incorrectOldPassword_entityNotValidExceptionThrown(){
+        setUpPrincipal(userRepository.findByEmail("JennifferHooker@example.com"));
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("1234", "KtsNvtTim1+", "KtsNvtTim1+");
+        assertThrows(EntityNotValidException.class, () -> userService.changePassword(changePasswordDTO));
+    }
+
+    @Test
+    void changePassword_passwordsDontMatch_entityNotValidExceptionThrown(){
+        setUpPrincipal(userRepository.findByEmail("JennifferHooker@example.com"));
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1++");
+        assertThrows(EntityNotValidException.class, () -> userService.changePassword(changePasswordDTO));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void changePassword_passwordsOk_true() throws EntityNotValidException {
+        setUpPrincipal(userRepository.findByEmail("JennifferHooker@example.com"));
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1+");
+        boolean success = userService.changePassword(changePasswordDTO);
+        assertTrue(success);
     }
 
 }
