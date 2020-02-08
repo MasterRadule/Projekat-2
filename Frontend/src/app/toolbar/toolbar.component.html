@@ -7,7 +7,7 @@
     <button *ngIf="role == 'ROLE_USER'" routerLink="/dashboard/reservations/preview" mat-button>My reservations</button>
   </span>
   <span fxLayoutAlign="right">
-    <button *ngIf="role != 'NO_ROLE'" mat-button>My profile</button>
+    <button *ngIf="role != 'NO_ROLE'" routerLink="/myProfile" mat-button>My profile</button>
     <button *ngIf="role != 'NO_ROLE'" (click)="logOut()" mat-button>Logout</button>
     <button *ngIf="role == 'NO_ROLE'" routerLink="/login" mat-button>Login</button>
     <button *ngIf="role == 'NO_ROLE'" routerLink="/register" mat-button>Register</button>

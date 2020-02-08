@@ -6,6 +6,8 @@ import {LoginComponent} from '../auth/components/login/login.component';
 import {RegisterComponent} from '../auth/components/register/register.component';
 import {ReservationComponent} from '../reservation/reservation.component';
 import {EventComponent} from '../event/event.component';
+import {UserEditComponent} from '../user-edit/myProfile/user-edit.component';
+import {ChangePasswordComponent} from '../user-edit/change-password/change-password.component';
 import {RoleGuard} from '../auth/guards/role.guard';
 
 export const routes: Routes = [
@@ -53,6 +55,18 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'myProfile',
+    component: UserEditComponent,
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'ROLE_ADMIN|ROLE_USER'}
+  },
+  {
+    path: 'changePassword',
+    component: ChangePasswordComponent,
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'ROLE_ADMIN|ROLE_USER'}
+  },
+  {
     path: '',
     redirectTo: '/dashboard/events/preview',
     pathMatch: 'full'
@@ -72,5 +86,5 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: '/dashboard/events/preview',
-  },
+  }
 ];
