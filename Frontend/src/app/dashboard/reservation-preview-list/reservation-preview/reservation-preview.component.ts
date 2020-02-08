@@ -37,43 +37,30 @@ export class ReservationPreviewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  ngAfterViewInit() {
-    if (this._reservation.orderId === null) {
-      this.configPayPal();
-    }
+  private paymentFunction() {
+    return () => this.reservationApiService.payReservationCreatePayment(this.reservation.id).toPromise()
+      .then(
+        (value: PaymentDTO) => value.paymentID
+      ).catch(
+      (message) => {
+        this.snackBar.open(message.error, 'Dismiss', {
+          duration: 3000
+        });
+        throw message;
+      }
+    );
   }
 
-  private configPayPal() {
-    paypal.Button.render({
-      style: {
-        size: 'small',
-        color: 'gold',
-        shape: 'pill',
-        label: 'pay',
-      },
-      env: 'sandbox',
-      payment: (data, actions) => this.reservationApiService.payReservationCreatePayment(this.reservation.id).toPromise()
-        .then(
-          (value: PaymentDTO) => value.paymentID
-        ).catch(
-          (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
-              duration: 3000
-            });
-            throw message;
-          }
-        ),
-      onAuthorize: (data, actions) =>
-        this.reservationApiService
-          .payReservationExecutePayment(new PaymentDTO(data.paymentID, data.payerID), this.reservation.id).toPromise()
-          .then((value: Reservation) => this.reservation = value)
-          .catch((message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
-              duration: 10000
-            });
-            throw message;
-          })
-    }, `#pay-button-${this.reservation.id}`);
+  private onAuthorizeFunction(data) {
+    return () => this.reservationApiService
+      .payReservationExecutePayment(new PaymentDTO(data.paymentID, data.payerID), this.reservation.id).toPromise()
+      .then((value: Reservation) => this.reservation = value)
+      .catch((message) => {
+        this.snackBar.open(message.error, 'Dismiss', {
+          duration: 10000
+        });
+        throw message;
+      });
   }
 
   private cancelReservation(reservation: Reservation) {
@@ -85,8 +72,8 @@ export class ReservationPreviewComponent implements OnInit {
         });
         this.reservationCancelled.emit();
       },
-      error: (message: string) => {
-        this.snackBar.open(message, 'Dismiss', {
+      error: (message) => {
+        this.snackBar.open(message.error, 'Dismiss', {
           duration: 3000
         });
       }

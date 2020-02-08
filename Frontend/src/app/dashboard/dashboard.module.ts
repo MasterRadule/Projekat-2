@@ -26,35 +26,37 @@ import {RouterModule} from '@angular/router';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import {ReservationPreviewListComponent} from './reservation-preview-list/reservation-preview-list.component';
 import {ReservationPreviewComponent} from './reservation-preview-list/reservation-preview/reservation-preview.component';
+import {SharedModule} from '../shared/shared.module';
 
 
 @NgModule({
   declarations: [DashboardComponent, LocationPreviewComponent, EventPreviewComponent,
     EventPreviewListComponent, PaginatorComponent, LocationPreviewListComponent,
     ReservationPreviewListComponent, ReservationPreviewListComponent, ReservationPreviewComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule,
-    CoreModule,
-    MatGridListModule,
-    MatTooltipModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    MatToolbarModule,
-    MatInputModule,
-    FlexModule,
-    MatPaginatorModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatFormFieldModule,
-    RouterModule,
-    ToolbarModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule,
+        CoreModule,
+        MatGridListModule,
+        MatTooltipModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        MatToolbarModule,
+        MatInputModule,
+        FlexModule,
+        MatPaginatorModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatFormFieldModule,
+        RouterModule,
+        ToolbarModule,
+        SharedModule
+    ],
   providers: [
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
     {

@@ -65,7 +65,7 @@
           </button>
       </div>
 
-  
+
   <div *ngIf="slider != undefined && slider.ligthboxShow && role == 'ROLE_ADMIN'" id="delete">
     <span>
       <button mat-fab color="primary" (click)="deleteMediaFile()" matTooltip="Delete">
@@ -136,8 +136,8 @@
   <div *ngIf="role != 'ROLE_ADMIN'" fxLayout="row wrap" id="eventDaySelect" fxLayoutAlign="center">
     <mat-form-field>
       <mat-label>Event days</mat-label>
-      <mat-select name="eventDay" [(ngModel)]="selectedEventDayID">
-        <mat-option *ngFor="let eDay of event.eventDays" [value]="eDay.id">
+      <mat-select name="eventDay" [(ngModel)]="selectedEventDay">
+        <mat-option *ngFor="let eDay of event.eventDays" [value]="eDay">
           {{eDay.date}}
         </mat-option>
       </mat-select>
@@ -145,12 +145,12 @@
   </div>
 
   <div fxLayout="row wrap">
-    <div fxLayout="column" class="seatGroups" [ngClass]="{'centered': role != 'ROLE_ADMIN'}">
-      <app-seat-groups id="sg" [width]="1000" [height]="500" [mode]="seatComponentMode" 
-      [selectedEventDayID]="selectedEventDayID" [enabledEventSeatGroups]="locationSeatGroupDTO"
-      (seatGroupClicked)="seatGroupClicked($event)"></app-seat-groups>
+    <div fxLayout="column" class="seatGroups" [ngClass]="{'centered': role === 'NO_ROLE'}">
+      <app-seat-groups id="sg" [width]="1000" [height]="500" [mode]="seatComponentMode"
+      [selectedEventDay]="selectedEventDay" [enabledEventSeatGroups]="locationSeatGroupDTO" [tickets]="reservation.tickets"
+      (seatGroupClicked)="seatGroupClicked($event)" (seatOrParterreClicked)="seatOrParterreClicked($event)"></app-seat-groups>
     </div>
-    <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups">
+    <form fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px" class="seatGroups" *ngIf="role == 'ROLE_ADMIN'">
       <mat-checkbox *ngIf="selectedSeatGroupId != -1" [(ngModel)]="enabledSeatGroup" name="enabled" (change)="seatGroupStatusChanged($event)">
         Enabled
       </mat-checkbox>
@@ -158,12 +158,24 @@
         <input [(ngModel)]="locationSeatGroupDTO.eventSeatGroups[selectedSeatGroupIndex].price" matInput matTooltip="Enter seat group price" name="price" placeholder="Seat group price" type="number" min=1>
        </mat-form-field>
     </form>
+    <app-tickets-table [(reservation)]="reservation" (reservationCreated)="onReservationChange()" *ngIf="role == 'ROLE_USER'"></app-tickets-table>
   </div>
 
   <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="role == 'ROLE_ADMIN'">
     <button mat-raised-button color="primary" type="submit" id="saveEventButton" *ngIf="role == 'ROLE_ADMIN'" style="margin-top:10px; margin-bottom:10px;" (click)="createOrEditEvent()" matTooltip="Save event's data, event's days and location">Save event</button>
   </div>
-  
+
+  <div style="visibility: hidden; position: fixed"
+       [style.left]="contextMenuPosition.x"
+       [style.top]="contextMenuPosition.y"
+       [matMenuTriggerFor]="contextMenu">
+  </div>
+  <mat-menu #contextMenu="matMenu">
+    <ng-template matMenuContent let-newTicketDetailed="newTicketDetailed" let-reservableAllDays="reservableAllDays">
+      <button mat-menu-item (click)="makeTicket(newTicketDetailed, false)">Make one day ticket</button>
+      <button *ngIf="reservableAllDays" mat-menu-item (click)="makeTicket(newTicketDetailed, true)">Make all days ticket</button>
+    </ng-template>
+  </mat-menu>
 
 </div>
 
