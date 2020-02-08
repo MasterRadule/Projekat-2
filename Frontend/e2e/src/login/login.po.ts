@@ -6,26 +6,26 @@ export class LoginPage {
   }
 
   getEmailInput() {
-   return element(by.id("email"));
+    return element(by.id('email'));
   }
 
   getPasswordInput() {
-    return element(by.id("password"));
+    return element(by.id('password'));
   }
 
   getLoginButton() {
     return element(by.id('loginButton'));
   }
 
-  getErrorMessage(){
+  getErrorMessage() {
     return element(by.id('errorEmail'));
   }
 
-  getSnackBar(){
+  getSnackBar() {
     return element(by.className('mat-simple-snackbar'));
   }
 
-  login(email, password){
+  login(email, password) {
     this.navigateTo();
     this.getEmailInput().sendKeys(email);
     this.getPasswordInput().sendKeys(password);

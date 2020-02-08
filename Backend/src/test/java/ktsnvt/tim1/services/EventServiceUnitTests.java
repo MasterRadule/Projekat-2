@@ -116,7 +116,7 @@ public class EventServiceUnitTests {
     }
 
     @Test
-    public void createEvent_eventCreated() throws EntityNotValidException {
+    public void createEvent_eventCreated() throws EntityNotValidException, EntityAlreadyExistsException {
         Long id = 1L;
         EventDTO dtoBeforeSaving = new EventDTO(null, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
