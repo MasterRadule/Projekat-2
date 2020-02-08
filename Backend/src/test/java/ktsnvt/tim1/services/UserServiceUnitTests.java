@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.ChangePasswordDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.UserMapper;
@@ -15,14 +16,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -108,4 +112,56 @@ public class UserServiceUnitTests {
         verify(userRepositoryMocked, times(1)).save(user);
         verify(userMapperMocked, times(1)).toDTO(newUser);
     }
+    @Test
+    void changePassword_incorrectOldPassword_entityNotValidExceptionThrown(){
+        User user = new User();
+        user.setPassword("$2y$12$YATuOt2bcLaly5c0aMLx/e5l.wg6fLHmicF.Uj02Pl0tmRtCqk6NC");
+        setUpPrincipal(user);
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1+");
+
+        Mockito.when(passwordEncoderMocked.matches(changePasswordDTO.getOldPassword(), user.getPassword())).thenReturn(false);
+
+        assertThrows(EntityNotValidException.class, () -> userService.changePassword(changePasswordDTO));
+
+        verify(passwordEncoderMocked, times(1)).matches(changePasswordDTO.getOldPassword(), user.getPassword());
+    }
+
+    @Test
+    void changePassword_passwordsDontMatch_entityNotValidExceptionThrown(){
+        User user = new User();
+        user.setPassword("$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra");
+        setUpPrincipal(user);
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1++");
+
+        Mockito.when(passwordEncoderMocked.matches(changePasswordDTO.getOldPassword(), user.getPassword())).thenReturn(true);
+        assertThrows(EntityNotValidException.class, () -> userService.changePassword(changePasswordDTO));
+        verify(passwordEncoderMocked, times(1)).matches(changePasswordDTO.getOldPassword(), user.getPassword());
+    }
+
+    @Test
+    void changePassword_passwordsOk_true() throws EntityNotValidException {
+        Long id = 1L;
+        String password = "$2y$12$YVTUQqw5VcyZTrH7rP7k/.iZsZxA8RK93szRmf.xUk9Cm0XzFl0dG";
+        String newPassword = "$2y$12$Gx9OessyeXO4.dZrP9uSsuaTUG2XJqdLWPzC0x1vF7DcoyTSgNBbi";
+        User user = new User(id,"Petar", "Petrovic", password, "ppetrovic@gmail.com", true );;
+        setUpPrincipal(user);
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1+");
+        User newUser = new User(id,"Petar", "Petrovic", newPassword, "ppetrovic@gmail.com", true );
+
+        Mockito.when(passwordEncoderMocked.matches(changePasswordDTO.getOldPassword(), password)).thenReturn(true);
+        Mockito.when(passwordEncoderMocked.encode(changePasswordDTO.getPassword())).thenReturn(newPassword);
+        Mockito.when(userRepositoryMocked.save(user)).thenReturn(newUser);
+
+        boolean success = userService.changePassword(changePasswordDTO);
+        assertTrue(success);
+
+        verify(passwordEncoderMocked, times(1)).matches(changePasswordDTO.getOldPassword(), password);
+        verify(passwordEncoderMocked, times(1)).encode(changePasswordDTO.getPassword());
+        verify(userRepositoryMocked, times(1)).save(user);
+    }
+
+
 }
