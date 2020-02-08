@@ -137,13 +137,13 @@ describe('dashboard page', () => {
 
     nextPageButton.click();
     expect(page.getEventPreviewElements().count()).toBe(6);
-    expect(page.getPaginatorLabel().getText()).toBe('7 – 12 of 30');
+    expect(page.getPaginatorLabel().getText()).toBe('7 – 12 of 25');
 
     const previousPageButton = page.getPreviousPageButton();
     expect(previousPageButton).toBeTruthy();
 
     page.getPreviousPageButton().click();
-    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 30');
+    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 25');
   });
 
   it('should search event previews by search text', () => {

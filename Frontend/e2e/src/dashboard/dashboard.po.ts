@@ -108,6 +108,7 @@ export class DashboardPage {
         element(by.css(`td[aria-label="${date}"]`)).click().then();
       });
     });
+  }
 
   logout() {
     this.navigateTo();

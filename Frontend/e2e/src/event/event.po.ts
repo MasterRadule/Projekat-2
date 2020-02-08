@@ -11,7 +11,7 @@ export class EventPage {
   }
 
   getEventDescriptionTextarea() {
-    return element(by.css('input[name="description"]'));
+    return element(by.css('textarea[name="description"]'));
   }
 
   setCategory(category: string) {
