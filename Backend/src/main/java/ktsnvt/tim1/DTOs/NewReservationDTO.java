@@ -1,5 +1,6 @@
 package ktsnvt.tim1.DTOs;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ public class NewReservationDTO {
     @NotNull
     private Long eventId;
     @NotEmpty
+    @Valid
     private ArrayList<NewTicketDTO> tickets;
 
     public NewReservationDTO() {

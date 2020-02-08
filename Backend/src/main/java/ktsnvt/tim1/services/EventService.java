@@ -60,7 +60,10 @@ public class EventService {
                 .orElseThrow(() -> new EntityNotFoundException("Event not found")));
     }
 
-    public EventDTO createEvent(EventDTO event) throws EntityNotValidException {
+    public EventDTO createEvent(EventDTO event) throws EntityNotValidException, EntityAlreadyExistsException {
+        if (eventRepository.findOneByName(event.getName()) != null) {
+            throw new EntityAlreadyExistsException("Event with given name already exists");
+        }
         Event e = eventMapper.toEntity(event);
         LocalDateTime today = LocalDateTime.now();
         for (EventDay ev: e.getEventDays()) {
@@ -68,6 +71,8 @@ public class EventService {
                 throw new EntityNotValidException("Event day date must be after today's date");
             }
         }
+        checkNumberOfReservationDeadlineDays(e, event);
+
         return eventMapper.toDTO(eventRepository.save(e));
     }
 
@@ -141,12 +146,12 @@ public class EventService {
     }
 
     public EventDTO setEventLocationAndSeatGroups(LocationSeatGroupDTO seatGroupsDTO) throws EntityNotFoundException, EntityNotValidException {
-        Event e = eventRepository.findByIdAndIsCancelledFalseAndLocationNotNull(seatGroupsDTO.getEventID())
+        Event e = eventRepository.findById(seatGroupsDTO.getEventID())
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Location l = locationRepository.findByIdAndDisabledFalse(seatGroupsDTO.getLocationID())
                 .orElseThrow(() -> new EntityNotFoundException("Location not found"));
 
-        if (!e.getLocation().equals(l))
+        if (e.getLocation() == null || !e.getLocation().equals(l))
             changeLocation(e, l);
 
         disableEventGroups(e, seatGroupsDTO);
@@ -267,7 +272,8 @@ public class EventService {
                     throw new EntityNotValidException("Location cannot be changed if reservation for event exist");
             }
         }
-        e.getLocation().getEvents().remove(e);
+        if (e.getLocation() != null)
+            e.getLocation().getEvents().remove(e);
         e.setLocation(l);
         l.getEvents().add(e);
     }
@@ -323,6 +329,7 @@ public class EventService {
                 EventSeatGroup esg = new EventSeatGroup();
                 esg.setPrice(esgDTO.getPrice());
                 esg.setSeatGroup(seatGroup);
+                esg.setEvent(e);
                 e.getEventDays().forEach(eventDay -> new ReservableSeatGroup(eventDay, esg));
 
                 e.getEventSeatGroups().add(esg);

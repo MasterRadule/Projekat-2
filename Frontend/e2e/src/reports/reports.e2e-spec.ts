@@ -1,11 +1,17 @@
 import {browser, logging} from 'protractor';
 import {ReportsPage} from './reports.po';
+import {LoginPage} from '../login/login.po';
+import {DashboardPage} from '../dashboard/dashboard.po';
 
 describe('reports page', () => {
   let page: ReportsPage;
 
   beforeAll(() => {
     browser.driver.manage().window().maximize();
+    const loginPage = new LoginPage();
+    loginPage.login('Dickens@example.com', 123);
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
   });
 
   beforeEach(() => {
@@ -78,11 +84,10 @@ describe('reports page', () => {
     });
   });
 
-  afterEach(async () => {
-    // Assert that there are no errors emitted from the browser
-    const logs = await browser.manage().logs().get(logging.Type.BROWSER);
-    expect(logs).not.toContain(jasmine.objectContaining({
-      level: logging.Level.SEVERE,
-    } as logging.Entry));
+  afterAll(() => {
+    const dashboardPage = new DashboardPage();
+    dashboardPage.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
   });
 });

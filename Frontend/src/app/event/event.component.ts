@@ -1,23 +1,27 @@
-import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {Event} from '../shared/model/event.model';
 import {EventDay} from '../shared/model/event-day.model';
 import {MediaFile} from '../shared/model/media-file.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EventApiService} from '../core/event-api.service';
 import {LocationApiService} from '../core/location-api.service';
-import {MatSnackBar} from '@angular/material';
+import {MatMenuTrigger, MatSnackBar} from '@angular/material';
 import {MatDialog} from '@angular/material/dialog';
-import { AxiomSchedulerEvent, AxiomSchedulerComponent } from 'axiom-scheduler';
+import {AxiomSchedulerEvent, AxiomSchedulerComponent} from 'axiom-scheduler';
 import {DialogComponent} from './dialog/dialog.component';
-import { colors } from './colors';
+import {colors} from './colors';
 import {NgImageSliderComponent} from 'ng-image-slider';
-import { FileUploader } from 'ng2-file-upload';
+import {FileUploader} from 'ng2-file-upload';
 import {Page} from '../shared/model/page.model';
 import {SeatGroupsComponent} from '../seat-groups/seat-groups.component';
 import {LocationSeatGroupDTO} from '../shared/model/location-seat-group-dto.model';
 import {EventSeatGroupDTO} from '../shared/model/event-seat-group-dto.model';
 import {AuthenticationApiService} from '../core/authentication-api.service';
 import * as moment from 'moment';
+import {NewTicketDetailed} from '../shared/model/new-ticket-detailed.model';
+import {Reservation} from '../shared/model/reservation.model';
+import {NewReservation} from '../shared/model/new-reservation.model';
+import {SeatDTO} from '../shared/model/seat-dto.model';
 
 @Component({
   selector: 'app-event',
@@ -31,22 +35,25 @@ export class EventComponent implements OnInit {
   private imageObject: Array<object> = [];
   private uploader: FileUploader;
   private locationsOptions: Location[];
-  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, [], "");
+  private locationSeatGroupDTO: LocationSeatGroupDTO = new LocationSeatGroupDTO(null, null, [], '');
   private selectedSeatGroupIndex: number;
   private selectedSeatGroupId = -1;
   private enabledSeatGroup = false;
-  private selectedEventDayID: number;
-  @ViewChild(AxiomSchedulerComponent, {static: false}) scheduler: AxiomSchedulerComponent;
-  @ViewChild('slider', {static: false}) slider: NgImageSliderComponent;
-  @ViewChild(SeatGroupsComponent, {static: false}) seatGroupComponent: SeatGroupsComponent;
+  private selectedEventDay: EventDay;
+  @ViewChild(AxiomSchedulerComponent, {static: false}) private scheduler: AxiomSchedulerComponent;
+  @ViewChild('slider', {static: false}) private slider: NgImageSliderComponent;
+  @ViewChild(SeatGroupsComponent, {static: false}) private seatGroupComponent: SeatGroupsComponent;
+  @ViewChild(MatMenuTrigger, {static: false}) private contextMenu: MatMenuTrigger;
+  private contextMenuPosition = {x: '0px', y: '0px'};
+  private reservation: NewReservation = new NewReservation();
 
   private role: string;
   private seatComponentMode: string;
 
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
-      private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+              private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
     this.role = this.authService.getRole();
-    this.seatComponentMode = this.role.concat("_EVENT");
+    this.seatComponentMode = this.role.concat('_EVENT');
   }
 
   ngOnInit() {
@@ -82,6 +89,7 @@ export class EventComponent implements OnInit {
           this.getEventDays();
           this.getPicturesAndVideos();
           this.getEventLocationAndSeatGroups();
+          this.reservation = new NewReservation(result.id);
         },
         error: (message: string) => {
           this.snackBar.open(message, 'Dismiss', {
@@ -108,10 +116,11 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.saveLocationAndSeatGroups();
+            this.locationSeatGroupDTO.eventID = this.event.id;
+            this.saveLocationAndSeatGroups(false);
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
             this.getEvent(this.event.id);
@@ -123,10 +132,11 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.saveLocationAndSeatGroups();
+            this.locationSeatGroupDTO.eventID = this.event.id;
+            this.saveLocationAndSeatGroups(true);
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
           }
@@ -137,19 +147,19 @@ export class EventComponent implements OnInit {
 
   private getEventDays() {
     for (const ev of this.event.eventDays) {
-       const from: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').toDate();
-       const to: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').set({hour: 23, minute: 59, second: 59}).toDate();
-       this.events.push(new AxiomSchedulerEvent('Event day', from, to, {id: ev.id}, colors[Math.floor(Math.random() * 15)]));
+      const from: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').toDate();
+      const to: Date = moment(ev.date, 'DD.MM.YYYY. HH:mm').set({hour: 23, minute: 59, second: 59}).toDate();
+      this.events.push(new AxiomSchedulerEvent('Event day', from, to, {id: ev.id}, colors[Math.floor(Math.random() * 15)]));
     }
-    this.selectedEventDayID = this.event.eventDays[0].id;
+    this.selectedEventDay = this.event.eventDays[0];
     this.refreshView();
   }
 
   private openDialog($event, create) {
     const dialogRef = this.dialog.open(DialogComponent);
     if (create) {
-        dialogRef.componentInstance.createMode = true;
-        dialogRef.afterClosed().subscribe(result => {
+      dialogRef.componentInstance.createMode = true;
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           const time = result.time.split(':');
           const from: Date = result.date.set({hour: time[0], minute: time[1]}).toDate();
@@ -167,8 +177,10 @@ export class EventComponent implements OnInit {
         }
       });
     } else {
-      dialogRef.componentInstance.dateTime = {date: $event.from,
-            time: moment($event.from.toString()).format('HH:mm')};
+      dialogRef.componentInstance.dateTime = {
+        date: $event.from,
+        time: moment($event.from.toString()).format('HH:mm')
+      };
       dialogRef.componentInstance.createMode = false;
       dialogRef.afterClosed().subscribe(result => {
         if (result !== '' && result !== undefined) {
@@ -197,28 +209,30 @@ export class EventComponent implements OnInit {
 
   private getPicturesAndVideos() {
     this.eventApiService.getEventsPicturesAndVideos(this.event.id).subscribe(
-        {
-          next: (result: MediaFile[]) => {
-            this.imageObject = [];
-            const base64 = 'data:image/jpeg;base64,';
-            for (const mediaFile of result) {
-              let obj;
-              if (mediaFile.fileType === 'image') {
-                obj = {image: base64 + mediaFile.dataBase64, thumbImage: base64 + mediaFile.dataBase64,
-                  data: {id: mediaFile.id}};
-              } else {
-                obj = {video: base64 + mediaFile.dataBase64, data: {id: mediaFile.id}};
-              }
-              this.imageObject.push(obj);
+      {
+        next: (result: MediaFile[]) => {
+          this.imageObject = [];
+          const base64 = 'data:image/jpeg;base64,';
+          for (const mediaFile of result) {
+            let obj;
+            if (mediaFile.fileType === 'image') {
+              obj = {
+                image: base64 + mediaFile.dataBase64, thumbImage: base64 + mediaFile.dataBase64,
+                data: {id: mediaFile.id}
+              };
+            } else {
+              obj = {video: base64 + mediaFile.dataBase64, data: {id: mediaFile.id}};
             }
-          },
-          error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
-              duration: 3000
-            });
+            this.imageObject.push(obj);
           }
+        },
+        error: (message: string) => {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+            duration: 3000
+          });
         }
-      );
+      }
+    );
   }
 
   private deleteMediaFile() {
@@ -226,18 +240,18 @@ export class EventComponent implements OnInit {
     // @ts-ignore
     const id = this.imageObject[activeImage].data.id;
     this.eventApiService.deleteMediaFile(this.event.id, id).subscribe(
-        {
-          next: (result) => {
-            this.imageObject.splice(activeImage, 1);
-            this.slider.ligthboxShow = false;
-          },
-          error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
-              duration: 3000
-            });
-          }
+      {
+        next: (result) => {
+          this.imageObject.splice(activeImage, 1);
+          this.slider.ligthboxShow = false;
+        },
+        error: (message: string) => {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+            duration: 3000
+          });
         }
-      );
+      }
+    );
   }
 
   private upload(item) {
@@ -247,7 +261,7 @@ export class EventComponent implements OnInit {
 
   private uploadAll() {
     for (const file of this.uploader.queue) {
-       this.upload(file);
+      this.upload(file);
     }
   }
 
@@ -264,7 +278,7 @@ export class EventComponent implements OnInit {
           }
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -277,7 +291,9 @@ export class EventComponent implements OnInit {
         this.locationsOptions = result;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
@@ -310,7 +326,7 @@ export class EventComponent implements OnInit {
           this.enabledSeatGroup = false;
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -340,23 +356,83 @@ export class EventComponent implements OnInit {
     this.seatGroupComponent.redraw();
   }
 
-  private saveLocationAndSeatGroups() {
-    this.eventApiService.setEventLocationAndSeatGroups(this.locationSeatGroupDTO).subscribe(
+  private saveLocationAndSeatGroups(serializing: boolean) {
+    const locationSeatGroup = serializing ? this.locationSeatGroupDTO.serialize() : this.locationSeatGroupDTO;
+    this.eventApiService.setEventLocationAndSeatGroups(locationSeatGroup).subscribe(
       {
         next: (result: Event) => {
           this.snackBar.open('Event saved successfully', 'Dismiss', {
-              duration: 3000
+            duration: 3000
           });
           this.router.navigate(['/dashboard/events/', result.id]).then(r => {
           });
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
           this.getEventLocationAndSeatGroups();
         }
       }
     );
+  }
+
+  private seatOrParterreClicked($event: { newTicketDetailed: NewTicketDetailed, mouseEvent: MouseEvent }) {
+    if (this.reservation.tickets.length >= this.event.maxTicketsPerReservation) {
+      return;
+    }
+    const {newTicketDetailed, mouseEvent} = $event;
+    this.contextMenuPosition.x = mouseEvent.clientX + 'px';
+    this.contextMenuPosition.y = mouseEvent.clientY + 'px';
+    const reservableAllDays = newTicketDetailed.seatId ?
+      this.seatAvailableAllDays(newTicketDetailed.rowNum, newTicketDetailed.colNum, newTicketDetailed.reservableSeatGroupId)
+      : this.parterreAvailableAllDays(newTicketDetailed.reservableSeatGroupId);
+    this.contextMenu.menuData = {
+      newTicketDetailed,
+      reservableAllDays
+    };
+    this.contextMenu.openMenu();
+  }
+
+  private makeTicket(newTicketDetailed: NewTicketDetailed, allDayTicket: boolean) {
+    newTicketDetailed.allDayTicket = allDayTicket;
+    if (allDayTicket) {
+      newTicketDetailed.price = newTicketDetailed.price * this.event.eventDays.length;
+    }
+    this.reservation.tickets = this.reservation.tickets.concat([newTicketDetailed]);
+  }
+
+  private seatAvailableAllDays(rowNum: number, colNum: number, reservableSeatGroupId: number): boolean {
+    const esg: EventSeatGroupDTO = this.locationSeatGroupDTO.eventSeatGroups
+      .filter(es => es.reservableSeatGroups.map(rsg => rsg.id).includes(reservableSeatGroupId))[0];
+    for (const rsg of esg.reservableSeatGroups) {
+      const seat: SeatDTO = rsg.seats.filter(s => s.colNum === colNum && s.rowNum === rowNum)[0];
+      if (seat.reserved) {
+        return false;
+      }
+      if (this.reservation.tickets.map(t => t.seatId).includes(seat.id)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private parterreAvailableAllDays(reservableSeatGroupId: number): boolean {
+    const esg: EventSeatGroupDTO = this.locationSeatGroupDTO.eventSeatGroups
+      .filter(es => es.reservableSeatGroups.map(rsg => rsg.id).includes(reservableSeatGroupId))[0];
+    for (const rsg of esg.reservableSeatGroups) {
+      const reservingTicketsNum: number = this.reservation.tickets
+        .filter(t => esg.reservableSeatGroups.map(rs => rs.id).includes(t.reservableSeatGroupId)
+          && (t.allDayTicket || t.reservableSeatGroupId === rsg.id)).length;
+      if (rsg.freeSeats - reservingTicketsNum <= 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private onReservationChange() {
+    this.getEventLocationAndSeatGroups();
+    this.reservation = new NewReservation(this.event.id);
   }
 }

@@ -41,6 +41,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.NoTransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -91,8 +92,6 @@ public class ReservationServiceUnitTests {
     @MockBean
     private EmailService emailServiceMocked;
 
-    @MockBean
-    private EntityManager entityManagerMocked;
 
     private void setUpPrincipal(RegisteredUser registeredUser) {
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -1053,12 +1052,10 @@ public class ReservationServiceUnitTests {
         PowerMockito.doReturn(entity).when(reservationServiceSpy, "makeReservationObject", newReservationDTO, false);
         PowerMockito.doReturn(payment).when(reservationServiceSpy, "makePaymentObject", entity);
 
-        PaymentDTO paymentDTO = reservationServiceSpy.createAndPayReservationCreatePayment(newReservationDTO);
-
-        assertEquals(paymentId, paymentDTO.getPaymentID());
+        Exception exception = assertThrows(NoTransactionException.class, () -> reservationServiceSpy.createAndPayReservationCreatePayment(newReservationDTO));
+        assertEquals("No transaction aspect-managed TransactionStatus in scope", exception.getMessage());
         PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makeReservationObject", newReservationDTO, false);
         PowerMockito.verifyPrivate(reservationServiceSpy, times(1)).invoke("makePaymentObject", entity);
-        Mockito.verify(entityManagerMocked, times(1)).clear();
     }
 
     @Test

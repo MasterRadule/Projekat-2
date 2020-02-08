@@ -10,9 +10,16 @@ export class NewReservation extends Serializable {
   private _eventId: number;
 
   @SerializeProperty({
-    map: 'tickets'
+    map: 'tickets',
+    list: true
   })
   private _tickets: NewTicket[];
+
+  constructor(eventId?: number) {
+    super();
+    this._eventId = eventId;
+    this.tickets = [];
+  }
 
   get eventId(): number {
     return this._eventId;

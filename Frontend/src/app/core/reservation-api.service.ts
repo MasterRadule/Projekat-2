@@ -33,10 +33,19 @@ export class ReservationApiService {
   }
 
   createAndPayReservationCreatePayment(newReservation: NewReservation) {
+    newReservation.tickets = newReservation.tickets.map(t => t.serialize());
     return this._http.post(`reservations/create-and-pay`, newReservation.serialize());
   }
 
   createAndPayReservationExecutePayment(newReservationAndPaymentDTO: NewReservationAndPaymentDTO) {
+    newReservationAndPaymentDTO.paymentDTO = newReservationAndPaymentDTO.paymentDTO.serialize();
+    newReservationAndPaymentDTO.newReservationDTO.tickets = newReservationAndPaymentDTO.newReservationDTO.tickets.map(t => t.serialize());
+    newReservationAndPaymentDTO.newReservationDTO = newReservationAndPaymentDTO.newReservationDTO.serialize();
     return this._http.post(`reservations/create-and-pay/execute`, newReservationAndPaymentDTO.serialize());
+  }
+
+  createReservation(newReservation: NewReservation) {
+    newReservation.tickets = newReservation.tickets.map(t => t.serialize());
+    return this._http.post(`reservations`, newReservation.serialize());
   }
 }

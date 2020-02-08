@@ -78,7 +78,7 @@ public class EventServiceIntegrationTests {
     @Transactional
     @Rollback
     @Test
-    void createEvent_eventCreated() throws EntityNotValidException {
+    void createEvent_eventCreated() throws EntityNotValidException, EntityAlreadyExistsException {
         EventDTO newDTO = new EventDTO(null, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
         newDTO.getEventDays().add(new EventDayDTO(null, "24.02.2020. 12:30"));

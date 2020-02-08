@@ -14,10 +14,10 @@ public class Ticket {
     @ManyToMany(mappedBy = "tickets", fetch = FetchType.LAZY)
     private Set<ReservableSeatGroup> reservableSeatGroups;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ticket")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "ticket")
     private Set<Seat> seats;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 

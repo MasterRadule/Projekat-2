@@ -17,6 +17,13 @@ export class NewTicket extends Serializable {
   })
   private _allDayTicket: boolean;
 
+  constructor(reservableSeatGroupId: number, seatId: number, allDayTicket: boolean) {
+    super();
+    this.reservableSeatGroupId = reservableSeatGroupId;
+    this.seatId = seatId;
+    this.allDayTicket = allDayTicket;
+  }
+
   get reservableSeatGroupId(): number {
     return this._reservableSeatGroupId;
   }
