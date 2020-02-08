@@ -81,6 +81,8 @@ public class EventServiceIntegrationTests {
     void createEvent_eventCreated() throws EntityNotValidException {
         EventDTO newDTO = new EventDTO(null, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
+        newDTO.getEventDays().add(new EventDayDTO(null, "24.02.2020. 12:30"));
+        newDTO.setReservationDeadlineDays(2);
 
         EventDTO newEventSaved = eventService.createEvent(newDTO);
 
@@ -111,6 +113,30 @@ public class EventServiceIntegrationTests {
         eventDTO.getEventDays().add(new EventDayDTO(null, "30.11.2019. 12:30"));
 
         assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void createEvent_reservationDeadlineDaysInvalid_entityNotValidExceptionThrown() {
+        EventDTO eventDTO = new EventDTO(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "28.02.2020. 12:30"));
+        eventDTO.setReservationDeadlineDays(24);
+
+        assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void createEvent_eventNameIsTaken_entityAlreadyExistsExceptionThrown() {
+        EventDTO eventDTO = new EventDTO(null, "Conputor", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "28.02.2019. 12:30"));
+        eventDTO.setReservationDeadlineDays(2);
+
+        assertThrows(EntityAlreadyExistsException.class, () -> eventService.createEvent(eventDTO));
     }
 
     @Transactional

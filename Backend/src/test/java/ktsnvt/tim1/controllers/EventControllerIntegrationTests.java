@@ -65,14 +65,15 @@ public class EventControllerIntegrationTests {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private HeaderTokenGenerator headerTokenGenerator;
+
     @AfterEach
     public void rollback(){
         Resource resource = new ClassPathResource("data-h2.sql");
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
         resourceDatabasePopulator.execute(dataSource);
     }
-
-    private HeaderTokenGenerator headerTokenGenerator;
 
     @Test
     void getEvents_eventsReturned() {
@@ -188,6 +189,51 @@ public class EventControllerIntegrationTests {
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertEquals("Event day date must be after today's date", errorMessage);
+    }
+
+    @Test
+    void createEvent_reservationDeadlineDaysInvalid_errorMessageReturned() {
+        EventDTO newDTO = new EventDTO(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        EventDayDTO eventDay = new EventDayDTO(null, "28.02.2020. 12:30");
+        newDTO.getEventDays().add(eventDay);
+        newDTO.setActiveForReservations(true);
+        newDTO.setReservationDeadlineDays(24);
+        newDTO.setMaxTicketsPerReservation(3);
+
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
+
+        ResponseEntity<String> result = testRestTemplate.exchange("/events",
+                HttpMethod.POST, entity, String.class);
+
+        String errorMessage = result.getBody();
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Number of reservation deadline days must " +
+                "be less than number of days left until the event", errorMessage);
+    }
+
+    @Test
+    void createEvent_eventNameIsTaken_errorMessageReturned() {
+        EventDTO newDTO = new EventDTO(null, "Conputor", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        EventDayDTO eventDay = new EventDayDTO(null, "28.02.2050. 12:30");
+        newDTO.getEventDays().add(eventDay);
+        newDTO.setActiveForReservations(true);
+        newDTO.setReservationDeadlineDays(2);
+        newDTO.setMaxTicketsPerReservation(3);
+
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
+
+        ResponseEntity<String> result = testRestTemplate.exchange("/events",
+                HttpMethod.POST, entity, String.class);
+
+        String errorMessage = result.getBody();
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Event with given name already exists", errorMessage);
     }
 
     @Test

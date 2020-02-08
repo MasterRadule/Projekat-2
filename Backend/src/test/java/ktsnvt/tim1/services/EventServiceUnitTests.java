@@ -120,9 +120,15 @@ public class EventServiceUnitTests {
         Long id = 1L;
         EventDTO dtoBeforeSaving = new EventDTO(null, "Event 1", "Description of Event 1",
                 EventCategory.Movie.name(), false);
+        dtoBeforeSaving.getEventDays().add(new EventDayDTO(null, "24.02.2020. 12:30"));
+        dtoBeforeSaving.setReservationDeadlineDays(2);
 
         Event eventBeforeSaving = new Event(null, dtoBeforeSaving.getName(), dtoBeforeSaving.getDescription(),
                 EventCategory.valueOf(dtoBeforeSaving.getCategory()), dtoBeforeSaving.isCancelled());
+        LocalDateTime evDay = LocalDateTime.parse("24.02.2020. 12:30", formatter);
+        EventDay ev = new EventDay(null, evDay);
+        eventBeforeSaving.getEventDays().add(ev);
+        eventBeforeSaving.setReservationDeadlineDays(2);
 
         EventDTO dtoAfterSaving = new EventDTO(id, dtoBeforeSaving.getName(), dtoBeforeSaving.getDescription(),
                 dtoBeforeSaving.getCategory(), dtoBeforeSaving.isCancelled());
@@ -168,6 +174,39 @@ public class EventServiceUnitTests {
         Mockito.when(eventMapperMocked.toEntity(eventDTO)).thenReturn(event);
 
         assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Test
+    public void createEvent_reservationDeadlineDaysInvalid_entityNotValidExceptionThrown() throws EntityNotValidException {
+        EventDTO eventDTO = new EventDTO(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "28.02.2020. 12:30"));
+        eventDTO.setReservationDeadlineDays(24);
+
+        Event event = new Event(null, "Event 1", "Description of Event 1",
+                EventCategory.Movie, false);
+        LocalDateTime evDay = LocalDateTime.parse("28.02.2019. 12:30", formatter);
+        EventDay ev = new EventDay(null, evDay);
+        event.getEventDays().add(ev);
+        event.setReservationDeadlineDays(24);
+
+        Mockito.when(eventMapperMocked.toEntity(eventDTO)).thenReturn(event);
+
+        assertThrows(EntityNotValidException.class, () -> eventService.createEvent(eventDTO));
+    }
+
+    @Test
+    public void createEvent_eventNameIsTaken_entityAlreadyExistsExceptionThrown() {
+        EventDTO eventDTO = new EventDTO(null, "Conputor", "Description of Event 1",
+                EventCategory.Movie.name(), false);
+        eventDTO.getEventDays().add(new EventDayDTO(null, "28.02.2019. 12:30"));
+
+        Event event = new Event(null, "Conputor", "Description of Event 1",
+                EventCategory.Movie, false);
+
+        Mockito.when(eventRepositoryMocked.findOneByName(eventDTO.getName())).thenReturn(event);
+
+        assertThrows(EntityAlreadyExistsException.class, () -> eventService.createEvent(eventDTO));
     }
 
     @Test
@@ -425,7 +464,7 @@ public class EventServiceUnitTests {
 
         LocationSeatGroupDTO seatGroupDTO = new LocationSeatGroupDTO(eventID, locationID);
 
-        Mockito.when(eventRepositoryMocked.findByIdAndIsCancelledFalseAndLocationNotNull(eventID)).thenReturn(Optional.of(event));
+        Mockito.when(eventRepositoryMocked.findById(eventID)).thenReturn(Optional.of(event));
         Mockito.when(locationRepositoryMocked.findByIdAndDisabledFalse(locationID)).thenReturn(Optional.of(location));
         Mockito.when(eventRepositoryMocked.save(event)).thenReturn(event);
         Mockito.when(eventMapperMocked.toDTO(event)).thenReturn(eventDTO);
