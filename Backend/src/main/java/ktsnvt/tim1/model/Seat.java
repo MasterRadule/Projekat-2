@@ -13,7 +13,7 @@ public class Seat {
     @JoinColumn(name = "reservable_seat_group_id", nullable = false)
     private ReservableSeatGroup reservableSeatGroup;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 

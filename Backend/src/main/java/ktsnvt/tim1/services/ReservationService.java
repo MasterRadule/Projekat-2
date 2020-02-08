@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
@@ -56,8 +57,6 @@ public class ReservationService {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private EntityManager entityManager;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Page<ReservationDTO> getReservations(ReservationTypeDTO type, Pageable pageable) {
@@ -103,18 +102,17 @@ public class ReservationService {
         if (numOfDaysToEvent < 0) throw new ImpossibleActionException("Event already started");
         if (checkReservationDeadline && numOfDaysToEvent <= event.getReservationDeadlineDays())
             throw new ImpossibleActionException("Reservation deadline date passed");
-
         Reservation reservation = new Reservation();
-        for (NewTicketDTO t : newReservationDTO.getTickets()) {
-            Ticket ticket = makeTicketObject(t, event);
-            reservation.getTickets().add(ticket);
-            ticket.setReservation(reservation);
-        }
         reservation.setEvent(event);
         RegisteredUser registeredUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         reservation.setRegisteredUser(registeredUser);
         registeredUser.getReservations().add(reservation);
+        for (NewTicketDTO t : newReservationDTO.getTickets()) {
+            Ticket ticket = makeTicketObject(t, event);
+            reservation.getTickets().add(ticket);
+            ticket.setReservation(reservation);
+        }
         return reservation;
     }
 
@@ -256,7 +254,7 @@ public class ReservationService {
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
-        entityManager.clear(); // clear persistence context in order not to save reservation in database
+        TransactionInterceptor.currentTransactionStatus().setRollbackOnly();; // rollback in order not to save reservation in database
         return new PaymentDTO(createdPayment.getId());
     }
 
@@ -282,7 +280,8 @@ public class ReservationService {
     private Payment makePaymentObject(Reservation reservation) throws PayPalRESTException, PayPalException {
         ItemList itemList = new ItemList();
         List<Ticket> tickets = new ArrayList<>(reservation.getTickets());
-        tickets.sort((t1, t2) -> (int) (t1.getId() - t2.getId())); // sorting to avoid randomness of items' order
+        tickets.sort((t1, t2) -> (int) ((t1.getId() ==null ? 0 : t1.getId())
+                - (t2.getId() ==null ? 0 : t2.getId()))); // sorting to avoid randomness of items' order
         itemList.setItems(new ArrayList<>());
         for (Ticket ticket : tickets) {
             Item item = new Item();
