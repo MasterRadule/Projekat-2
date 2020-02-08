@@ -90,7 +90,7 @@
             </mat-option>
           </mat-select>
        </mat-form-field>
-       <mat-form-field>
+       <mat-form-field *ngIf="role != 'ROLE_ADMIN'">
         <input [(ngModel)]="locationSeatGroupDTO.locationName" matInput name="locationName" placeholder="Location" spellcheck="false" disabled>
       </mat-form-field>
        <mat-form-field>

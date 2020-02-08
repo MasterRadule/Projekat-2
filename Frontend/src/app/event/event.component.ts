@@ -44,7 +44,7 @@ export class EventComponent implements OnInit {
   private seatComponentMode: string;
 
   constructor(private route: ActivatedRoute, private eventApiService: EventApiService, private locationApiService: LocationApiService,
-      private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
+              private authService: AuthenticationApiService, private snackBar: MatSnackBar, private router: Router, private dialog: MatDialog) {
     this.role = this.authService.getRole();
     this.seatComponentMode = this.role.concat("_EVENT");
   }
