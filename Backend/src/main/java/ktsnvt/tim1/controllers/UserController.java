@@ -32,7 +32,7 @@ public class UserController {
 		}
     }
 
-	@PutMapping(value = "/updatePassword")
+	@PutMapping(value = "/password")
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
 		try{

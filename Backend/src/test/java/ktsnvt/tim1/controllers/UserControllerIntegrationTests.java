@@ -150,7 +150,7 @@ public class UserControllerIntegrationTests {
 
         HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/updatePassword"),
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
                 HttpMethod.PUT, entity, String.class);
 
         assertNotNull(result.getBody());
@@ -166,7 +166,7 @@ public class UserControllerIntegrationTests {
 
         HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
 
-        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/updatePassword"),
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
                 HttpMethod.PUT, entity, String.class);
 
         assertNotNull(result.getBody());
@@ -184,7 +184,7 @@ public class UserControllerIntegrationTests {
 
         HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
 
-        ResponseEntity<Boolean> result = testRestTemplate.exchange(createURLWithPort("/user/updatePassword"),
+        ResponseEntity<Boolean> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
                 HttpMethod.PUT, entity, Boolean.class);
 
         boolean success = result.getBody();

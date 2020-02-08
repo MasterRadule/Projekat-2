@@ -26,6 +26,6 @@ export class UserEditApiService {
   }
 
   changePassword(changePasswordDTO: ChangePasswordDTO) {
-    return this._http.put(`user/updatePassword`, changePasswordDTO, {headers: this._headers});
+    return this._http.put(`user/password`, changePasswordDTO, {headers: this._headers});
   }
 }
