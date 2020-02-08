@@ -1,80 +1,87 @@
 import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 
 @Serialize({})
-export class UserDTO extends Serializable{
+export class UserDTO extends Serializable {
+
+  @SerializeProperty({
+    map: 'id'
+  })
+  private id: number;
+
   @SerializeProperty({
     map: 'firstName'
   })
-  private _firstName: string;
+  private firstName: string;
 
   @SerializeProperty({
     map: 'lastName'
   })
-  private _lastName: string;
+  private lastName: string;
 
   @SerializeProperty({
     map: 'email'
   })
-  private _email: string;
+  private email: string;
 
   @SerializeProperty({
     map: 'password'
   })
-  private _password: string;
+  private password: string;
 
   @SerializeProperty({
     map: 'verified'
   })
-  private _verified: boolean;
+  private verified: boolean;
 
-  constructor(firstName: string, lastName: string, email: string, password: string) {
+  constructor(id: number, firstName: string, lastName: string, email: string, password: string) {
     super();
-    this._firstName = firstName;
-    this._lastName = lastName;
-    this._email = email;
-    this._password = password;
-    this._verified = false;
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+    this.verified = false;
   }
 
 
-  get verified(): boolean {
-    return this._verified;
+  getVerified(): boolean {
+    return this.verified;
   }
 
-  set verified(value: boolean) {
-    this._verified = value;
+  setVerified(value: boolean) {
+    this.verified = value;
   }
 
-  get firstName():string{
-    return this._firstName;
+  getFirstName(): string {
+    return this.firstName;
   }
 
-  set firstName(firstName: string){
-    this._firstName = firstName;
+  setFirstName(firstName: string) {
+    this.firstName = firstName;
   }
 
-  get lastName():string{
-    return this._lastName;
+  getLastName(): string {
+    return this.lastName;
   }
 
-  set lastName(lastName: string){
-    this._lastName = lastName;
+  setLastName(lastName: string) {
+    this.lastName = lastName;
   }
 
-  get email():string{
-    return this._email;
+  getEmail(): string {
+    return this.email;
   }
 
-  set email(email: string){
-    this._email = email;
+  setEmail(email: string) {
+    this.email = email;
   }
 
-  get password():string{
-    return this._password;
+  getPassword(): string {
+    return this.password;
   }
 
-  set password(password: string){
-    this._password = password;
+  setPassword(password: string) {
+    this.password = password;
   }
 
 }

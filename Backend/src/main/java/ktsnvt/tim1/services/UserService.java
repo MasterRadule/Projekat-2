@@ -1,5 +1,6 @@
 package ktsnvt.tim1.services;
 
+import ktsnvt.tim1.DTOs.ChangePasswordDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
 import ktsnvt.tim1.mappers.UserMapper;
@@ -36,13 +37,26 @@ public class UserService {
         }
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
+        if(!userDTO.getPassword().equals(user.getPassword())){
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
         return userMapper.toDTO(userRepository.save(user));
 
     }
 
+    public boolean changePassword(ChangePasswordDTO changePasswordDTO) throws EntityNotValidException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())){
+            throw new EntityNotValidException("Old password is incorrect");
+        }
+        if (!changePasswordDTO.getPassword().equals(changePasswordDTO.getRepeatedPassword())){
+            throw new EntityNotValidException("Passwords don't match");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getPassword()));
+        userRepository.save(user);
+        return true;
+    }
 }
 
 

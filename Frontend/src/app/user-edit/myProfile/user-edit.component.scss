@@ -1,5 +1,5 @@
 .mat-form-field {
-  min-width: 300px;
+  min-width: 500px;
 }
 .mat-card{
   width: 100%;
@@ -7,15 +7,13 @@
   position: fixed;
 }
 .mat-card-content>:first-child, .mat-card>:first-child{
-  margin-top:100px;
-  margin-bottom: -100px;
+  margin-top:50px;
 }
 
 mat-card-title,
 mat-card-content {
   display: flex;
   justify-content: center;
-
 }
 
 .error {
@@ -28,4 +26,14 @@ mat-card-content {
 .button {
   display: flex;
   justify-content: flex-end;
+}
+.changePass{
+  margin-top: -25px;
+}
+#changePassword{
+  margin-left: -15px;
+  color: darkcyan;
+}
+legend{
+  color: darkcyan;
 }
