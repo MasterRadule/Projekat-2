@@ -1,5 +1,6 @@
 package ktsnvt.tim1.controllers;
 
+import ktsnvt.tim1.DTOs.ChangePasswordDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.exceptions.EntityNotFoundException;
 import ktsnvt.tim1.exceptions.EntityNotValidException;
@@ -30,6 +31,16 @@ public class UserController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
     }
+
+	@PutMapping(value = "/updatePassword")
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
+	public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
+		try{
+			return new ResponseEntity<>(userService.changePassword(changePasswordDTO), HttpStatus.OK);
+		}catch (EntityNotValidException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 
     @GetMapping()
     public ResponseEntity<Object> getUser(){

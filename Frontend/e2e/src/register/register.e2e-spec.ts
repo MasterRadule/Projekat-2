@@ -29,9 +29,9 @@ describe('register page', () => {
   });
 
   it('should show error message if email is taken', () => {
-    page.getFirstNameInput().sendKeys("Petar");
+    page.getFirstNameInput().sendKeys('Petar');
     expect(page.getRegisterButton().isEnabled()).toBe(false);
-    page.getLastNameInput().sendKeys("Petrovic");
+    page.getLastNameInput().sendKeys('Petrovic');
     expect(page.getRegisterButton().isEnabled()).toBe(false);
     page.getEmailInput().sendKeys('Dickens@example.com');
     expect(page.getRegisterButton().isEnabled()).toBe(false);
@@ -44,9 +44,9 @@ describe('register page', () => {
   });
 
   it('should register', () => {
-    page.getFirstNameInput().sendKeys("Petar");
+    page.getFirstNameInput().sendKeys('Petar');
     expect(page.getRegisterButton().isEnabled()).toBe(false);
-    page.getLastNameInput().sendKeys("Petrovic");
+    page.getLastNameInput().sendKeys('Petrovic');
     expect(page.getRegisterButton().isEnabled()).toBe(false);
     page.getEmailInput().sendKeys('petar.petrovic@example.com');
     expect(page.getRegisterButton().isEnabled()).toBe(false);

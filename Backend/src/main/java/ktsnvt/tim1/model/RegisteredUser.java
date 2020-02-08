@@ -10,6 +10,7 @@ import java.util.*;
 
 @Entity
 public class RegisteredUser extends User {
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "registeredUser")
     private Set<Reservation> reservations;
 

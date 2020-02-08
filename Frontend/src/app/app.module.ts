@@ -18,6 +18,7 @@ import {TokenInterceptor} from './interceptors/token.interceptor';
 import {SharedModule} from './shared/shared.module';
 import {ReservationModule} from './reservation/reservation.module';
 import {UrlInterceptor} from './interceptors/url.interceptor';
+import {UserEditModule} from './user-edit/user-edit.module';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import {UrlInterceptor} from './interceptors/url.interceptor';
     ReportsModule,
     SeatGroupsModule,
     AuthModule,
-    SharedModule
+    SharedModule,
+    UserEditModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
               {provide: HTTP_INTERCEPTORS, useClass: UrlInterceptor, multi: true}],
