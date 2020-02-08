@@ -119,13 +119,13 @@ describe('dashboard page', () => {
     page.previewEvents();
     expect(page.getEventPreviewElements().count()).toBe(6);
 
-    page.selectNumberOfItemsDisplayed(3);
+    page.selectNumberOfEventsDisplayed(3);
     expect(page.getEventPreviewElements().count()).toBe(3);
 
-    page.selectNumberOfItemsDisplayed(9);
+    page.selectNumberOfEventsDisplayed(9);
     expect(page.getEventPreviewElements().count()).toBe(9);
 
-    page.selectNumberOfItemsDisplayed(6);
+    page.selectNumberOfEventsDisplayed(6);
     expect(page.getEventPreviewElements().count()).toBe(6);
   });
 

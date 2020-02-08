@@ -51,6 +51,7 @@ public class ReservableSeatGroup {
                 }
             }
         }
+        esg.getReservableSeatGroups().add(this);
     }
 
     public void incrementFreeSeats(){

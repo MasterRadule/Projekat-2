@@ -17,7 +17,7 @@ export class EventPage {
   setCategory(category: string) {
     element.all(by.css('.mat-select-arrow-wrapper')).first().click().then(() => {
       browser.driver.sleep(1000).then(() => {
-        element(by.css(`mat-option[ng-reflect-value="${category}"]`)).click().then();
+        element(by.cssContainingText('span.mat-option-text', category)).click();
       });
     });
   }
@@ -27,7 +27,7 @@ export class EventPage {
   }
 
   getLocation() {
-    return element(by.css('mat-select[name="locationID"]'));
+    return element(by.css('mat-select[name="locationID"] .mat-select-value-text>span'));
   }
 
   getEventReservationDeadlineDaysInput() {
@@ -69,7 +69,7 @@ export class EventPage {
   setLocation(location: string) {
     element.all(by.css('.mat-select-arrow-wrapper')).last().click().then(() => {
       browser.driver.sleep(1000).then(() => {
-        element(by.css(`mat-option[ng-reflect-value="${location}"]`)).click().then();
+        element(by.cssContainingText('span.mat-option-text', location)).click();
       });
     });
   }

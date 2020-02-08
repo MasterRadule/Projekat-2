@@ -20,8 +20,8 @@ export class LocationSeatGroupDTO extends Serializable {
   })
   private _eventSeatGroups: EventSeatGroupDTO[];
 
-  constructor(eventID: number, locationID: number, eventSeatGroups: EventSeatGroupDTO[], 
-      locationName: string) {
+  constructor(eventID: number, locationID: number, eventSeatGroups: EventSeatGroupDTO[],
+              locationName: string) {
     super();
     this._eventID = eventID;
     this._locationID = locationID;

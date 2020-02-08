@@ -108,10 +108,11 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.saveLocationAndSeatGroups();
+            this.locationSeatGroupDTO.eventID = this.event.id;
+            this.saveLocationAndSeatGroups(false);
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
             this.getEvent(this.event.id);
@@ -123,10 +124,11 @@ export class EventComponent implements OnInit {
         {
           next: (result: Event) => {
             this.event = result;
-            this.saveLocationAndSeatGroups();
+            this.locationSeatGroupDTO.eventID = this.event.id;
+            this.saveLocationAndSeatGroups(true);
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
           }
@@ -213,7 +215,7 @@ export class EventComponent implements OnInit {
             }
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
           }
@@ -232,7 +234,7 @@ export class EventComponent implements OnInit {
             this.slider.ligthboxShow = false;
           },
           error: (message: string) => {
-            this.snackBar.open(message, 'Dismiss', {
+            this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
               duration: 3000
             });
           }
@@ -264,7 +266,7 @@ export class EventComponent implements OnInit {
           }
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -277,7 +279,9 @@ export class EventComponent implements OnInit {
         this.locationsOptions = result;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
@@ -310,7 +314,7 @@ export class EventComponent implements OnInit {
           this.enabledSeatGroup = false;
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -340,8 +344,9 @@ export class EventComponent implements OnInit {
     this.seatGroupComponent.redraw();
   }
 
-  private saveLocationAndSeatGroups() {
-    this.eventApiService.setEventLocationAndSeatGroups(this.locationSeatGroupDTO).subscribe(
+  private saveLocationAndSeatGroups(serializing: boolean) {
+    const locationSeatGroup = serializing ? this.locationSeatGroupDTO.serialize() : this.locationSeatGroupDTO;
+    this.eventApiService.setEventLocationAndSeatGroups(locationSeatGroup).subscribe(
       {
         next: (result: Event) => {
           this.snackBar.open('Event saved successfully', 'Dismiss', {
@@ -351,7 +356,7 @@ export class EventComponent implements OnInit {
           });
         },
         error: (message: string) => {
-          this.snackBar.open(JSON.parse(JSON.stringify(message))['error'], 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
           this.getEventLocationAndSeatGroups();

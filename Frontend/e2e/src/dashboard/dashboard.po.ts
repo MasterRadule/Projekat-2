@@ -60,6 +60,13 @@ export class DashboardPage {
     });
   }
 
+  selectNumberOfEventsDisplayed(items: number) {
+    element(by.css('#mat-select-2')).click().then(() => {
+      element(by.css(`.mat-option[ng-reflect-value="${items}"]`)).click().then(() => {
+      });
+    });
+  }
+
   setSearchTextForLocationPreviews(text: string) {
     element(by.css('#search')).sendKeys(text).then(() => {
     });
