@@ -60,5 +60,10 @@ export class DashboardPage {
   getResetButtonForLocationPreviews() {
     return element(by.css('.searchButton[type="button"]'));
   }
+
+  logout() {
+    this.navigateTo();
+    element(by.css('body > app-root > app-dashboard > div > app-toolbar > mat-toolbar > span:nth-child(2) > button:nth-child(2)')).click();
+  }
 }
 
