@@ -1,0 +1,38 @@
+<div class="page">
+  <app-toolbar class="header"></app-toolbar>
+  <mat-card>
+    <fieldset style="margin-right: 40px;">
+      <legend>My Profile</legend>
+    <mat-card-content>
+      <form [formGroup]="ngForm" (ngSubmit)="onSubmit()">
+        <p>
+          <mat-form-field>
+            <input id="firstName" type="text" matInput placeholder="First Name" [formControl]="ngForm.controls.firstName" formControlName="firstName" (click)="ngForm.controls.firstName.markAsTouched()">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input id="lastName" type="text" matInput placeholder="Last Name" [formControl]="ngForm.controls.lastName" formControlName="lastName" (click)="ngForm.controls.lastName.markAsTouched()">
+         </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input id="email" type="text" matInput placeholder="Email" [formControl]="ngForm.controls.email" formControlName="email">
+          </mat-form-field>
+        </p>
+
+        <div class="changePass">
+          <button type="button" routerLink="/changePassword" id="changePassword" mat-button>Change password</button>
+        </div>
+
+        <div class="button">
+          <button mat-raised-button color="primary"
+                  [matTooltip]="'Edit user'" type="submit" id="editButton" [disabled]="!ngForm.valid">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+    </fieldset>
+  </mat-card>
+</div>

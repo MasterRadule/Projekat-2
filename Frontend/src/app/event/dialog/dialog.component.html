@@ -15,6 +15,6 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button *ngIf="createMode" mat-raised-button [mat-dialog-close]="dateTime" color="primary">Add</button>
+  <button *ngIf="createMode" mat-raised-button [mat-dialog-close]="dateTime" id="addEventDay" color="primary">Add</button>
   <button *ngIf="!createMode" mat-raised-button [mat-dialog-close]="dateTime" color="primary">Edit</button>
 </mat-dialog-actions>

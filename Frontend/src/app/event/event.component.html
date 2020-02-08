@@ -90,7 +90,7 @@
             </mat-option>
           </mat-select>
        </mat-form-field>
-       <mat-form-field>
+       <mat-form-field *ngIf="role != 'ROLE_ADMIN'">
         <input [(ngModel)]="locationSeatGroupDTO.locationName" matInput name="locationName" placeholder="Location" spellcheck="false" disabled>
       </mat-form-field>
        <mat-form-field>
@@ -107,7 +107,7 @@
        </mat-checkbox>
 
        <span fxLayout="row" fxLayoutGap="10px" *ngIf="role == 'ROLE_ADMIN'">
-        <button mat-raised-button color="primary" type="button" (click)="openDialog(null, true)"
+        <button mat-raised-button color="primary" type="button" id="addEvDayButton" (click)="openDialog(null, true)"
         matTooltip="Add an event day to calendar">Add event day</button>
       </span>
 
@@ -162,7 +162,7 @@
   </div>
 
   <div fxLayout="row wrap" fxLayoutAlign="center" *ngIf="role == 'ROLE_ADMIN'">
-    <button mat-raised-button color="primary" type="submit" *ngIf="role == 'ROLE_ADMIN'" style="margin-top:10px; margin-bottom:10px;" (click)="createOrEditEvent()" matTooltip="Save event's data, event's days and location">Save event</button>
+    <button mat-raised-button color="primary" type="submit" id="saveEventButton" *ngIf="role == 'ROLE_ADMIN'" style="margin-top:10px; margin-bottom:10px;" (click)="createOrEditEvent()" matTooltip="Save event's data, event's days and location">Save event</button>
   </div>
 
   <div style="visibility: hidden; position: fixed"

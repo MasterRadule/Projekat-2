@@ -51,7 +51,7 @@ public class EventController {
     public ResponseEntity<Object> createEvent(@Valid @RequestBody EventDTO event) {
         try {
             return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
-        } catch (EntityNotValidException e) {
+        } catch (EntityNotValidException | EntityAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

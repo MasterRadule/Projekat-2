@@ -1,5 +1,6 @@
 package ktsnvt.tim1.controllers;
 
+import ktsnvt.tim1.DTOs.ChangePasswordDTO;
 import ktsnvt.tim1.DTOs.UserDTO;
 import ktsnvt.tim1.model.User;
 import ktsnvt.tim1.security.TokenUtils;
@@ -139,6 +140,56 @@ public class UserControllerIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals("No User Logged In!", result.getBody());
+    }
+
+    @Test
+    void changePassword_incorrectOldPassword_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("1234", "KtsNvtTim1+", "KtsNvtTim1+");
+
+        HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
+
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
+                HttpMethod.PUT, entity, String.class);
+
+        assertNotNull(result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Old password is incorrect", result.getBody());
+    }
+
+    @Test
+    void changePassword_passwordsDontMatch_errorMessageReturned() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("JennifferHooker@example.com");
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1++");
+
+        HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
+
+        ResponseEntity<String> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
+                HttpMethod.PUT, entity, String.class);
+
+        assertNotNull(result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Passwords don't match", result.getBody());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void changePassword_passwordsOK_true() {
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Porsha.Ferraro219@nowhere.com");
+
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("123", "KtsNvtTim1+", "KtsNvtTim1+");
+
+        HttpEntity<ChangePasswordDTO> entity = new HttpEntity<>(changePasswordDTO, headers);
+
+        ResponseEntity<Boolean> result = testRestTemplate.exchange(createURLWithPort("/user/password"),
+                HttpMethod.PUT, entity, Boolean.class);
+
+        boolean success = result.getBody();
+        assertTrue(success);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     private String createURLWithPort(String uri) {
