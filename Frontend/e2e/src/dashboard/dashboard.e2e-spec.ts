@@ -1,11 +1,16 @@
 import {browser, logging} from 'protractor';
 import {DashboardPage} from './dashboard.po';
+import {LoginPage} from '../login/login.po';
 
 describe('dashboard page', () => {
   let page: DashboardPage;
 
   beforeAll(() => {
     browser.driver.manage().window().maximize();
+    const loginPage = new LoginPage();
+    loginPage.login('Dickens@example.com', 123);
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
   });
 
   beforeEach(() => {
@@ -220,5 +225,11 @@ describe('dashboard page', () => {
     expect(logs).not.toContain(jasmine.objectContaining({
       level: logging.Level.SEVERE,
     } as logging.Entry));
+  });
+
+  afterAll(() => {
+    page.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
   });
 });
