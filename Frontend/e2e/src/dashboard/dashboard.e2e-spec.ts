@@ -105,6 +105,114 @@ describe('dashboard page', () => {
     });
   });
 
+  it('should display event previews', () => {
+    page.previewEvents();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+  });
+
+  it('should change number of displayed event previews', () => {
+    page.previewEvents();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+
+    page.selectNumberOfItemsDisplayed(3);
+    expect(page.getEventPreviewElements().count()).toBe(3);
+
+    page.selectNumberOfItemsDisplayed(9);
+    expect(page.getEventPreviewElements().count()).toBe(9);
+
+    page.selectNumberOfItemsDisplayed(6);
+    expect(page.getEventPreviewElements().count()).toBe(6);
+  });
+
+  it('should go to next page of event previews and return to previous', () => {
+    page.previewEvents();
+
+    const nextPageButton = page.getNextPageButton();
+    expect(nextPageButton).toBeTruthy();
+
+    nextPageButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+    expect(page.getPaginatorLabel().getText()).toBe('7 – 12 of 30');
+
+    const previousPageButton = page.getPreviousPageButton();
+    expect(previousPageButton).toBeTruthy();
+
+    page.getPreviousPageButton().click();
+    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 30');
+  });
+
+  it('should search event previews by search text', () => {
+    page.previewEvents();
+
+    const searchText = 'co';
+    page.setSearchTextForEventPreviews(searchText);
+
+    const searchButton = page.getSearchButtonForEventPreviews();
+
+    searchButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(4);
+    page.getEventPreviewTitles().then((titles) => {
+      for (const title of titles) {
+        title.getText().then((value) => {
+          expect(value.toLowerCase()).toContain(searchText.toLowerCase());
+        });
+      }
+    });
+
+    const resetButton = page.getResetButtonForEventPreviews();
+
+    resetButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+  });
+
+  it('should search event previews by category', () => {
+    page.previewEvents();
+
+    const category = 'Fair';
+    page.setCategory(category);
+
+    const searchButton = page.getSearchButtonForEventPreviews();
+
+    searchButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(5);
+
+    const resetButton = page.getResetButtonForEventPreviews();
+
+    resetButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+  });
+
+  it('should search event previews by start date and end date', () => {
+    page.setStartDate('February 10, 2020');
+    browser.driver.sleep(1000);
+
+    page.setEndDate('February 29, 2020');
+    browser.driver.sleep(1000);
+
+    const searchButton = page.getSearchButtonForEventPreviews();
+
+    searchButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(5);
+    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 9');
+
+    const resetButton = page.getResetButtonForEventPreviews();
+
+    resetButton.click();
+    expect(page.getEventPreviewElements().count()).toBe(6);
+  });
+
+  it('should go to edit event page', () => {
+    page.previewEvents();
+
+    const editButton = page.getFirstEventPreviewEditButton();
+
+    browser.executeScript('arguments[0].scrollIntoView', editButton).then(() => {
+      browser.executeScript('arguments[0].click()', editButton).then(() => {
+        expect(browser.getCurrentUrl()).toEqual('http://localhost:4200/dashboard/events/1');
+      });
+    });
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

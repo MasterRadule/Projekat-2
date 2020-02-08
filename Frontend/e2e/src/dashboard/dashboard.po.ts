@@ -17,7 +17,15 @@ export class DashboardPage {
     return element.all(by.tagName('app-location-preview'));
   }
 
+  getEventPreviewElements() {
+    return element.all(by.tagName('app-event-preview'));
+  }
+
   getLocationPreviewTitles() {
+    return element.all(by.css('mat-card-title'));
+  }
+
+  getEventPreviewTitles() {
     return element.all(by.css('mat-card-title'));
   }
 
@@ -27,6 +35,10 @@ export class DashboardPage {
 
   getFirstLocationPreviewEditButton() {
     return element.all(by.css('app-location-preview button')).first();
+  }
+
+  getFirstEventPreviewEditButton() {
+    return element.all(by.css('app-event-preview button')).first();
   }
 
   getPaginatorLabel() {
@@ -53,12 +65,49 @@ export class DashboardPage {
     });
   }
 
+  setSearchTextForEventPreviews(text: string) {
+    element(by.css('#searchInput')).sendKeys(text).then(() => {
+    });
+  }
+
   getSearchButtonForLocationPreviews() {
     return element(by.css('.searchButton[type="submit"]'));
   }
 
+  getSearchButtonForEventPreviews() {
+    return element(by.css('#buttonSearch'));
+  }
+
   getResetButtonForLocationPreviews() {
     return element(by.css('.searchButton[type="button"]'));
+  }
+
+  getResetButtonForEventPreviews() {
+    return element(by.css('#buttonReset'));
+  }
+
+  setCategory(category: string) {
+    element.all(by.css('.mat-select-arrow-wrapper')).first().click().then(() => {
+      browser.driver.sleep(1000).then(() => {
+        element(by.css(`mat-option[ng-reflect-value="${category}"]`)).click().then();
+      });
+    });
+  }
+
+  setStartDate(date: string) {
+    const datepicker = element.all(by.css('mat-datepicker-toggle button')).first().click().then(() => {
+      browser.driver.sleep(1000).then(() => {
+        element(by.css(`td[aria-label="${date}"]`)).click().then();
+      });
+    });
+  }
+
+  setEndDate(date: string) {
+    element.all(by.css('mat-datepicker-toggle button')).last().click().then(() => {
+      browser.driver.sleep(1000).then(() => {
+        element(by.css(`td[aria-label="${date}"]`)).click().then();
+      });
+    });
   }
 }
 
