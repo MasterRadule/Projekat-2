@@ -95,7 +95,7 @@ export class DashboardPage {
   }
 
   setStartDate(date: string) {
-    const datepicker = element.all(by.css('mat-datepicker-toggle button')).first().click().then(() => {
+    element.all(by.css('mat-datepicker-toggle button')).first().click().then(() => {
       browser.driver.sleep(1000).then(() => {
         element(by.css(`td[aria-label="${date}"]`)).click().then();
       });

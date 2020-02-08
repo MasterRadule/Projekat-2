@@ -186,19 +186,20 @@ describe('dashboard page', () => {
     page.setStartDate('February 10, 2020');
     browser.driver.sleep(1000);
 
-    page.setEndDate('February 29, 2020');
+    page.setEndDate('February 28, 2020');
     browser.driver.sleep(1000);
 
     const searchButton = page.getSearchButtonForEventPreviews();
 
     searchButton.click();
-    expect(page.getEventPreviewElements().count()).toBe(5);
+    expect(page.getEventPreviewElements().count()).toBe(6);
     expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 9');
 
     const resetButton = page.getResetButtonForEventPreviews();
 
     resetButton.click();
     expect(page.getEventPreviewElements().count()).toBe(6);
+    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 25');
   });
 
   it('should go to edit event page', () => {

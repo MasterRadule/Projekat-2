@@ -351,7 +351,7 @@ export class EventComponent implements OnInit {
           });
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message))['error'], 'Dismiss', {
             duration: 3000
           });
           this.getEventLocationAndSeatGroups();

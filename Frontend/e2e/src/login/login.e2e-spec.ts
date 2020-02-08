@@ -20,7 +20,7 @@ describe('login page', () => {
     expect(page.getLoginButton().isEnabled()).toBe(true);
     page.getLoginButton().click().then(() => {
       expect(page.getSnackBar().getText()).toContain('Invalid email or password');
-      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/login')
+      expect(browser.getCurrentUrl()).toMatch('http://localhost:4200/login');
     });
   });
 
