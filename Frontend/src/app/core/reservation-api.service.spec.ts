@@ -130,7 +130,8 @@ describe('ReservationApiService', () => {
 
   it('should execute payment for reservation creation (HttpClient called once)', () => {
     const paymentDTO: PaymentDTO = new PaymentDTO('paymentID', 'payerID');
-    const newReservationAndPaymentDTO: NewReservationAndPaymentDTO = new NewReservationAndPaymentDTO();
+    const newReservation: NewReservation = new NewReservation();
+    const newReservationAndPaymentDTO: NewReservationAndPaymentDTO = new NewReservationAndPaymentDTO(newReservation, paymentDTO);
     const ticket: Ticket = new Ticket(1, 1, 1, 'seatGroupName', 10, [new Date()]);
     const reservation: Reservation = new Reservation(1, 'paymentID', 'eventName', 1, [ticket]);
 

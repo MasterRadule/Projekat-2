@@ -19,6 +19,18 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {ReservationComponent} from '../../../reservation/reservation.component';
 import {ReservationModule} from '../../../reservation/reservation.module';
 import {of} from 'rxjs';
+import {SharedModule} from '../../../shared/shared.module';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, Input} from '@angular/core';
+
+@Component({
+  selector: 'app-paypal-button',
+  template: '<p>Mock Component</p>'
+})
+class MockPayPalButtonComponent {
+  @Input() private paymentFunction;
+  @Input() private onAuthorizeFunction;
+  @Input() private buttonId;
+}
 
 describe('ReservationPreviewComponent', () => {
   let component: ReservationPreviewComponent;
@@ -35,11 +47,6 @@ describe('ReservationPreviewComponent', () => {
   beforeEach(() => {
     const reservationApiServiceSpy = jasmine.createSpyObj('ReservationApiService', ['cancelReservation']);
     const matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
-    window.paypal = {
-      Button: {
-        render: jasmine.createSpy()
-      }
-    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -58,7 +65,7 @@ describe('ReservationPreviewComponent', () => {
             pathMatch: 'full'
           }
         ])],
-      declarations: [ReservationPreviewComponent],
+      declarations: [ReservationPreviewComponent, MockPayPalButtonComponent],
       providers: [
         {provide: MatSnackBar, useValue: matSnackBarSpy},
         {provide: ReservationApiService, useValue: reservationApiServiceSpy}
@@ -86,11 +93,8 @@ describe('ReservationPreviewComponent', () => {
       .toBeTruthy();
     expect(fixture.debugElement.query(By.css('#cancelButton')))
       .toBeTruthy();
-    expect(fixture.debugElement.query(By.css(`#pay-button-${reservationNotPaid.id}`)))
-      .toBeTruthy();
     expect(fixture.debugElement.query(By.css('mat-card-title')).nativeElement.innerText)
       .toEqual(reservationNotPaid.eventName);
-    expect(window.paypal.Button.render).toHaveBeenCalled();
   });
 
   it('should create correctly when reservation is paid', () => {
