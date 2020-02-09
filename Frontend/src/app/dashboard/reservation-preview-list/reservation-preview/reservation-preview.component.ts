@@ -51,8 +51,8 @@ export class ReservationPreviewComponent implements OnInit {
     );
   }
 
-  private onAuthorizeFunction(data) {
-    return () => this.reservationApiService
+  private onAuthorizeFunction() {
+    return (data) => this.reservationApiService
       .payReservationExecutePayment(new PaymentDTO(data.paymentID, data.payerID), this.reservation.id).toPromise()
       .then((value: Reservation) => this.reservation = value)
       .catch((message) => {

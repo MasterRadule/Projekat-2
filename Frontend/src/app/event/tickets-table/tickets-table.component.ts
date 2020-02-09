@@ -67,8 +67,8 @@ export class TicketsTableComponent implements OnInit {
       );
   }
 
-  private onAuthorizeFunction(data) {
-    return () => this.reservationApiService
+  private onAuthorizeFunction() {
+    return (data) => this.reservationApiService
       .createAndPayReservationExecutePayment(
         new NewReservationAndPaymentDTO(this.reservation, new PaymentDTO(data.paymentID, data.payerID))).toPromise()
       .then((value: Reservation) => {

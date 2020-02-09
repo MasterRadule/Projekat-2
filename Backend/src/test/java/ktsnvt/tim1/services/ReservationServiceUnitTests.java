@@ -1178,6 +1178,10 @@ public class ReservationServiceUnitTests {
         rsg.setEventSeatGroup(esg);
         double ticketPrice = 10;
         esg.setPrice(ticketPrice);
+        esg.setSeatGroup(new SeatGroup());
+        esg.getSeatGroup().setName("sgn");
+        rsg.setEventDay(new EventDay());
+        rsg.getEventDay().setDate(LocalDateTime.now());
 
         reservation.getTickets().add(ticket);
 
@@ -1201,6 +1205,10 @@ public class ReservationServiceUnitTests {
         rsg.setEventSeatGroup(esg);
         double ticketPrice = 10;
         esg.setPrice(ticketPrice);
+        esg.setSeatGroup(new SeatGroup());
+        esg.getSeatGroup().setName("sgn");
+        rsg.setEventDay(new EventDay());
+        rsg.getEventDay().setDate(LocalDateTime.now());
 
         reservation.getTickets().add(ticket);
 
@@ -1218,7 +1226,11 @@ public class ReservationServiceUnitTests {
         assertEquals(1, itemList.getItems().size());
         Item item = itemList.getItems().get(0);
         assertEquals("KTSNVT - Ticket",item.getDescription());
-        assertEquals("TicketID: " + ticket.getId(), item.getName());
+        String id = rsg.getEventSeatGroup().getSeatGroup().getName()
+                + rsg.getEventDay().getDate().toString();
+        char[] charArray = id.toCharArray();
+        Arrays.sort(charArray);
+        assertEquals("Item ID: " + Arrays.toString(charArray), item.getName());
         assertEquals("EUR", item.getCurrency());
         assertEquals(String.valueOf(ticketPrice), item.getPrice());
         assertEquals("1", item.getQuantity());

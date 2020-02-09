@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -206,7 +207,7 @@ public class ReservationService {
                 rsg.incrementFreeSeats();
             }
             ticket.getReservableSeatGroups().clear();
-            for(Seat seat : ticket.getSeats()){
+            for (Seat seat : ticket.getSeats()) {
                 seat.setTicket(null);
             }
             ticket.getSeats().clear();
@@ -254,7 +255,8 @@ public class ReservationService {
     public PaymentDTO createAndPayReservationCreatePayment(NewReservationDTO newReservationDTO) throws EntityNotFoundException, EntityNotValidException, ImpossibleActionException, PayPalRESTException, PayPalException {
         Reservation reservation = makeReservationObject(newReservationDTO, false);
         Payment createdPayment = makePaymentObject(reservation);
-        TransactionInterceptor.currentTransactionStatus().setRollbackOnly();; // rollback in order not to save reservation in database
+        TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
+        ; // rollback in order not to save reservation in database
         return new PaymentDTO(createdPayment.getId());
     }
 
@@ -280,13 +282,21 @@ public class ReservationService {
     private Payment makePaymentObject(Reservation reservation) throws PayPalRESTException, PayPalException {
         ItemList itemList = new ItemList();
         List<Ticket> tickets = new ArrayList<>(reservation.getTickets());
-        tickets.sort((t1, t2) -> (int) ((t1.getId() ==null ? 0 : t1.getId())
-                - (t2.getId() ==null ? 0 : t2.getId()))); // sorting to avoid randomness of items' order
+        tickets.sort((t1, t2) -> (int) ((t1.getId() == null ? 0 : t1.getId())
+                - (t2.getId() == null ? 0 : t2.getId()))); // sorting to avoid randomness of items' order
         itemList.setItems(new ArrayList<>());
         for (Ticket ticket : tickets) {
             Item item = new Item();
             item.setDescription("KTSNVT - Ticket");
-            item.setName("TicketID: " + ticket.getId());
+            String id = ticket.getReservableSeatGroups()
+                    .stream().map(rsg -> rsg.getEventSeatGroup().getSeatGroup().getName()
+                            + rsg.getEventDay().getDate().toString()).reduce("", String::concat);
+            id = id.concat(ticket.getSeats()
+                    .stream().map(seat -> seat.getRowNum().toString()
+                            + seat.getColNum().toString()).reduce("", String::concat));
+            char[] charArray = id.toCharArray();
+            Arrays.sort(charArray); // sorting to avoid randomness of items' order
+            item.setName("Item ID: " + Arrays.toString(charArray));
             item.setCurrency("EUR");
             item.setPrice(String.valueOf(ticket.getReservableSeatGroups().stream().mapToDouble(
                     rsg -> rsg.getEventSeatGroup().getPrice()).sum()));

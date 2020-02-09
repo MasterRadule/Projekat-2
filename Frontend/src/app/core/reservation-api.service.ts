@@ -32,8 +32,9 @@ export class ReservationApiService {
     return this._http.post(`reservations/${reservationId}/execute-payment`, paymentDTO.serialize());
   }
 
-  createAndPayReservationCreatePayment(newReservation: NewReservation) {
-    newReservation.tickets = newReservation.tickets.map(t => t.serialize());
+  createAndPayReservationCreatePayment(newReservationParam: NewReservation) {
+    const newReservation: NewReservation = new NewReservation(newReservationParam.eventId);
+    newReservation.tickets = newReservationParam.tickets.map(t => t.serialize());
     return this._http.post(`reservations/create-and-pay`, newReservation.serialize());
   }
 
@@ -44,7 +45,8 @@ export class ReservationApiService {
     return this._http.post(`reservations/create-and-pay/execute`, newReservationAndPaymentDTO.serialize());
   }
 
-  createReservation(newReservation: NewReservation) {
+  createReservation(newReservationParam: NewReservation) {
+    const newReservation: NewReservation = new NewReservation(newReservationParam.eventId);
     newReservation.tickets = newReservation.tickets.map(t => t.serialize());
     return this._http.post(`reservations`, newReservation.serialize());
   }

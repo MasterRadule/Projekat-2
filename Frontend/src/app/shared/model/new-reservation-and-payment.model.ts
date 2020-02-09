@@ -16,7 +16,7 @@ export class NewReservationAndPaymentDTO extends Serializable {
   })
   private _paymentDTO: PaymentDTO;
 
-  constructor(newReservationDTO: NewReservation, paymentDTO: PaymentDTO) {
+  constructor(newReservationDTO?: NewReservation, paymentDTO?: PaymentDTO) {
     super();
     this._newReservationDTO = newReservationDTO;
     this._paymentDTO = paymentDTO;

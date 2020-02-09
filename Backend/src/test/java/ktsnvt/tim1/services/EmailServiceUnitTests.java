@@ -157,7 +157,7 @@ public class EmailServiceUnitTests {
         emailService.sendReservationBoughtEmail(reservation);
 
         ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
-        Mockito.verify(javaMailSenderSpy, Mockito.timeout(1000)).send(captor.capture());
+        Mockito.verify(javaMailSenderSpy, Mockito.timeout(10000)).send(captor.capture());
 
         assertEquals(registeredUser.getEmail(), captor.getValue().getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals(emailAddress, captor.getValue().getFrom()[0].toString());
