@@ -27,7 +27,7 @@ describe('ReservationPreviewComponent', () => {
   let matSnackBar: jasmine.SpyObj<MatSnackBar>;
   let router: Router;
   let urlLocation: UrlLocation;
-  let ticket: Ticket = new Ticket(1, 1, 1, 'seatGroupName', 10, [new Date()]);
+  const ticket: Ticket = new Ticket(1, 1, 1, 'seatGroupName', 10, [new Date()]);
   const reservationNotPaid: Reservation = new Reservation(1, null, 'eventName', 1, [ticket]);
   const reservationPaid: Reservation = new Reservation(1, 'orderId', 'eventName', 1, [ticket]);
 
@@ -35,7 +35,7 @@ describe('ReservationPreviewComponent', () => {
   beforeEach(() => {
     const reservationApiServiceSpy = jasmine.createSpyObj('ReservationApiService', ['cancelReservation']);
     const matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
-    window['paypal'] = {
+    window.paypal = {
       Button: {
         render: jasmine.createSpy()
       }
@@ -90,7 +90,7 @@ describe('ReservationPreviewComponent', () => {
       .toBeTruthy();
     expect(fixture.debugElement.query(By.css('mat-card-title')).nativeElement.innerText)
       .toEqual(reservationNotPaid.eventName);
-    expect(window['paypal'].Button.render).toHaveBeenCalled();
+    expect(window.paypal.Button.render).toHaveBeenCalled();
   });
 
   it('should create correctly when reservation is paid', () => {

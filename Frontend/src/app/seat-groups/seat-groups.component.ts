@@ -283,9 +283,9 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
     seatGroupRepresentation.draw();
   }
 
-  changeStroke(seatGroupRepresentation: Konva.Group | Konva.Shape, color: String, strokeWidth: number) {
+  changeStroke(seatGroupRepresentation: Konva.Group | Konva.Shape, color: string, strokeWidth: number) {
     seatGroupRepresentation.children.each((child, index) => {
-      if (index != 0) {
+      if (index !== 0) {
         child.setAttr('stroke', color);
         child.setAttr('strokeWidth', strokeWidth);
       }
@@ -306,7 +306,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   getEventSeatGroupAndReservableSeatGroupAndSeat(seatGroupID: number, rowNum?: number, colNum?: number) {
     let eventSeatGroup: EventSeatGroupDTO;
-    for (let esg of this.enabledEventSeatGroups.eventSeatGroups) {
+    for (const esg of this.enabledEventSeatGroups.eventSeatGroups) {
       if (esg.seatGroupID === seatGroupID) {
         eventSeatGroup = esg;
         break;
@@ -314,7 +314,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
     }
 
     let reservableSeatGroup: ReservableSeatGroupDTO;
-    for (let rsg of eventSeatGroup.reservableSeatGroups) {
+    for (const rsg of eventSeatGroup.reservableSeatGroups) {
       if (rsg.eventDayID === this.selectedEventDay.id) {
         reservableSeatGroup = rsg;
         break;
@@ -325,7 +325,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
     }
 
     let seat: SeatDTO;
-    for (let s of reservableSeatGroup.seats) {
+    for (const s of reservableSeatGroup.seats) {
       if (s.rowNum === rowNum && s.colNum === colNum) {
         seat = s;
         break;
@@ -336,7 +336,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
 
   getNumberOfFreeSeats(seatGroupID: number) {
     let eventSeatGroup: EventSeatGroupDTO;
-    for (let esg of this.enabledEventSeatGroups.eventSeatGroups) {
+    for (const esg of this.enabledEventSeatGroups.eventSeatGroups) {
       if (esg.seatGroupID === seatGroupID) {
         eventSeatGroup = esg;
         break;
@@ -344,7 +344,7 @@ export class SeatGroupsComponent implements OnInit, OnDestroy {
     }
 
     let reservableSeatGroup: ReservableSeatGroupDTO;
-    for (let rsg of eventSeatGroup.reservableSeatGroups) {
+    for (const rsg of eventSeatGroup.reservableSeatGroups) {
       if (rsg.eventDayID === this.selectedEventDay.id) {
         reservableSeatGroup = rsg;
         break;

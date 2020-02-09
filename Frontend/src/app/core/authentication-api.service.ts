@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {LoginDto} from "../shared/model/login-dto.model";
-import {Observable} from "rxjs";
-import {UserDTO} from "../shared/model/user-dto.model";
+import {LoginDto} from '../shared/model/login-dto.model';
+import {Observable} from 'rxjs';
+import {UserDTO} from '../shared/model/user-dto.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,13 +29,13 @@ export class AuthenticationApiService {
     return localStorage.getItem('token');
   }
 
-  getRole(): string{
-    let token = localStorage.getItem('token');
-    let role = "NO_ROLE";
-    if(token!=null){
-      let jwtData = token.split('.')[1];
-      let decodedJwtJsonData = window.atob(jwtData);
-      let decodedJwtData = JSON.parse(decodedJwtJsonData);
+  getRole(): string {
+    const token = localStorage.getItem('token');
+    let role = 'NO_ROLE';
+    if (token != null) {
+      const jwtData = token.split('.')[1];
+      const decodedJwtJsonData = window.atob(jwtData);
+      const decodedJwtData = JSON.parse(decodedJwtJsonData);
       role = decodedJwtData.role[0].authority;
     }
     return role;
@@ -45,7 +45,7 @@ export class AuthenticationApiService {
     return this._http.get(`logout`, {headers: this._headers, responseType: 'text'});
   }
 
-  register(userDTO: UserDTO): Observable<any>{
+  register(userDTO: UserDTO): Observable<any> {
     return this._http.post(`register`, userDTO.serialize(), {headers: this._headers, responseType: 'text'});
   }
 

@@ -20,11 +20,11 @@ export class SeatDTO extends Serializable {
   private _reserved: boolean;
 
   constructor(id: number, rowNum: number, colNum: number, reserved: boolean) {
-  	super();
-  	this._id = id;
-  	this._rowNum = rowNum;
-  	this._colNum = colNum;
-  	this._reserved = reserved;
+    super();
+    this._id = id;
+    this._rowNum = rowNum;
+    this._colNum = colNum;
+    this._reserved = reserved;
   }
 
   get id(): number {
@@ -56,7 +56,7 @@ export class SeatDTO extends Serializable {
   }
 
   set reserved(reserved: boolean) {
-    this._reserved= reserved;
+    this._reserved = reserved;
   }
 
 }

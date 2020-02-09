@@ -5,39 +5,39 @@ export class RegisterPage {
     return browser.get('/register');
   }
 
-  getFirstNameInput(){
-    return element(by.id("firstName"));
+  getFirstNameInput() {
+    return element(by.id('firstName'));
   }
 
-  getLastNameInput(){
-    return element(by.id("lastName"));
+  getLastNameInput() {
+    return element(by.id('lastName'));
   }
 
   getEmailInput() {
-    return element(by.id("email"));
+    return element(by.id('email'));
   }
 
   getPasswordInput() {
-    return element(by.id("password"));
+    return element(by.id('password'));
   }
 
   getRegisterButton() {
     return element(by.id('registerButton'));
   }
 
-  getEmailErrorMessage(){
+  getEmailErrorMessage() {
     return element(by.id('emailError'));
   }
 
-  getPasswordErrorMessage(){
+  getPasswordErrorMessage() {
     return element(by.id('passwordError'));
   }
 
-  getPasswordLengthErrorMessage(){
+  getPasswordLengthErrorMessage() {
     return element(by.id('passwordLengthError'));
   }
 
-  getSnackBar(){
+  getSnackBar() {
     return element(by.className('mat-simple-snackbar'));
   }
 }

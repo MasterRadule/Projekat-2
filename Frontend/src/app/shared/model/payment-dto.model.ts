@@ -1,7 +1,7 @@
 import {Serializable, Serialize, SerializeProperty} from 'ts-serializer';
 
 @Serialize({})
-export class PaymentDTO extends Serializable{
+export class PaymentDTO extends Serializable {
   @SerializeProperty({
     map: 'paymentID'
   })

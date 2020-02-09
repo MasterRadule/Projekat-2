@@ -72,4 +72,4 @@ export class ReservableSeatGroupDTO extends Serializable {
   set freeSeats(freeSeats: number) {
     this._freeSeats = freeSeats;
   }
-} 
+}

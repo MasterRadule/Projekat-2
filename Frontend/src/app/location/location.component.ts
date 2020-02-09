@@ -33,7 +33,7 @@ export class LocationComponent implements OnInit {
   constructor(private route: ActivatedRoute, private locationApiService: LocationApiService, private snackBar: MatSnackBar,
               private router: Router, private authService: AuthenticationApiService) {
     this.role = this.authService.getRole();
-    this.seatComponentMode = this.role.concat("_LOCATION");
+    this.seatComponentMode = this.role.concat('_LOCATION');
   }
 
   ngOnInit() {
