@@ -36,7 +36,7 @@ export class ReservationPreviewListComponent implements OnInit {
         this._reservations = result.content;
       },
       error: (message: string) => {
-        this.snackBar.open(message, 'Dismiss', {
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
           duration: 3000
         });
       }

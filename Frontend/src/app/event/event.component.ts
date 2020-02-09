@@ -92,7 +92,7 @@ export class EventComponent implements OnInit {
           this.reservation = new NewReservation(result.id);
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }

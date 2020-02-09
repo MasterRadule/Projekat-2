@@ -35,7 +35,7 @@ export class LocationPreviewListComponent implements OnInit {
         this._locations = result.content;
       },
       error: (message: string) => {
-        this.snackBar.open(message, 'Dismiss', {
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
           duration: 3000
         });
       }
@@ -57,7 +57,7 @@ export class LocationPreviewListComponent implements OnInit {
           this._locations = result.content;
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }

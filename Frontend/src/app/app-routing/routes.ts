@@ -35,7 +35,9 @@ export const routes: Routes = [
   {
     path: 'dashboard/events',
     component: EventComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [RoleGuard],
+    data: {expectedRoles: 'ROLE_ADMIN'}
   },
   {
     path: 'dashboard/locations',

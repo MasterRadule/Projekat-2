@@ -55,7 +55,7 @@ export class LocationComponent implements OnInit {
           this.initialized = true;
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -69,7 +69,7 @@ export class LocationComponent implements OnInit {
           this.seatGroupComponent.seatGroups = result.content;
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -87,7 +87,7 @@ export class LocationComponent implements OnInit {
           });
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -105,7 +105,7 @@ export class LocationComponent implements OnInit {
           });
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
@@ -143,7 +143,7 @@ export class LocationComponent implements OnInit {
           this.seatGroupComponent.addSeatGroup(result);
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }

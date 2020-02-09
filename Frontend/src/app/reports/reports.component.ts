@@ -59,7 +59,9 @@ export class ReportsComponent implements OnInit {
         this._locationOptions = result;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
@@ -70,7 +72,9 @@ export class ReportsComponent implements OnInit {
         this._eventOptions = result;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }

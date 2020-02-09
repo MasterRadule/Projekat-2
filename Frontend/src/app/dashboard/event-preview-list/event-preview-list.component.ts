@@ -89,7 +89,9 @@ export class EventPreviewListComponent implements OnInit {
         this._locationsOptions = result;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
@@ -102,7 +104,9 @@ export class EventPreviewListComponent implements OnInit {
         this.events = result.content;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
@@ -135,7 +139,9 @@ export class EventPreviewListComponent implements OnInit {
         this.events = result.content;
       },
       error: (message: string) => {
-        this.snackBar.open(message);
+        this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }

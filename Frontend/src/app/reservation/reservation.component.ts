@@ -25,7 +25,7 @@ export class ReservationComponent implements OnInit {
     });
   }
 
-  getReservation(id: number){
+  getReservation(id: number) {
     this.reservationApiService.getReservation(id).subscribe(
       {
         next: (result: Reservation) => {
@@ -35,7 +35,7 @@ export class ReservationComponent implements OnInit {
           this._paid = result.orderId === null ? 'no' : 'yes';
         },
         error: (message: string) => {
-          this.snackBar.open(message, 'Dismiss', {
+          this.snackBar.open(JSON.parse(JSON.stringify(message)).error, 'Dismiss', {
             duration: 3000
           });
         }
