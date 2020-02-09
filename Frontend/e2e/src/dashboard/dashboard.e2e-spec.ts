@@ -2,8 +2,9 @@ import {browser, logging} from 'protractor';
 import {DashboardPage} from './dashboard.po';
 import {LoginPage} from '../login/login.po';
 
-describe('dashboard page', () => {
-  let page: DashboardPage;
+let page: DashboardPage;
+
+describe('dashboard page admin', () => {
 
   beforeAll(() => {
     browser.driver.manage().window().maximize();
@@ -218,6 +219,91 @@ describe('dashboard page', () => {
       });
     });
   });
+
+  afterAll(() => {
+    page.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+  });
+});
+
+describe('dashboard page user', () => {
+  beforeAll(() => {
+    browser.driver.manage().window().maximize();
+    const loginPage = new LoginPage();
+    loginPage.login('JennifferHooker@example.com', 123);
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+  });
+
+  beforeEach(() => {
+    page = new DashboardPage();
+  });
+
+  it('should display reservation previews', () => {
+    page.previewReservations();
+    expect(page.getReservationPreviewElements().count()).toBe(6);
+  });
+
+  it('should change number of displayed reservation previews', () => {
+    page.previewReservations();
+    expect(page.getReservationPreviewElements().count()).toBe(6);
+
+    page.selectNumberOfReservationsDisplayed(3);
+    expect(page.getReservationPreviewElements().count()).toBe(3);
+
+    page.selectNumberOfReservationsDisplayed(9);
+    expect(page.getReservationPreviewElements().count()).toBe(9);
+
+    page.selectNumberOfReservationsDisplayed(6);
+    expect(page.getReservationPreviewElements().count()).toBe(6);
+  });
+
+  it('should go to next page of reservation previews and return to previous', () => {
+    page.previewReservations();
+
+    const nextPageButton = page.getNextPageButton();
+    expect(nextPageButton).toBeTruthy();
+
+    nextPageButton.click();
+    expect(page.getReservationPreviewElements().count()).toBe(4);
+    expect(page.getPaginatorLabel().getText()).toBe('7 – 10 of 10');
+
+    const previousPageButton = page.getPreviousPageButton();
+    expect(previousPageButton).toBeTruthy();
+
+    page.getPreviousPageButton().click();
+    expect(page.getPaginatorLabel().getText()).toBe('1 – 6 of 10');
+  });
+
+  it('should search reservations', () => {
+    page.previewReservations();
+
+    page.selectTypeOfReservationsDisplayed('All');
+
+    expect(page.getReservationPreviewElements().count()).toBe(6);
+
+    page.selectTypeOfReservationsDisplayed('Reserved');
+
+    expect(page.getReservationPreviewElements().count()).toBe(0);
+
+    page.selectTypeOfReservationsDisplayed('Bought');
+
+    expect(page.getReservationPreviewElements().count()).toBe(6);
+  });
+
+  it('should go to edit reservation page', () => {
+    page.previewReservations();
+
+    const previewButton = page.getFirstEventReservationPreviewButton();
+
+    browser.executeScript('arguments[0].scrollIntoView', previewButton).then(() => {
+      browser.executeScript('arguments[0].click()', previewButton).then(() => {
+        expect(browser.getCurrentUrl()).toEqual('http://localhost:4200/dashboard/reservations/1');
+      });
+    });
+  });
+
 
   afterAll(() => {
     page.logout();

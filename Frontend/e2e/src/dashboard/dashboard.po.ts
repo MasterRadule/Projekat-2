@@ -13,12 +13,20 @@ export class DashboardPage {
     return browser.get('/dashboard/events/preview') as Promise<any>;
   }
 
+  previewReservations() {
+    return browser.get('/dashboard/reservations/preview') as Promise<any>;
+  }
+
   getLocationPreviewElements() {
     return element.all(by.tagName('app-location-preview'));
   }
 
   getEventPreviewElements() {
     return element.all(by.tagName('app-event-preview'));
+  }
+
+  getReservationPreviewElements() {
+    return element.all(by.tagName('app-reservation-preview'));
   }
 
   getLocationPreviewTitles() {
@@ -39,6 +47,10 @@ export class DashboardPage {
 
   getFirstEventPreviewEditButton() {
     return element.all(by.css('app-event-preview button')).first();
+  }
+
+  getFirstEventReservationPreviewButton() {
+    return element.all(by.css('app-reservation-preview button')).first();
   }
 
   getPaginatorLabel() {
@@ -63,6 +75,20 @@ export class DashboardPage {
   selectNumberOfEventsDisplayed(items: number) {
     element(by.css('#mat-select-2')).click().then(() => {
       element(by.css(`.mat-option[ng-reflect-value="${items}"]`)).click().then(() => {
+      });
+    });
+  }
+
+  selectNumberOfReservationsDisplayed(items: number) {
+    element(by.css('#mat-select-1')).click().then(() => {
+      element(by.css(`.mat-option[ng-reflect-value="${items}"]`)).click().then(() => {
+      });
+    });
+  }
+
+  selectTypeOfReservationsDisplayed(type: string) {
+    element(by.css('#mat-select-0')).click().then(() => {
+      element(by.css(`.mat-option[ng-reflect-value="${type}"]`)).click().then(() => {
       });
     });
   }

@@ -1,6 +1,6 @@
 <div fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px">
-  <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="20px">
-    <button id="detailsButton" mat-raised-button color="primary" (click)="createReservation()">Create reservation
+  <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="20px" *ngIf="reservation.tickets.length">
+    <button id="createReservationButton" mat-raised-button color="primary" (click)="createReservation()">Create reservation
     </button>
     <app-paypal-button [paymentFunction]="paymentFunction()" [onAuthorizeFunction]="onAuthorizeFunction()"
                        [buttonId]="'paypal-button'"></app-paypal-button>

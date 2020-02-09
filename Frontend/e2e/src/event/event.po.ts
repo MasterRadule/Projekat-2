@@ -91,4 +91,12 @@ export class EventPage {
   getSnackBar() {
     return element(by.className('mat-simple-snackbar'));
   }
+
+  getTicketsTable() {
+    return element(by.css('body > app-root > app-event > div > div:nth-child(4) > app-tickets-table > div > table'));
+  }
+
+  getCreateReservationsButton() {
+    return element.all(by.css('#createReservationButton'));
+  }
 }

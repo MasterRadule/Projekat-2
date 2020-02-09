@@ -477,7 +477,15 @@ INSERT INTO reservation(id, is_cancelled, order_id, event_id, user_id) VALUES
 (22, True, NULL, 22, 27),
 (23, True, NULL, 23, 28),
 (24, True, NULL, 24, 29),
-(25, False, NULL, 25, 6);
+(25, False, '278955818', 25, 6),
+(26, False, '278955818', 25, 6),
+(27, False, '278955818', 25, 6),
+(28, False, '278955818', 25, 6),
+(29, False, '278955818', 25, 6),
+(30, False, '278955818', 25, 6),
+(31, False, '278955818', 25, 6),
+(32, False, '278955818', 25, 6),
+(33, False, '278955818', 25, 6);
 
 --
 -- Inserting data into table reservable_seat_group
@@ -507,7 +515,7 @@ INSERT INTO reservable_seat_group(id, free_seats, event_day_id, event_seat_group
 (22, 71, 22, 22),
 (23, 28, 23, 23),
 (24, 75, 24, 24),
-(25, 32, 25, 25),
+(25, 24, 25, 25),
 (26, 79, 26, 26),
 (27, 36, 27, 27),
 (28, 83, 28, 28),
@@ -589,7 +597,15 @@ INSERT INTO ticket(id, reservation_id) VALUES
 (47, 22),
 (48, 23),
 (49, 24),
-(50, 25);
+(50, 25),
+(51, 26),
+(52, 27),
+(53, 28),
+(54, 29),
+(55, 30),
+(56, 31),
+(57, 32),
+(58, 33);
 
 --
 -- Inserting data into table event_pictures_and_videos
@@ -699,7 +715,15 @@ INSERT INTO reservable_seat_groups_tickets(reservable_seat_group, ticket) VALUES
 (36, 36),
 (2, 2),
 (8, 8),
-(3, 3);
+(3, 3),
+(25, 51),
+(25, 52),
+(25, 53),
+(25, 54),
+(25, 55),
+(25, 56),
+(25, 57),
+(25, 58);
 
 --
 -- Inserting data into table seat

@@ -148,3 +148,39 @@ describe('event page', () => {
   });
 
 });
+
+describe('event page', () => {
+  let page: EventPage;
+
+  beforeAll(() => {
+    browser.driver.manage().window().maximize();
+    const loginPage = new LoginPage();
+    loginPage.login('JennifferHooker@example.com', 123);
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+  });
+
+  beforeEach(() => {
+    page = new EventPage();
+  });
+
+  it('should show tickets table', () => {
+    page.navigateTo(1);
+    expect(page.getTicketsTable()).toBeTruthy();
+  });
+
+  it('should not show "Create reservations" button', () => {
+    page.navigateTo(1);
+    expect(page.getCreateReservationsButton().then(items => {
+      expect(items.length).toBe(0);
+    }));
+  });
+
+  afterAll(() => {
+    const dashboardPage = new DashboardPage();
+    dashboardPage.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+  });
+
+});

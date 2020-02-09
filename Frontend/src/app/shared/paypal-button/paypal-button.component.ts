@@ -30,6 +30,7 @@ export class PaypalButtonComponent implements OnInit {
         color: 'gold',
         shape: 'pill',
         label: 'pay',
+        tagline: false
       },
       env: 'sandbox',
       payment: this.paymentFunction,
