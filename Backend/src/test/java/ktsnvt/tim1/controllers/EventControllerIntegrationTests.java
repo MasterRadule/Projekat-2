@@ -180,7 +180,8 @@ public class EventControllerIntegrationTests {
         newDTO.setReservationDeadlineDays(1);
         newDTO.setMaxTicketsPerReservation(3);
 
-        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO);
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+        HttpEntity<EventDTO> entity = new HttpEntity<>(newDTO, headers);
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events",
                 HttpMethod.POST, entity, String.class);
@@ -368,7 +369,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         HttpEntity<Object> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> result = testRestTemplate.exchange("/events/1/pictures-and-videos/1",
-                HttpMethod.DELETE, null, String.class);
+                HttpMethod.DELETE, entity, String.class);
 
         String message = result.getBody();
 
@@ -383,7 +384,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         HttpEntity<Object> entity = new HttpEntity<>(null, headers);
         ResponseEntity<String> result = testRestTemplate.exchange("/events/31/pictures-and-videos/51",
-                HttpMethod.DELETE, null, String.class);
+                HttpMethod.DELETE, entity, String.class);
 
         String errorMessage = result.getBody();
 
@@ -396,7 +397,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
         HttpEntity<Object> entity = new HttpEntity<>(null, headers);
 		ResponseEntity<String> result = testRestTemplate.exchange("/events/1/pictures-and-videos/51",
-                HttpMethod.DELETE, null, String.class);
+                HttpMethod.DELETE, entity, String.class);
 
         String errorMessage = result.getBody();
 
@@ -454,7 +455,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events",
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -477,7 +478,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events",
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -501,7 +502,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events",
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -520,8 +521,10 @@ public class EventControllerIntegrationTests {
         EventDayDTO eventDayDTO1 = new EventDayDTO(1L, "01.01.2020. 00:00");
         newDTO.getEventDays().add(eventDayDTO1);
 
+        HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
+
         ResponseEntity<String> result = testRestTemplate.exchange("/events",
-                HttpMethod.PUT, new HttpEntity<>(newDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(newDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -571,7 +574,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<EventDTO> result = testRestTemplate.exchange("/events/location",
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), EventDTO.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), EventDTO.class);
 
         EventDTO eventDTO = result.getBody();
         Event event = eventRepository.getOne(eventID);
@@ -595,7 +598,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events/location",
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -616,7 +619,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events/location",
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -637,7 +640,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events/location",
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
@@ -656,7 +659,7 @@ public class EventControllerIntegrationTests {
         HttpHeaders headers = headerTokenGenerator.generateHeaderWithToken("Dickens@example.com");
 
         ResponseEntity<String> result = testRestTemplate.exchange("/events/location",
-                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO), String.class);
+                HttpMethod.PUT, new HttpEntity<>(seatGroupDTO, headers), String.class);
 
         String errorMessage = result.getBody();
 
