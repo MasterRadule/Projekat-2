@@ -292,7 +292,7 @@ describe('dashboard page user', () => {
     expect(page.getReservationPreviewElements().count()).toBe(6);
   });
 
-  it('should go to edit reservation page', () => {
+  it('should go to reservation page details', () => {
     page.previewReservations();
 
     const previewButton = page.getFirstEventReservationPreviewButton();
