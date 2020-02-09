@@ -143,6 +143,15 @@ export class DashboardPage {
     });
   }
 
+  clickReservationCancelButton() {
+    return element(by.css('#cancelButton')).click();
+  }
+
+  getSnackBar() {
+    return element(by.className('mat-simple-snackbar'));
+  }
+
+
   logout() {
     this.navigateTo();
     element(by.css('body > app-root > app-dashboard > div > app-toolbar > mat-toolbar > span:nth-child(2) > button:nth-child(2)')).click();

@@ -304,6 +304,26 @@ describe('dashboard page user', () => {
     });
   });
 
+  it('should cancel reservation', () => {
+    page.logout();
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+    const loginPage = new LoginPage();
+    loginPage.login('ktsnvt.tim1@gmail.com', 123);
+    browser.driver.sleep(1000);
+    browser.waitForAngular();
+    browser.ignoreSynchronization = true;
+    page.previewReservations();
+    page.getReservationPreviewElements().count().then(c => {
+      if (c) {
+        page.clickReservationCancelButton().then(() => {
+          browser.driver.sleep(500);
+          expect(page.getSnackBar().getText()).toContain('Successfully cancelled the reservation');
+        });
+      }
+    });
+  });
+
 
   afterAll(() => {
     page.logout();
